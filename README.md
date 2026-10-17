@@ -92,7 +92,7 @@ Dependabot opens pull requests into `development` for outdated gems and GitHub A
 - `config/master.key` is **never** committed. Keep a copy in a password manager.
 - Deployment credentials live in GitHub **Settings → Secrets and variables → Actions**, never in the code.
 
-### Quick documentation changes
+### Quick changes example
 
 Even README-only edits go through a pull request. Use a `docs/` branch:
 
