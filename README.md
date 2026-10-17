@@ -6,11 +6,11 @@ Add your comics in seconds and keep your whole collection in one place. Comic St
 
 ### Branches
 
-| Branch               | Purpose                                            | Protected                   |
-| -------------------- | -------------------------------------------------- | --------------------------- |
-| `main`               | Production. Only updated by merging `development`. | ✅ PR + passing CI required |
-| `development`        | Integration branch. Default branch for all work.   | ✅ PR + passing CI required |
-| `feature/*`, `fix/*` | Short-lived branches for a single change.          | ❌                          |
+| Branch                         | Purpose                                            | Protected                   |
+| ------------------------------ | -------------------------------------------------- | --------------------------- |
+| `main`                         | Production. Only updated by merging `development`. | ✅ PR + passing CI required |
+| `development`                  | Integration branch. Default branch for all work.   | ✅ PR + passing CI required |
+| `feature/*`, `fix/*`, `docs/*` | Short-lived branches for a single change.          | ❌                          |
 
 Direct pushes to `main` and `development` are blocked. All changes go through a pull request.
 
@@ -91,3 +91,30 @@ Dependabot opens pull requests into `development` for outdated gems and GitHub A
 
 - `config/master.key` is **never** committed. Keep a copy in a password manager.
 - Deployment credentials live in GitHub **Settings → Secrets and variables → Actions**, never in the code.
+
+### Quick documentation changes
+
+Even README-only edits go through a pull request. Use a `docs/` branch:
+
+```bash
+git checkout development
+git pull
+git checkout -b docs/short-description
+
+# edit README.md (or other docs)
+
+git add README.md
+git commit -m "Update README with development workflow"
+git push -u origin docs/short-description
+```
+
+Then open a pull request into `development`, wait for the checks to pass, and **Squash and merge**.
+
+> **Tip:** Always create the branch _before_ committing. If you accidentally commit on `development`, move the commit to a new branch and reset:
+>
+> ```bash
+> git checkout -b docs/short-description
+> git push -u origin docs/short-description
+> git checkout development
+> git reset --hard origin/development
+> ```
