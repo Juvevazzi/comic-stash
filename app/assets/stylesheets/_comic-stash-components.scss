@@ -1,0 +1,710 @@
+// Comic Stash — theme layer and collection components. Import AFTER Bootstrap and the tokens.
+
+// 1. Bootstrap <-> tokens bridge
+:root,
+[data-bs-theme] {
+  --bs-body-bg: var(--paper);
+  --bs-body-color: var(--ink);
+  --bs-emphasis-color: var(--ink);
+  --bs-heading-color: var(--ink);
+  --bs-secondary-color: var(--ink-muted);
+  --bs-tertiary-color: var(--ink-subtle);
+  --bs-secondary-bg: var(--paper-sunken);
+  --bs-tertiary-bg: var(--paper-sunken);
+  --bs-border-color: var(--line);
+  --bs-link-color: var(--link);
+  --bs-link-hover-color: var(--cyan-hover);
+  --bs-focus-ring-color: var(--focus);
+  --bs-highlight-bg: var(--yellow-soft);
+  --bs-highlight-color: var(--ink);
+  --bs-body-font-family: var(--font-sans);
+  --bs-font-sans-serif: var(--font-sans);
+  --bs-font-monospace: var(--font-mono);
+  --bs-border-radius: var(--radius-md);
+  --bs-border-radius-sm: var(--radius-sm);
+  --bs-border-radius-lg: var(--radius-lg);
+  --bs-border-radius-xl: var(--radius-xl);
+  --bs-border-radius-pill: var(--radius-pill);
+  --bs-box-shadow-sm: var(--shadow-sm);
+  --bs-box-shadow: var(--shadow-md);
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+}
+a {
+  color: var(--link);
+  text-underline-offset: 0.2em;
+}
+a:hover {
+  color: var(--cyan-hover);
+}
+::selection {
+  background: var(--yellow);
+  color: var(--on-yellow);
+}
+
+// Headings: Archivo for h1-h3 and displays, Atkinson bold for h4-h6.
+h1,
+h2,
+h3,
+.h1,
+.h2,
+.h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: "wdth" 112;
+  letter-spacing: -0.01em;
+}
+h3,
+.h3 {
+  font-weight: 700;
+}
+.display-1,
+.display-2,
+.display-3,
+.display-4,
+.display-5,
+.display-6 {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 125;
+  letter-spacing: -0.02em;
+}
+code,
+kbd,
+.font-monospace {
+  font-family: var(--font-mono);
+}
+
+// Focus: one solid ring outside a paper gap, everywhere.
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.btn,
+.form-control,
+.form-select,
+.form-check-input,
+.nav-link,
+.page-link,
+.list-group-item-action,
+.cs-issue {
+  --bs-btn-focus-box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--focus);
+  &:focus-visible,
+  &:focus {
+    outline: 0;
+  }
+  &:focus-visible {
+    box-shadow:
+      0 0 0 2px var(--paper),
+      0 0 0 4px var(--focus);
+  }
+}
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  border-color: var(--ink);
+  box-shadow:
+    0 0 0 2px var(--paper),
+    0 0 0 4px var(--focus);
+}
+
+// 2. Buttons
+.btn {
+  --bs-btn-font-weight: 700;
+  --bs-btn-border-width: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+}
+
+.btn-primary {
+  --bs-btn-color: var(--on-cyan);
+  --bs-btn-bg: var(--cyan);
+  --bs-btn-border-color: var(--cyan);
+  --bs-btn-hover-color: var(--on-cyan);
+  --bs-btn-hover-bg: var(--cyan-hover);
+  --bs-btn-hover-border-color: var(--cyan-hover);
+  --bs-btn-active-color: var(--on-cyan);
+  --bs-btn-active-bg: var(--cyan-hover);
+  --bs-btn-active-border-color: var(--cyan-hover);
+  --bs-btn-disabled-color: var(--on-cyan);
+  --bs-btn-disabled-bg: var(--cyan);
+  --bs-btn-disabled-border-color: var(--cyan);
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--cyan);
+  --bs-btn-border-color: var(--cyan);
+  --bs-btn-bg: transparent;
+  --bs-btn-hover-color: var(--on-cyan);
+  --bs-btn-hover-bg: var(--cyan);
+  --bs-btn-hover-border-color: var(--cyan);
+  --bs-btn-active-color: var(--on-cyan);
+  --bs-btn-active-bg: var(--cyan-hover);
+  --bs-btn-active-border-color: var(--cyan-hover);
+  --bs-btn-disabled-color: var(--cyan);
+  --bs-btn-disabled-border-color: var(--cyan);
+}
+// Secondary = the neutral default button.
+.btn-secondary,
+.btn-outline-secondary {
+  --bs-btn-color: var(--ink);
+  --bs-btn-bg: var(--paper-raised);
+  --bs-btn-border-color: var(--line-strong);
+  --bs-btn-hover-color: var(--ink);
+  --bs-btn-hover-bg: var(--paper-sunken);
+  --bs-btn-hover-border-color: var(--ink);
+  --bs-btn-active-color: var(--ink);
+  --bs-btn-active-bg: var(--paper-sunken);
+  --bs-btn-active-border-color: var(--ink);
+  --bs-btn-disabled-color: var(--ink-subtle);
+  --bs-btn-disabled-bg: var(--paper-raised);
+  --bs-btn-disabled-border-color: var(--line);
+}
+.btn-outline-secondary {
+  --bs-btn-bg: transparent;
+}
+// Hunt = add to / manage the hunt list.
+.btn-hunt {
+  --bs-btn-color: var(--magenta-ink);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--magenta);
+  --bs-btn-hover-color: var(--on-magenta);
+  --bs-btn-hover-bg: var(--magenta);
+  --bs-btn-hover-border-color: var(--magenta);
+  --bs-btn-active-color: var(--on-magenta);
+  --bs-btn-active-bg: var(--magenta);
+  --bs-btn-active-border-color: var(--magenta);
+  --bs-btn-disabled-color: var(--magenta-ink);
+  --bs-btn-disabled-border-color: var(--magenta);
+}
+.btn-danger {
+  --bs-btn-color: var(--on-danger);
+  --bs-btn-bg: var(--danger);
+  --bs-btn-border-color: var(--danger);
+  --bs-btn-hover-color: var(--on-danger);
+  --bs-btn-hover-bg: var(--danger);
+  --bs-btn-hover-border-color: var(--ink);
+  --bs-btn-active-color: var(--on-danger);
+  --bs-btn-active-bg: var(--danger);
+  --bs-btn-active-border-color: var(--ink);
+}
+.btn-outline-danger {
+  --bs-btn-color: var(--danger);
+  --bs-btn-border-color: var(--danger);
+  --bs-btn-bg: transparent;
+  --bs-btn-hover-color: var(--on-danger);
+  --bs-btn-hover-bg: var(--danger);
+  --bs-btn-hover-border-color: var(--danger);
+  --bs-btn-active-color: var(--on-danger);
+  --bs-btn-active-bg: var(--danger);
+  --bs-btn-active-border-color: var(--danger);
+}
+.btn-link {
+  --bs-btn-color: var(--link);
+  --bs-btn-hover-color: var(--cyan-hover);
+  --bs-btn-active-color: var(--cyan-hover);
+  --bs-btn-font-weight: 700;
+}
+
+// 3. Forms
+.form-control,
+.form-select {
+  background-color: var(--paper-raised);
+  border-color: var(--line-strong);
+  color: var(--ink);
+  &::placeholder {
+    color: var(--ink-subtle);
+  }
+}
+.form-label {
+  font-weight: 700;
+}
+.form-text {
+  color: var(--ink-muted);
+}
+.form-check-input {
+  background-color: var(--paper-raised);
+  border-color: var(--line-strong);
+}
+.form-check-input:checked {
+  background-color: var(--cyan);
+  border-color: var(--cyan);
+}
+.input-group-text {
+  background-color: var(--paper-sunken);
+  border-color: var(--line-strong);
+  color: var(--ink-muted);
+}
+.was-validated .form-control:invalid,
+.form-control.is-invalid {
+  border-color: var(--danger);
+}
+.invalid-feedback {
+  color: var(--danger);
+}
+.was-validated .form-control:valid,
+.form-control.is-valid {
+  border-color: var(--success);
+}
+.valid-feedback {
+  color: var(--success);
+}
+
+// 4. Surfaces
+.card {
+  --bs-card-bg: var(--paper-raised);
+  --bs-card-border-color: var(--line);
+  --bs-card-color: var(--ink);
+  --bs-card-cap-bg: transparent;
+  --bs-card-border-radius: var(--radius-lg);
+}
+.dropdown-menu {
+  --bs-dropdown-bg: var(--paper-raised);
+  --bs-dropdown-border-color: var(--line);
+  --bs-dropdown-box-shadow: var(--shadow-md);
+  --bs-dropdown-link-hover-bg: var(--paper-sunken);
+  --bs-dropdown-link-active-bg: var(--cyan);
+  --bs-dropdown-link-active-color: var(--on-cyan);
+}
+.modal {
+  --bs-modal-bg: var(--paper-raised);
+  --bs-modal-border-color: var(--line);
+}
+.toast {
+  --bs-toast-bg: var(--paper-raised);
+  --bs-toast-border-color: var(--line);
+  --bs-toast-box-shadow: var(--shadow-md);
+  --bs-toast-header-bg: var(--paper-raised);
+  --bs-toast-header-color: var(--ink);
+}
+.list-group {
+  --bs-list-group-bg: var(--paper-raised);
+  --bs-list-group-border-color: var(--line);
+  --bs-list-group-color: var(--ink);
+  --bs-list-group-action-hover-bg: var(--paper-sunken);
+  --bs-list-group-active-bg: var(--cyan-soft);
+  --bs-list-group-active-color: var(--cyan-ink);
+  --bs-list-group-active-border-color: var(--line);
+}
+.table {
+  --bs-table-bg: var(--paper-raised);
+  --bs-table-color: var(--ink);
+  --bs-table-border-color: var(--line);
+  --bs-table-hover-bg: var(--paper-sunken);
+  --bs-table-hover-color: var(--ink);
+  --bs-table-striped-bg: var(--paper);
+  --bs-table-striped-color: var(--ink);
+  > thead th {
+    background: var(--paper-sunken);
+    color: var(--ink-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+}
+.progress,
+.progress-stacked {
+  --bs-progress-bg: var(--missing-soft);
+  --bs-progress-bar-bg: var(--owned);
+  --bs-progress-border-radius: var(--radius-pill);
+  --bs-progress-height: 0.75rem;
+}
+
+// Navbar
+.navbar.cs-navbar {
+  --bs-navbar-color: var(--ink-muted);
+  --bs-navbar-hover-color: var(--ink);
+  --bs-navbar-active-color: var(--ink);
+  --bs-navbar-brand-color: var(--ink);
+  --bs-navbar-brand-hover-color: var(--ink);
+  background: var(--paper-raised);
+  border-bottom: 1px solid var(--line);
+  .nav-link {
+    font-weight: 700;
+  }
+  .nav-link.active {
+    box-shadow: inset 0 -3px 0 var(--cyan);
+  }
+}
+.cs-wordmark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: "wdth" 125;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+// Alerts: soft fill, inked text, icon first.
+.alert {
+  --bs-alert-border-color: transparent;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+.alert > .bi {
+  font-size: 1.25rem;
+  line-height: 1.2;
+  flex: none;
+}
+.alert-primary,
+.alert-info {
+  --bs-alert-bg: var(--cyan-soft);
+  --bs-alert-color: var(--cyan-ink);
+  --bs-alert-link-color: var(--cyan-ink);
+}
+.alert-success {
+  --bs-alert-bg: var(--success-soft);
+  --bs-alert-color: var(--ink);
+  --bs-alert-link-color: var(--ink);
+  > .bi {
+    color: var(--success);
+  }
+}
+.alert-warning {
+  --bs-alert-bg: var(--missing-soft);
+  --bs-alert-color: var(--ink);
+  --bs-alert-link-color: var(--ink);
+  > .bi {
+    color: var(--missing);
+  }
+}
+.alert-danger {
+  --bs-alert-bg: var(--danger-soft);
+  --bs-alert-color: var(--ink);
+  --bs-alert-link-color: var(--ink);
+  > .bi {
+    color: var(--danger);
+  }
+}
+
+// 5. Comic Stash components
+
+// Caption box: the yellow narration label.
+.cs-caption {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background: var(--yellow);
+  color: var(--on-yellow);
+  border: 2px solid var(--on-yellow);
+  border-radius: 0;
+  font: 700 0.75rem/1rem var(--font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+// Panel: inked border + hard offset shadow. One per screen.
+.cs-panel {
+  background: var(--paper-raised);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-panel);
+}
+
+// Status pill: owned / missing / hunting / upcoming. Always icon + word.
+.cs-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font: 700 0.75rem/1rem var(--font-sans);
+  white-space: nowrap;
+  .bi {
+    font-size: 0.875rem;
+  }
+}
+.cs-status-owned {
+  background: var(--cyan-soft);
+  color: var(--cyan-ink);
+}
+.cs-status-missing {
+  background: var(--missing-soft);
+  color: var(--missing);
+  border: 1px dashed var(--missing);
+}
+.cs-status-hunting {
+  background: var(--magenta-soft);
+  color: var(--magenta-ink);
+}
+.cs-status-upcoming {
+  background: transparent;
+  color: var(--ink-muted);
+  border-color: var(--line-strong);
+}
+
+.cs-issue-no {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+// Issue grid: the run at a glance.
+.cs-issue-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(2.75rem, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cs-issue {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  font: 700 0.875rem/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+.cs-issue.is-owned {
+  background: var(--owned);
+  color: var(--on-cyan);
+}
+.cs-issue.is-owned:hover {
+  background: var(--cyan-hover);
+  color: var(--on-cyan);
+}
+.cs-issue.is-missing {
+  background: var(--missing-soft);
+  color: var(--missing);
+  border-style: dashed;
+  border-color: var(--missing);
+}
+.cs-issue.is-hunting {
+  background: var(--paper-raised);
+  color: var(--magenta-ink);
+  border-color: var(--magenta);
+}
+.cs-issue.is-hunting::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  border-style: solid;
+  border-width: 0 0.625rem 0.625rem 0;
+  border-color: transparent var(--magenta) transparent transparent;
+  border-top-right-radius: var(--radius-sm);
+}
+.cs-issue.is-upcoming {
+  background: transparent;
+  color: var(--ink-subtle);
+  border-color: var(--line);
+  cursor: default;
+}
+.cs-issue.is-upcoming:hover {
+  transform: none;
+}
+
+.cs-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+}
+.cs-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+.cs-legend .cs-swatch {
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 2px;
+  border: 2px solid transparent;
+}
+.cs-swatch.is-owned {
+  background: var(--owned);
+}
+.cs-swatch.is-missing {
+  background: var(--missing-soft);
+  border: 2px dashed var(--missing);
+}
+.cs-swatch.is-hunting {
+  background: var(--paper-raised);
+  border-color: var(--magenta);
+}
+.cs-swatch.is-upcoming {
+  border-color: var(--line-strong);
+}
+
+// Run progress: owned vs missing in one bar.
+.cs-run {
+  display: grid;
+  gap: 0.375rem;
+}
+.cs-run-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+}
+.cs-run-meta strong {
+  color: var(--ink);
+}
+.cs-run-meta .cs-missing-count {
+  color: var(--missing);
+  font-weight: 700;
+}
+
+// Cover: 2:3 comic cover, image or placeholder.
+.cs-cover {
+  position: relative;
+  display: block;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper-sunken);
+  > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+.cs-cover-flag {
+  position: absolute;
+  top: 0.375rem;
+  left: 0.375rem;
+  padding: 0.0625rem 0.375rem;
+  background: var(--yellow);
+  color: var(--on-yellow);
+  border: 1.5px solid var(--on-yellow);
+  font: 700 0.75rem/1.125rem var(--font-mono);
+}
+// Placeholder art when no cover image is known: halftone on a process colour.
+.cs-cover-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 0.5rem;
+  font: 800 0.875rem/1.05 var(--font-display);
+  font-variation-settings: "wdth" 112;
+  text-transform: uppercase;
+  color: var(--on-yellow);
+  background-color: var(--yellow);
+  background-image: radial-gradient(var(--on-yellow) 18%, transparent 20%);
+  background-size: 8px 8px;
+  > span {
+    background: var(--paper-raised);
+    color: var(--ink);
+    padding: 0.125rem 0.25rem;
+  }
+}
+.cs-cover-placeholder.is-cyan {
+  background-color: var(--cyan);
+  background-image: radial-gradient(var(--cyan-hover) 22%, transparent 24%);
+}
+.cs-cover-placeholder.is-magenta {
+  background-color: var(--magenta);
+  background-image: radial-gradient(var(--magenta-ink) 22%, transparent 24%);
+}
+.cs-cover-placeholder.is-ink {
+  background-color: var(--ink);
+  background-image: radial-gradient(var(--ink-muted) 18%, transparent 20%);
+}
+.cs-cover.is-missing {
+  border: 2px dashed var(--missing);
+  background: var(--missing-soft);
+}
+
+// Series card
+.cs-series-card {
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+  &:hover {
+    box-shadow: var(--shadow-sm);
+    border-color: var(--line-strong);
+  }
+  .card-title {
+    font-size: 1.125rem;
+    margin-bottom: 0.125rem;
+  }
+  .cs-series-meta {
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+  }
+}
+
+// Collection stats strip
+.cs-stat {
+  display: grid;
+  gap: 0.125rem;
+}
+.cs-stat-value {
+  font: 800 2rem/1 var(--font-display);
+  font-variation-settings: "wdth" 125;
+  font-variant-numeric: tabular-nums;
+}
+.cs-stat-label {
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+}
+.cs-stat.is-missing .cs-stat-value {
+  color: var(--missing);
+}
+
+// Hunt list rows
+.cs-hunt-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.cs-hunt-item .cs-cover {
+  width: 2.5rem;
+  flex: none;
+}
+.cs-hunt-item .cs-hunt-title {
+  font-weight: 700;
+}
+.cs-hunt-item .cs-hunt-meta {
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+}
+
+// Quick add
+.cs-quick-add {
+  padding: 1rem;
+}
+.cs-quick-add .input-group-lg > .form-control {
+  font-size: 1.125rem;
+}
+.cs-kbd {
+  font: 500 0.75rem/1 var(--font-mono);
+  padding: 0.1875rem 0.375rem;
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  color: var(--ink-muted);
+  background: var(--paper-raised);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-issue,
+  .cs-series-card {
+    transition: none;
+  }
+  .cs-issue:hover {
+    transform: none;
+  }
+}
