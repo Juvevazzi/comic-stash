@@ -1,2 +1,5 @@
-@import 'bootstrap/scss/bootstrap';
-@import 'bootstrap-icons/font/bootstrap-icons';
+@import "comic-stash-variables"; // 1. Sass overrides
+@import "bootstrap/scss/bootstrap"; // 2. Bootstrap 5.3.8
+@import "bootstrap-icons/font/bootstrap-icons"; // 3. Bootstrap Icons
+@import "comic-stash-tokens"; // 4. token custom properties + @font-face
+@import "comic-stash-components"; // 5. theme bridge + Comic Stash components

@@ -1,5 +1,39 @@
-<h1>Pages#home</h1>
-<p>Find me in app/views/pages/home.html.erb</p>
-    <div class="container mt-5">
-      <button class="btn btn-primary">Test <i class="bi bi-check-circle"></i></button>
-    </div>
+<nav class="navbar navbar-expand cs-navbar px-3">
+  <button type="button" class="btn btn-secondary btn-sm" aria-label="Toggle dark mode"
+        onclick="var h=document.documentElement,t=h.dataset.bsTheme==='dark'?'light':'dark';h.dataset.bsTheme=t;localStorage.setItem('theme',t)">
+  <i class="bi bi-circle-half"></i>
+</button>
+  <a class="navbar-brand cs-wordmark" href="#">Comic Stash</a>
+  <ul class="navbar-nav me-auto">
+    <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Collection</a></li>
+    <li class="nav-item"><a class="nav-link" href="#">Hunt list</a></li>
+  </ul>
+  <button class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i>Add comic</button>
+</nav>
+
+<main class="container-lg py-5">
+  <span class="cs-caption mb-3">Meanwhile, in your collection</span>
+  <h1>Your collection</h1>
+  <p class="text-body-secondary">21 of 26 issues of Night Signal. 5 to hunt down.</p>
+
+  <div class="d-flex flex-wrap gap-2 mb-4">
+    <button class="btn btn-primary"><i class="bi bi-plus-lg"></i>Add comic</button>
+    <button class="btn btn-secondary"><i class="bi bi-upc-scan"></i>Scan barcode</button>
+    <button class="btn btn-hunt"><i class="bi bi-bookmark-plus"></i>Add to hunt list</button>
+  </div>
+
+  <ol class="cs-issue-grid mb-3" style="max-width: 560px" aria-label="Night Signal issues">
+    <li><a class="cs-issue is-owned" href="#">1<span class="visually-hidden"> owned</span></a></li>
+    <li><a class="cs-issue is-owned" href="#">2<span class="visually-hidden"> owned</span></a></li>
+    <li><a class="cs-issue is-missing" href="#">3<span class="visually-hidden"> missing</span></a></li>
+    <li><a class="cs-issue is-hunting" href="#">4<span class="visually-hidden"> missing, on hunt list</span></a></li>
+    <li><span class="cs-issue is-upcoming">5<span class="visually-hidden"> not yet released</span></span></li>
+  </ol>
+
+  <div class="cs-run mb-4" style="max-width: 480px">
+    <div class="cs-run-meta"><span><strong>Night Signal</strong> · Vol. 1</span><span><strong>21</strong> of 26 · <span class="cs-missing-count">5 missing</span></span></div>
+    <div class="progress" role="progressbar" aria-label="21 of 26 owned" aria-valuenow="81" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar" style="width: 81%"></div></div>
+  </div>
+
+  <div class="alert alert-success" role="status"><i class="bi bi-check2-circle"></i><div><strong>Added Night Signal #9.</strong> 5 issues still missing.</div></div>
+</main>
