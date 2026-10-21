@@ -1,15 +1,27 @@
 Rails.application.routes.draw do
-  get "pages/home"
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # Logged in home page
+  get "dashboard", to: "dashboard#show", as: :dashboard
+  root to: redirect("/dashboard")
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # Account accessed
+  get "login", to: "sessions#new", as: :login
+  post "login", to: "sessions#create"
+  get "signup", to: "registrations#new", as: :signup
+  post "signup", to: "registrations#create"
+  get "forgot-password", to: "passwords#new", as: :forgot_password
+  post "forgot-password", to: "passwords#create"
+
+  # Collection full CRUD
+  resources :comics, only: %i[index show new]
+  resources :series, only: :index
+  get "gaps", to: "gaps#index", as: :gaps
+  get "search", to: "search#index", as: :search
+  resource :profile, only: :show
+
+  # Static content
+  get "help", to: "pages#help", as: :help
+  get "terms", to: "pages#terms", as: :terms
+  get "privacy", to: "pages#privacy", as: :privacy
+
   get "up" => "rails/health#show", as: :rails_health_check
-
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-
-  # Defines the root path route ("/")
-  root "pages#home"
 end
