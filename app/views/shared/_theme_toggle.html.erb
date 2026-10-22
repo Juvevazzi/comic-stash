@@ -1,0 +1,7 @@
+<%# Light/dark switch. The theme Stimulus controller flips data-bs-theme on
+    <html>, remembers it in localStorage and keeps aria-pressed in sync. %>
+<button type="button" class="btn btn-link cs-icon-btn" aria-label="Dark mode" aria-pressed="false"
+        data-controller="theme" data-action="theme#toggle">
+  <%= icon("moon-stars", class: "cs-theme-icon-light") %>
+  <%= icon("sun", class: "cs-theme-icon-dark") %>
+</button>

@@ -1,0 +1,10 @@
+<%# Flash messages as Bootstrap alerts, always icon + words, never colour alone.
+    Renders nothing until a controller sets flash[:notice] or flash[:alert]. %>
+<% { notice: [ "success", "check2-circle" ], alert: [ "danger", "exclamation-octagon" ] }.each do |key, (style, icon_name)| %>
+  <% if flash[key].present? %>
+    <div class="alert alert-<%= style %>" role="<%= key == :alert ? "alert" : "status" %>">
+      <%= icon(icon_name) %>
+      <div><%= flash[key] %></div>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,41 @@
+<%# Top bar on signed-in pages. Desktop: wordmark, main nav, search, theme,
+    avatar. Phones: the main nav moves to shared/_bottom_nav. %>
+<header class="navbar navbar-expand-lg cs-navbar sticky-top">
+  <div class="container-xl gap-3">
+    <%= link_to "Comic Stash", dashboard_path, class: "navbar-brand cs-wordmark" %>
+
+    <nav class="d-none d-lg-flex" aria-label="Main">
+      <ul class="navbar-nav">
+        <li class="nav-item"><%= nav_link_to "Dashboard", dashboard_path, class: "nav-link", active: controller_name == "dashboard" %></li>
+        <li class="nav-item"><%= nav_link_to "Collection", comics_path, class: "nav-link", active: controller_name == "comics" %></li>
+        <li class="nav-item"><%= nav_link_to "Series", series_index_path, class: "nav-link" %></li>
+        <li class="nav-item"><%= nav_link_to "Hunt list", dashboard_path(anchor: "hunt"), class: "nav-link", active: false %></li>
+        <li class="nav-item"><%= nav_link_to "Insights", dashboard_path(anchor: "insights"), class: "nav-link", active: false %></li>
+      </ul>
+    </nav>
+
+    <div class="d-flex align-items-center gap-2 ms-auto">
+      <%# A real GET form, so search works without JavaScript.
+          The "/" shortcut comes from the search-hotkey Stimulus controller. %>
+      <%= form_with url: search_path, method: :get, class: "cs-nav-search d-none d-lg-block", role: "search",
+                    data: { controller: "search-hotkey" } do |f| %>
+        <%= f.label :q, "Search your stash", class: "visually-hidden" %>
+        <div class="input-group">
+          <span class="input-group-text"><%= icon("search") %></span>
+          <%= f.search_field :q, value: params[:q], class: "form-control", placeholder: "Search series, issues or creators",
+                             data: { search_hotkey_target: "input" } %>
+          <span class="input-group-text"><kbd class="cs-kbd">/</kbd></span>
+        </div>
+      <% end %>
+
+      <%= link_to search_path, class: "btn btn-link d-lg-none cs-icon-btn", "aria-label": "Search your stash" do %>
+        <%= icon("search") %>
+      <% end %>
+
+      <%= render "shared/theme_toggle" %>
+
+      <%# Initials are hard-coded until there is a current user. %>
+      <%= link_to "RG", profile_path, class: "cs-avatar", "aria-label": "Your profile" %>
+    </div>
+  </div>
+</header>
