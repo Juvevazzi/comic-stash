@@ -1,4 +1,14 @@
+# Static content pages (help, terms, privacy)
+
 class PagesController < ApplicationController
-  def home
+  layout "public"
+
+  def help
+  end
+
+  def terms
+  end
+
+  def privacy
   end
 end
