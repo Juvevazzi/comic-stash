@@ -1,0 +1,28 @@
+<%# Breadcrumb + caption box + page title for every app page.
+    Locals: title (h1 and tab title), caption (optional yellow box),
+            lead (optional sentence), breadcrumbs (optional [label, path] pairs).
+    Example: render "shared/page_header", title: "Your series",
+                    breadcrumbs: [["Dashboard", dashboard_path]]
+%>
+<% content_for :title, title %>
+<% breadcrumbs = local_assigns.fetch(:breadcrumbs, []) %>
+<div class="cs-page-header">
+  <% if breadcrumbs.any? %>
+    <nav aria-label="Breadcrumb">
+      <ol class="breadcrumb">
+        <% breadcrumbs.each do |label, path| %>
+          <li class="breadcrumb-item"><%= link_to label, path %></li>
+        <% end %>
+        <li class="breadcrumb-item active" aria-current="page"><%= title %></li>
+      </ol>
+    </nav>
+  <% end %>
+
+  <% if local_assigns[:caption] %>
+    <span class="cs-caption mb-2"><%= caption %></span>
+  <% end %>
+  <h1 class="mb-1"><%= title %></h1>
+  <% if local_assigns[:lead] %>
+    <p class="lead text-body-secondary mb-0"><%= lead %></p>
+  <% end %>
+</div>

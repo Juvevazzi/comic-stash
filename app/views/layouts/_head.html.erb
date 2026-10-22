@@ -1,0 +1,25 @@
+<%# Shared <head> for every layout (application, auth, public). %>
+<title><%= content_for?(:title) ? "#{yield(:title)} · Comic Stash" : "Comic Stash" %></title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script>
+  // Follow the OS theme until the user picks one
+  (function () {
+    var saved = localStorage.getItem("theme");
+    var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.setAttribute("data-bs-theme", saved || (dark ? "dark" : "light"));
+  })();
+</script>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Comic Stash">
+<meta name="mobile-web-app-capable" content="yes">
+<%= csrf_meta_tags %>
+<%= csp_meta_tag %>
+
+<%= yield :head %>
+
+<link rel="icon" href="/icon.png" type="image/png">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon.png">
+
+<%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+<%= javascript_importmap_tags %>
