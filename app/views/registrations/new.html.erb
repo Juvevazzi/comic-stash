@@ -1,1 +1,81 @@
+<%# Sign up page %>
+<%# TODO: Add dark mode toggle %>
+<%# TODO: Change password rule indicators to red/alert by default %>
 
+
+<% content_for :title, "Create your account" %>
+
+<% content_for :aside do %>
+  <span class="cs-caption">Issue #1: your collection begins</span>
+  <p class="cs-display">Start your stash.</p>
+  <p class="cs-auth-lead">Bring the long boxes online. It takes a minute to set up, and every book you add makes the gaps easier to spot.</p>
+
+  <%# Three selling points: data + a loop, so the markup is written once. %>
+  <% features = [
+       [ "search", "is-cyan", "Add comics in seconds", "Search for a title and it lands straight in your collection." ],
+       [ "dash-circle-dotted", "is-missing", "See every gap in a run", "Each series shows what you own and exactly which issues are missing." ],
+       [ "bookmark-fill", "is-magenta", "Hunt down the rest", "Put missing issues on your hunt list and take it to the shop." ]
+     ] %>
+  <ol class="cs-feature-list cs-auth-extra">
+    <% features.each do |icon_name, tone, heading, text| %>
+      <li>
+        <span class="cs-feature-icon <%= tone %>"><%= icon(icon_name) %></span>
+        <span>
+          <span class="d-block fw-bold"><%= heading %></span>
+          <span class="d-block small text-body-secondary"><%= text %></span>
+        </span>
+      </li>
+    <% end %>
+  </ol>
+<% end %>
+
+<% content_for :switch do %>
+  <span>Already have an account?</span>
+  <%= link_to "Log in", login_path %>
+<% end %>
+
+<%# scope: :user nests fields as user[name], user[email_address]..., ready for
+    params.expect(user: [...]) in RegistrationsController#create. %>
+<%= form_with scope: :user, url: signup_path, class: "cs-panel cs-auth-card-form",
+              "aria-labelledby": "signup-title", data: { controller: "password-rules" } do |f| %>
+  <div>
+    <h1 id="signup-title" class="mb-2">Create your account</h1>
+    <p class="text-body-secondary mb-0">Free to start. Your collection stays yours.</p>
+  </div>
+
+  <div>
+    <%= f.label :name, "Your name", class: "form-label fw-bold" %>
+    <%= f.text_field :name, class: "form-control", autocomplete: "name", required: true %>
+  </div>
+
+  <div>
+    <%= f.label :email_address, "Email", class: "form-label fw-bold" %>
+    <%= f.email_field :email_address, class: "form-control", autocomplete: "email", required: true,
+                      placeholder: "you@example.com" %>
+  </div>
+
+  <div>
+    <%= f.label :password, class: "form-label fw-bold" %>
+    <%= render "shared/password_field", form: f, field: :password, autocomplete: "new-password",
+                                        describedby: "password-rules" %>
+    <ul id="password-rules" class="cs-password-rules">
+      <li data-password-rules-target="rule" data-pattern=".{8,}">
+        <%= icon("circle") %><%= icon("check-circle") %>At least 8 characters
+      </li>
+      <li data-password-rules-target="rule" data-pattern="[0-9]">
+        <%= icon("circle") %><%= icon("check-circle") %>Includes a number
+      </li>
+    </ul>
+  </div>
+
+  <div class="form-check d-flex align-items-start gap-2 ps-0 pt-2">
+    <%= f.check_box :terms_accepted, class: "form-check-input m-0 flex-shrink-0", required: true %>
+    <%= f.label :terms_accepted, class: "form-check-label small" do %>
+      I agree to the <%= link_to "Terms", terms_path %> and <%= link_to "Privacy policy", privacy_path %>.
+    <% end %>
+  </div>
+
+  <%= f.button type: "submit", class: "btn btn-primary btn-lg w-100" do %>
+    Create account <%= icon("arrow-right") %>
+  <% end %>
+<% end %>

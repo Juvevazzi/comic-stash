@@ -1,2 +1,49 @@
-<h1>Sessions#new</h1>
-<p>Find me in app/views/sessions/new.html.erb</p>
+<%# Log in page. %>
+<%# TODO: Add dark mode toggle %>
+
+<% content_for :title, "Log in" %>
+
+<%# Left brand panel %>
+<% content_for :aside do %>
+  <span class="cs-caption">Meanwhile, in your collection</span>
+  <p class="cs-display">Every issue. Every gap.</p>
+  <p class="cs-auth-lead">Search for a title and it lands in your collection. Every run shows you exactly which issues are still missing.</p>
+  <%= render "sessions/run_preview" %>
+<% end %>
+
+<%# Top-right link (moves under the form on mobile) %>
+<% content_for :switch do %>
+  <span>New to Comic Stash?</span>
+  <%= link_to "Create an account", signup_path %>
+<% end %>
+
+<%# Field names match the Rails 8 authentication generator. %>
+<%= form_with url: login_path, class: "cs-panel cs-auth-card-form", "aria-labelledby": "login-title" do |f| %>
+  <div>
+    <h1 id="login-title" class="mb-2">Welcome back</h1>
+    <p class="text-body-secondary mb-0">Log in to pick up where your collection left off.</p>
+  </div>
+
+  <div>
+    <%= f.label :email_address, "Email", class: "form-label fw-bold" %>
+    <%= f.email_field :email_address, class: "form-control", autocomplete: "email", required: true,
+                      placeholder: "you@example.com", autofocus: true %>
+  </div>
+
+  <div>
+    <div class="d-flex justify-content-between align-items-baseline">
+      <%= f.label :password, class: "form-label fw-bold" %>
+      <%= link_to "Forgot password?", forgot_password_path, class: "small" %>
+    </div>
+    <%= render "shared/password_field", form: f, field: :password, autocomplete: "current-password" %>
+  </div>
+
+  <div class="form-check d-flex align-items-center gap-2 ps-0 py-2">
+    <%= f.check_box :remember_me, class: "form-check-input m-0" %>
+    <%= f.label :remember_me, "Keep me logged in", class: "form-check-label" %>
+  </div>
+
+  <%= f.button type: "submit", class: "btn btn-primary btn-lg w-100" do %>
+    Log in <%= icon("arrow-right") %>
+  <% end %>
+<% end %>

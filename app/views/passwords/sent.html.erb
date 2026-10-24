@@ -1,0 +1,21 @@
+<%# Forgot password page %>
+<%# TODO: Add dark mode toggle %>
+
+<% content_for :title, "Check your email" %>
+<% content_for :main_class, "cs-stage cs-halftone" %>
+
+<section class="cs-panel cs-stage-card d-flex flex-column gap-3" role="status">
+  <span class="cs-success-badge"><%= icon("envelope") %></span>
+  <h1 class="mb-0">Check your email</h1>
+  <p class="text-body-secondary mb-0">
+    If there’s an account for <strong class="text-body"><%= @email.presence || "that address" %></strong>,
+    a reset link is on its way. It works for one hour.
+  </p>
+  <p class="small text-body-secondary mb-0">Nothing yet? Check your spam folder, or send it again.</p>
+
+  <div class="d-flex flex-wrap gap-2">
+    <%= button_to "Send it again", forgot_password_path, params: { email: @email }, class: "btn btn-secondary" %>
+    <%= link_to "Back to log in", login_path, class: "btn btn-primary" %>
+  </div>
+  <%= link_to "Use a different email", forgot_password_path, class: "small fw-bold" %>
+</section>
