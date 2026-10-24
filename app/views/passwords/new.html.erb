@@ -1,1 +1,28 @@
+<%# Forgot password page %>
+<%# TODO: Add dark mode toggle %>
+<%# TODO: Not redirecting to sent.html.erb on submit %>
 
+<% content_for :title, "Reset your password" %>
+<% content_for :main_class, "cs-stage cs-halftone" %>
+
+<section class="cs-panel cs-stage-card">
+  <%= form_with url: forgot_password_path, class: "d-flex flex-column gap-3", "aria-labelledby": "reset-title" do |f| %>
+    <div class="d-flex flex-column align-items-start gap-2">
+      <span class="cs-caption">Locked out of the long box?</span>
+      <h1 id="reset-title" class="mb-0">Reset your password</h1>
+      <p class="text-body-secondary mb-0">Enter the email you signed up with and we’ll send you a link to set a new password.</p>
+    </div>
+
+    <div>
+      <%= f.label :email, "Email", class: "form-label fw-bold" %>
+      <%= f.email_field :email, class: "form-control form-control-lg", autocomplete: "email", required: true,
+                        placeholder: "you@example.com", autofocus: true %>
+    </div>
+
+    <%= f.submit "Send reset link", class: "btn btn-primary btn-lg w-100" %>
+
+    <%= link_to login_path, class: "align-self-center fw-bold text-decoration-none py-2" do %>
+      <%= icon("chevron-left") %> Back to log in
+    <% end %>
+  <% end %>
+</section>
