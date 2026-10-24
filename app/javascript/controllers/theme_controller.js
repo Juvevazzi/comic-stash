@@ -8,8 +8,8 @@ export default class extends Controller {
   // This method synchronises the theme based on the user's preference stored in localStorage or the system preference
   toggle() {
     const root = document.documentElement;
-    const next = root.dataset.bstheme === "dark" ? "light" : "dark";
-    root.dataset.bstheme = next;
+    const next = root.dataset.bsTheme === "dark" ? "light" : "dark";
+    root.dataset.bsTheme = next;
     try {
       localStorage.setItem("theme", next);
     } catch (_) {}
@@ -18,7 +18,7 @@ export default class extends Controller {
   }
 
   sync() {
-    const dark = document.documentElement.dataset.bstheme === "dark";
+    const dark = document.documentElement.dataset.bsTheme === "dark";
     this.element.setAttribute("aria-pressed", dark ? "true" : "false");
   }
 }
