@@ -3,4 +3,5 @@
 @import "bootstrap-icons/font/bootstrap-icons"; // 3. Bootstrap Icons
 @import "comic-stash-tokens"; // 4. token custom properties + @font-face
 @import "comic-stash-components"; // 5. theme bridge + Comic Stash components
-@import "comic-stash-layout"; // 6. page layouts: app shell, auth, public pages
+@import "comic-stash-layout"; // 6. page layouts: app, auth, public pages
+@import "comic-stash-pages"; // 7. page sections: dashboard and later pages

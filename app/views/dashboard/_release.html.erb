@@ -1,0 +1,21 @@
+<%# One row of "New in your series". %>
+<li>
+  <%= render "shared/cover", tone: release.tone, issue: release.issue, css: "cs-thumb" %>
+  <div class="cs-grow">
+    <div class="d-flex flex-wrap align-items-center gap-2">
+      <span class="fw-bold"><%= release.title %> <span class="cs-issue-no"><%= release.issue %></span></span>
+      <% unless release.released %>
+        <span class="cs-status cs-status-upcoming"><%= icon("calendar-event") %>Upcoming</span>
+      <% end %>
+    </div>
+    <p class="small text-body-secondary mb-2"><%= release.date_label %></p>
+    <div class="d-flex flex-wrap gap-2">
+      <% if release.released %>
+        <%= link_to new_comic_path, class: "btn btn-secondary btn-sm" do %>
+          <%= icon("check2") %> Got it
+        <% end %>
+      <% end %>
+      <%= render "shared/hunt_button", on: release.hunting %>
+    </div>
+  </div>
+</li>

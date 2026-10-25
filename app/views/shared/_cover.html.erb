@@ -1,0 +1,8 @@
+<%# Comic cover thumbnail: a halftone placeholder until real cover images
+    arrive from the Metron API.%>
+<span class="cs-cover <%= local_assigns[:css] %>" aria-hidden="true">
+  <span class="cs-cover-placeholder <%= "is-#{tone}" unless tone.to_s == "yellow" %>"></span>
+  <% if local_assigns[:issue] %>
+    <span class="cs-cover-flag"><%= issue %></span>
+  <% end %>
+</span>

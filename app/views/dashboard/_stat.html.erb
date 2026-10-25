@@ -1,0 +1,11 @@
+<%# One tile in "Your stash in numbers". %>
+<div class="col">
+  <div class="cs-stat cs-stat-card <%= "is-missing" if local_assigns[:missing] %>">
+    <span class="cs-stat-label"><%= icon(icon_name) %><%= label %></span>
+    <span class="cs-stat-value">
+      <%= value %>
+      <% if local_assigns[:unit] %><span class="cs-stat-unit"><%= unit %></span><% end %>
+    </span>
+    <span class="small text-body-secondary"><%= note %></span>
+  </div>
+</div>
