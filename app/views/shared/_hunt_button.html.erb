@@ -1,0 +1,7 @@
+<%# Add to / remove from the hunt list. %>
+<button type="button" class="btn btn-hunt btn-sm" aria-pressed="<%= on %>"
+        data-controller="hunt-button" data-hunt-button-on-value="<%= on %>"
+        data-action="hunt-button#toggle">
+  <%= icon("bookmark") %>
+  <span data-hunt-button-target="label"><%= on ? "On your hunt list" : "Add to hunt list" %></span>
+</button>

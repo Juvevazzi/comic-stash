@@ -1,4 +1,109 @@
-<%# Wireframe: Dashboard placeholder. %>
-<%= render "shared/page_header", title: "Welcome back", caption: "Meanwhile, in your collection" %>
+<%# User dashboard (Desktop / Mobile). %>
+<%# TODO: Data comes from DashboardController; sample objects for now. %>
 
-<div class="alert alert-info"><%= icon("info-circle") %><div>This page is a placeholder.</div></div>
+<% released = @releases.count(&:released) %>
+<%= render "shared/page_header", title: "Welcome back", caption: "Meanwhile, in your collection",
+           lead: "#{pluralize(released, "new issue")} out in series you collect, #{@releases.size - released} more on the way." %>
+
+<section class="cs-section" aria-labelledby="actions-h">
+  <h2 id="actions-h">Jump in</h2>
+  <% actions = [
+       [ "plus-lg", "is-cyan", "Add comics", "Search a title and add it", new_comic_path ],
+       [ "journals", "is-cyan", "View series", "Every run you collect", series_index_path ],
+       [ "collection", "is-cyan", "View comics", "Browse the whole stash", comics_path ],
+       [ "dash-circle-dotted", "is-missing", "Find the gaps", "Look up a run and see what’s missing", gaps_path ]
+     ] %>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3">
+    <% actions.each do |icon_name, tone, label, hint, path| %>
+      <div class="col">
+        <%= link_to path, class: "cs-action-card" do %>
+          <span class="cs-feature-icon <%= tone %>"><%= icon(icon_name) %></span>
+          <span>
+            <span class="d-block fw-bold"><%= label %></span>
+            <span class="d-block small text-body-secondary"><%= hint %></span>
+          </span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<section id="insights" class="cs-section" aria-labelledby="metrics-h">
+  <h2 id="metrics-h">Your stash in numbers</h2>
+  <div class="row row-cols-2 row-cols-xl-4 g-3">
+    <%= render "dashboard/stat", label: "Series in your stash", icon_name: "journals",
+               value: @stats.series_count, note: pluralize(@stats.complete_runs, "complete run") %>
+    <%= render "dashboard/stat", label: "Comics in your stash", icon_name: "collection",
+               value: @stats.comic_count, note: "#{@stats.added_this_month} added this month" %>
+    <%= render "dashboard/stat", label: "Longest unbroken run", icon_name: "trophy",
+               value: @stats.longest_run_length, unit: "issues",
+               note: "#{@stats.longest_run_title} #1–#{@stats.longest_run_length}" %>
+    <%= render "dashboard/stat", label: "Issues still missing", icon_name: "dash-circle-dotted",
+               value: @stats.missing_count, missing: true,
+               note: safe_join([ "Across #{@stats.series_with_gaps} series · ", link_to("See the gaps", gaps_path) ]) %>
+  </div>
+</section>
+
+<div class="row g-4 cs-section">
+  <section id="hunt" class="col-lg-6" aria-labelledby="closest-h">
+    <div class="cs-section-head">
+      <h2 id="closest-h">Closest to complete</h2>
+      <%= link_to "All series", series_index_path %>
+    </div>
+    <ul class="cs-row-list">
+      <%= render partial: "dashboard/closest_run", collection: @closest_runs, as: :run %>
+    </ul>
+  </section>
+
+  <section class="col-lg-6" aria-labelledby="latest-h">
+    <div class="cs-section-head">
+      <h2 id="latest-h">New in your series</h2>
+      <%= link_to "All releases", comics_path %>
+    </div>
+    <ul class="cs-row-list">
+      <%= render partial: "dashboard/release", collection: @releases, as: :release %>
+    </ul>
+  </section>
+</div>
+
+<div class="row g-4 cs-section">
+  <section class="col-lg-6" aria-labelledby="lastseries-h">
+    <div class="cs-section-head">
+      <h2 id="lastseries-h">Series you added lately</h2>
+      <%= link_to "All series", series_index_path %>
+    </div>
+    <ul class="cs-row-list">
+      <% @recent_series.each do |series| %>
+        <li>
+          <%= render "shared/cover", tone: series.tone, css: "cs-thumb" %>
+          <div class="cs-grow">
+            <div class="cs-run-meta mb-2">
+              <%= link_to series.title, series_index_path, class: "fw-bold" %>
+              <span class="cs-issue-no"><%= series.owned %> of <%= series.total %></span>
+            </div>
+            <%= render "shared/run_progress", owned: series.owned, total: series.total %>
+            <p class="small text-body-secondary mt-2 mb-0">Added <%= series.added_label %></p>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+
+  <section class="col-lg-6" aria-labelledby="lastcomics-h">
+    <div class="cs-section-head">
+      <h2 id="lastcomics-h">Comics you added lately</h2>
+      <%= link_to "Whole collection", comics_path %>
+    </div>
+    <ul class="cs-row-list">
+      <% @recent_comics.each do |comic| %>
+        <li>
+          <%= render "shared/cover", tone: comic.tone, issue: comic.issue, css: "cs-thumb" %>
+          <div class="cs-grow">
+            <span class="d-block fw-bold"><%= comic.title %> <span class="cs-issue-no"><%= comic.issue %></span></span>
+            <span class="small text-body-secondary"><%= comic.added_label %></span>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+</div>

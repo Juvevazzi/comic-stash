@@ -1,0 +1,20 @@
+<%# One row of "Closest to complete". %>
+<li>
+  <%= render "shared/cover", tone: run.tone, css: "cs-thumb" %>
+  <div class="cs-grow">
+    <div class="cs-run-meta mb-2">
+      <span><%= link_to run.title, series_index_path, class: "fw-bold" %> <%= run.volume %></span>
+      <span class="cs-issue-no"><%= run.owned %> of <%= run.total %></span>
+    </div>
+    <%= render "shared/run_progress", owned: run.owned, total: run.total %>
+    <div class="d-flex flex-wrap align-items-center gap-1 mt-2 small">
+      <span class="text-body-secondary me-1">Missing</span>
+      <% run.gaps.each do |gap| %>
+        <span class="cs-status cs-status-missing cs-issue-no"><%= gap %></span>
+      <% end %>
+    </div>
+  </div>
+  <%= link_to gaps_path, class: "btn btn-hunt btn-sm flex-shrink-0" do %>
+    <%= icon("bookmark-plus") %> Hunt <%= run.missing %>
+  <% end %>
+</li>
