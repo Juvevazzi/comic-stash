@@ -1,4 +1,23 @@
-<%# Wireframe: Add comics placeholder. %>
-<%= render "shared/page_header", title: "Add comics", breadcrumbs: [ [ "Dashboard", dashboard_path ] ] %>
+<%# Add comics (wireframes: Add comics - Desktop / Mobile).
+    Three parts: add one comic, what you just added, and add in bulk. %>
+<%= render "shared/page_header", title: "Add comics",
+           lead: "Add one issue at a time, or a whole run in one go.",
+           breadcrumbs: [ [ "Dashboard", dashboard_path ] ] %>
 
-<div class="alert alert-info"><%= icon("info-circle") %><div>This page is a placeholder.</div></div>
+<%# Series names offered while typing. Both forms point at this one list. %>
+<datalist id="series-options">
+  <% @series_options.each do |name, owned| %>
+    <option value="<%= name %>"><%= owned %></option>
+  <% end %>
+</datalist>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <%= render "comics/add_one_form" %>
+  </div>
+  <div class="col-lg-5">
+    <%= render "comics/just_added", items: @just_added %>
+  </div>
+</div>
+
+<%= render "comics/bulk_add" %>

@@ -1,0 +1,32 @@
+<%# "Added just now": the comics added in this session, each with Undo.
+    Local: items (SampleStash::Addition objects for now). %>
+<section class="card h-100" aria-labelledby="added-h">
+  <div class="card-body d-flex flex-column">
+    <div class="cs-section-head">
+      <h2 id="added-h" class="h4">Added just now</h2>
+      <span class="cs-status cs-status-owned"><%= items.size %></span>
+    </div>
+
+    <% if items.empty? %>
+      <p class="text-body-secondary">Nothing yet. Each comic you add lands here so you can check it.</p>
+    <% else %>
+      <ul class="cs-row-list mb-3">
+        <% items.each do |item| %>
+          <li class="align-items-center">
+            <%= render "shared/cover", tone: item.tone, css: "cs-thumb-sm" %>
+            <div class="cs-grow">
+              <span class="d-block fw-bold"><%= item.title %> <span class="cs-issue-no"><%= item.issue %></span></span>
+              <span class="small text-body-secondary">
+                <span class="font-monospace"><%= item.barcode || "No barcode" %></span> · <%= item.added_label %>
+              </span>
+            </div>
+            <%= button_to "Undo", comic_path(item.id), method: :delete, class: "btn btn-link btn-sm",
+                          "aria-label": "Undo adding #{item.title} #{item.issue}" %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <%= link_to "See your whole collection", comics_path, class: "fw-bold mt-auto" %>
+  </div>
+</section>

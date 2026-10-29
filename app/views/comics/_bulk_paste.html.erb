@@ -1,0 +1,41 @@
+<%# Bulk tab 2: one comic per line, "series, issue, barcode". The
+    paste-preview controller checks each line as you type. %>
+<%= form_with scope: :bulk, url: bulk_comics_path, class: "row g-4", data: { controller: "paste-preview" } do |f| %>
+  <%= f.hidden_field :source, value: "paste", id: nil %>
+  <div class="col-md-6">
+    <%= f.label :list, "One comic per line", class: "form-label fw-bold" %>
+    <p id="paste-hint" class="form-text mt-0">Series name, issue number, barcode (optional), separated by commas.</p>
+    <%= f.text_area :list, rows: 9, class: "form-control font-monospace", required: true,
+                    placeholder: "Iron Tide, 3\nIron Tide, 11, 76194134182501111", "aria-describedby": "paste-hint",
+                    data: { paste_preview_target: "input", action: "input->paste-preview#update" } %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="cs-preview" aria-live="polite">
+      <div class="d-flex justify-content-between gap-2 mb-2">
+        <span class="fw-bold">Preview</span>
+        <span class="small text-body-secondary" data-paste-preview-target="summary">0 of 0 ready</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead>
+            <tr>
+              <th scope="col">Series</th>
+              <th scope="col">Issue</th>
+              <th scope="col">Barcode</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody data-paste-preview-target="rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 cs-bulk-footer">
+    <span class="small text-body-secondary" data-paste-preview-target="note">You can undo any of these from “Added just now”.</span>
+    <%= f.button type: "submit", class: "btn btn-primary", data: { paste_preview_target: "submit" } do %>
+      <%= icon("collection") %> <span data-paste-preview-target="label">Add comics</span>
+    <% end %>
+  </div>
+<% end %>
