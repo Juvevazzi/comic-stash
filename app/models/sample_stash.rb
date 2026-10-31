@@ -14,6 +14,9 @@ module SampleStash
   RecentSeries = Data.define(:title, :owned, :total, :added_label, :tone)
   RecentComic = Data.define(:title, :issue, :added_label, :tone)
 
+  # A comic you just added (the "Added just now" list on Add comics).
+  Addition = Data.define(:id, :title, :issue, :barcode, :added_label, :tone)
+
   # Headline numbers for "Your stash in numbers".
   Stats = Data.define(:series_count, :complete_runs, :comic_count, :added_this_month,
                       :longest_run_title, :longest_run_length, :missing_count, :series_with_gaps)

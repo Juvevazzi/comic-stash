@@ -1,0 +1,30 @@
+<%# Bulk tab 3: upload a CSV file. multipart: true lets the form send a file. %>
+<%= form_with scope: :bulk, url: bulk_comics_path, multipart: true, class: "row g-4" do |f| %>
+  <%= f.hidden_field :source, value: "csv", id: nil %>
+  <div class="col-md-6">
+    <%= f.label :file, "CSV file", class: "form-label fw-bold" %>
+    <%= f.file_field :file, accept: ".csv,text/csv", class: "form-control form-control-lg", required: true,
+                     "aria-describedby": "csv-help" %>
+    <p id="csv-help" class="form-text">Up to 500 comics per file.</p>
+  </div>
+
+  <div class="col-md-6">
+    <div class="cs-preview">
+      <span class="d-block fw-bold mb-1">What the file needs</span>
+      <p class="small text-body-secondary">A header row, then one comic per row.</p>
+      <pre class="cs-code mb-3">series,issue,barcode
+Iron Tide,3,
+Iron Tide,11,76194134182501111</pre>
+      <%= link_to "/comic-stash-template.csv", download: true, class: "fw-bold" do %>
+        <%= icon("download") %> Download the template
+      <% end %>
+    </div>
+  </div>
+
+  <div class="col-12 cs-bulk-footer">
+    <span class="small text-body-secondary">You can undo any of these from “Added just now”.</span>
+    <%= f.button type: "submit", class: "btn btn-primary" do %>
+      <%= icon("upload") %> Upload and add
+    <% end %>
+  </div>
+<% end %>

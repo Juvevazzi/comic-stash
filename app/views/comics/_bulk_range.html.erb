@@ -1,0 +1,44 @@
+<%# Bulk tab 1: a run of issues, e.g. Hollow Crown #2–8, with a live preview
+    from the range-preview controller. %>
+<%= form_with scope: :bulk, url: bulk_comics_path, class: "row g-4", data: { controller: "range-preview" } do |f| %>
+  <%= f.hidden_field :source, value: "range", id: nil %>
+  <div class="col-md-6">
+    <div class="mb-3">
+      <%= f.label :series_name, "Series name", class: "form-label fw-bold" %>
+      <%= f.text_field :series_name, class: "form-control", required: true, autocomplete: "off",
+                       list: "series-options",
+                       data: { range_preview_target: "series", action: "input->range-preview#update" } %>
+    </div>
+    <div class="row g-3">
+      <div class="col">
+        <%= f.label :from, "From issue", class: "form-label fw-bold" %>
+        <%= f.number_field :from, class: "form-control", required: true, min: 0,
+                           data: { range_preview_target: "from", action: "input->range-preview#update" } %>
+      </div>
+      <div class="col">
+        <%= f.label :to, "To issue", class: "form-label fw-bold" %>
+        <%= f.number_field :to, class: "form-control", required: true, min: 0,
+                           data: { range_preview_target: "to", action: "input->range-preview#update" } %>
+      </div>
+    </div>
+    <p class="small text-body-secondary mt-3 mb-0">Barcodes can be added to each issue later from the series page.</p>
+  </div>
+
+  <div class="col-md-6">
+    <div class="cs-preview" aria-live="polite">
+      <div class="d-flex justify-content-between gap-2 mb-2">
+        <span class="fw-bold">Preview</span>
+        <span class="small text-body-secondary" data-range-preview-target="summary">Fill in a series and a range</span>
+      </div>
+      <ol class="cs-issue-grid" aria-label="Issues to add" data-range-preview-target="tiles"></ol>
+      <p class="small text-body-secondary mt-2 mb-0" data-range-preview-target="more" hidden></p>
+    </div>
+  </div>
+
+  <div class="col-12 cs-bulk-footer">
+    <span class="small text-body-secondary">You can undo any of these from “Added just now”.</span>
+    <%= f.button type: "submit", class: "btn btn-primary", data: { range_preview_target: "submit" } do %>
+      <%= icon("collection") %> <span data-range-preview-target="label">Add comics</span>
+    <% end %>
+  </div>
+<% end %>
