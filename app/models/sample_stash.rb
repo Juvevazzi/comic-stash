@@ -14,6 +14,9 @@ module SampleStash
   RecentSeries = Data.define(:title, :owned, :total, :added_label, :tone)
   RecentComic = Data.define(:title, :issue, :added_label, :tone)
 
+  # A comic you just added (the "Added just now" list on Add comics).
+  Addition = Data.define(:id, :title, :issue, :barcode, :added_label, :tone)
+
   # Headline numbers for "Your stash in numbers".
   Stats = Data.define(:series_count, :complete_runs, :comic_count, :added_this_month,
                       :longest_run_title, :longest_run_length, :missing_count, :series_with_gaps)
@@ -56,6 +59,22 @@ module SampleStash
       RecentComic.new(title: "The Long Box Kids", issue: "#3", added_label: "Added today", tone: :cyan),
       RecentComic.new(title: "Glasshouse", issue: "#9", added_label: "Added 2 days ago", tone: :yellow),
       RecentComic.new(title: "Hollow Crown", issue: "#1", added_label: "Added last week", tone: :magenta)
+    ]
+  end
+
+  # Series in your stash, offered as you type a series name: [name, how many you own].
+  def self.series_options
+    [
+      [ "Night Signal", "48 of 52" ], [ "Paper Moons", "22 of 24" ], [ "Iron Tide", "17 of 20" ],
+      [ "Glasshouse", "9 of 12" ], [ "Static Saints", "48 issues" ], [ "The Long Box Kids", "3 of 5" ],
+      [ "Hollow Crown", "1 of 8" ]
+    ]
+  end
+
+  def self.just_added
+    [
+      Addition.new(id: 1, title: "Paper Moons", issue: "#22", barcode: "76194134182502211", added_label: "2 min ago", tone: :magenta),
+      Addition.new(id: 2, title: "Glasshouse", issue: "#9", barcode: nil, added_label: "5 min ago", tone: :yellow)
     ]
   end
 end

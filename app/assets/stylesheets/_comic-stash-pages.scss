@@ -107,3 +107,98 @@
     }
   }
 }
+
+// Add comics -----------------------------------------------------------------
+
+// The "Add one comic" form: the page's one comic panel (.cs-panel).
+.cs-form-panel {
+  padding: var(--space-4);
+}
+
+// Smaller cover for the "Added just now" rows.
+.cs-thumb-sm {
+  width: 2.5rem;
+  flex: none;
+}
+
+// Segmented tab switcher for "Add in bulk".
+.cs-tablist {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  background: var(--paper-sunken);
+  border-radius: var(--radius-md);
+
+  [role="tab"] {
+    min-height: 2.75rem;
+    padding: 0 var(--space-3);
+    background: transparent;
+    color: var(--ink-muted);
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+
+    &:hover {
+      color: var(--ink);
+    }
+    &:focus-visible {
+      outline: 0;
+      box-shadow:
+        0 0 0 2px var(--paper),
+        0 0 0 4px var(--focus);
+    }
+  }
+  [role="tab"][aria-selected="true"] {
+    background: var(--paper-raised);
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+}
+
+// Grey well that holds a live preview or the CSV instructions.
+.cs-preview {
+  height: 100%;
+  padding: var(--space-3);
+  background: var(--paper-sunken);
+  border-radius: var(--radius-lg);
+
+  // Preview tiles are not links: no pointer, no lift.
+  .cs-issue {
+    cursor: default;
+
+    &:hover {
+      transform: none;
+    }
+  }
+  .table {
+    --bs-table-bg: transparent;
+  }
+}
+
+// Sample CSV shown as code.
+.cs-code {
+  padding: var(--space-3);
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  font: 500 0.8125rem/1.25rem var(--font-mono);
+  white-space: pre;
+}
+
+// Note on the left, submit button on the right, under each bulk form.
+.cs-bulk-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+
+// A pasted line with a problem: danger colour, always with an icon and words.
+.cs-status-problem {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
