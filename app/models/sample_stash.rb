@@ -265,4 +265,19 @@ module SampleStash
                    meta: "#{series.series_type} · #{series.began}–#{series.ended || "present"} · #{series.publisher}")
     end
   end
+
+  # Search: series that are not in your stash yet, from the comics catalogue.
+  CatalogueSeries = Data.define(:name, :meta, :issue_count, :tone)
+
+  def self.catalogue
+    [
+      CatalogueSeries.new(name: "Night Market", meta: "Limited series · 2023–2024 · Inkwell", issue_count: 6, tone: :yellow),
+      CatalogueSeries.new(name: "Nightjar", meta: "Ongoing series · 2021–present · Halftone House", issue_count: 31, tone: :magenta),
+      CatalogueSeries.new(name: "Midnight Static", meta: "Limited series · 2025–present · Northlight Comics", issue_count: 4, tone: :cyan),
+      CatalogueSeries.new(name: "Signal Fire", meta: "Ongoing series · 2018–2020 · Northlight Comics", issue_count: 24, tone: :cyan),
+      CatalogueSeries.new(name: "Paper Lanterns", meta: "Graphic novel · 2022 · Lantern Press", issue_count: 1, tone: :yellow),
+      CatalogueSeries.new(name: "Iron Orchard", meta: "Limited series · 2020–2021 · Halftone House", issue_count: 8, tone: :magenta),
+      CatalogueSeries.new(name: "Glass Saints", meta: "One-shot · 2024 · Inkwell", issue_count: 1, tone: :cyan)
+    ]
+  end
 end
