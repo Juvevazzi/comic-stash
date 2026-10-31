@@ -1,0 +1,11 @@
+<%# Hunt it and Got it for one missing issue (Find the gaps, Search).
+    Got it is the same PATCH as on View issue; it comes back to this page with
+    an Undo in the message. Locals: comic_id, label ("Night Signal #49"), hunting. %>
+<div class="cs-gap-actions">
+  <%= render "shared/hunt_button", on: hunting, item: label %>
+  <%= button_to comic_path(comic_id), method: :patch, params: { comic: { owned: true } },
+                class: "btn btn-secondary btn-sm",
+                "aria-label": "Got #{label}: add it to your collection" do %>
+    <%= icon("check-circle") %> Got it
+  <% end %>
+</div>

@@ -9,7 +9,7 @@ class StaticPagesTest < ActionDispatch::IntegrationTest
     "/comics/1" => "Night Signal #53",
     "/series" => "Your series",
     "/gaps" => "Find the gaps",
-    "/search" => "Search",
+    "/search" => "Search your stash",
     "/profile" => "Your profile"
   }.freeze
 

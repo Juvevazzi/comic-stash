@@ -1,0 +1,25 @@
+<%# One of your series in the results. Locals: series (a SampleStash::SeriesRow), term. %>
+<% owned = series.issue_count - series.missing %>
+<article class="cs-result-card">
+  <%= render "series/cover", series: series %>
+  <div class="cs-grow">
+    <div class="d-flex justify-content-between align-items-baseline gap-2">
+      <h3 class="h6 mb-0"><%= highlight(series.name, term) %></h3>
+      <span class="small cs-issue-no text-body-secondary text-nowrap"><%= owned %> of <%= series.issue_count %></span>
+    </div>
+    <p class="small text-body-secondary mb-2">
+      <%= series.began %>–<%= series.ended || "present" %> · <%= series.publisher %>
+    </p>
+    <%= render "shared/run_progress", owned: owned, total: series.issue_count %>
+    <div class="d-flex justify-content-between align-items-center mt-2">
+      <% if series.missing.positive? %>
+        <%= link_to gaps_path(q: series.name), class: "cs-status cs-status-missing text-decoration-none" do %>
+          <%= icon("dash-circle-dotted") %><%= series.missing %> missing
+        <% end %>
+      <% else %>
+        <span class="cs-status cs-status-owned"><%= icon("check2") %>Complete</span>
+      <% end %>
+      <%= link_to "View comics", comics_path(series: series.name), class: "btn btn-link btn-sm px-0" %>
+    </div>
+  </div>
+</article>

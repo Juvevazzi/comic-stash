@@ -1,0 +1,16 @@
+<%# Owned / Missing / Hunting filter for Your issues. Checkboxes styled as
+    toggle chips (Bootstrap's btn-check); each change re-runs the search. %>
+<%= form_with url: search_path, method: :get, class: "cs-status-chips", data: { controller: "auto-submit" } do %>
+  <%= hidden_field_tag :q, @search.term, id: nil %>
+  <%= hidden_field_tag :tab, @tab, id: nil %>
+  <span class="small fw-bold">Show</span>
+  <% SampleSearch::STATUSES.each do |status| %>
+    <%= check_box_tag "status[]", status, @statuses.include?(status), id: "status-#{status}", class: "btn-check",
+                      autocomplete: "off", data: { action: "change->auto-submit#submit" } %>
+    <%= label_tag "status-#{status}", status.capitalize, class: "btn btn-sm cs-chip-toggle" %>
+  <% end %>
+  <% if @statuses.any? %>
+    <%= link_to "Clear", search_path(q: @search.term, tab: @tab), class: "btn btn-link btn-sm" %>
+  <% end %>
+  <noscript><button type="submit" class="btn btn-secondary btn-sm">Apply</button></noscript>
+<% end %>
