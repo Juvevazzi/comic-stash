@@ -1,4 +1,86 @@
-<%# Wireframe: View issue placeholder. %>
-<%= render "shared/page_header", title: "Issue details", breadcrumbs: [ [ "Dashboard", dashboard_path ], [ "Your comics", comics_path ] ] %>
+<%# View issue (wireframe: View issue). One comic in full. Desktop: cover and
+    "your copy" on the left, the issue on the right. Phones: one column in
+    the wireframe's order, with the cover beside the title (see .cs-issue). %>
+<% content_for :title, "#{@issue.series} ##{@issue.issue}" %>
 
-<div class="alert alert-info"><%= icon("info-circle") %><div>This page is a placeholder.</div></div>
+<nav aria-label="Breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><%= link_to "Dashboard", dashboard_path %></li>
+    <li class="breadcrumb-item"><%= link_to "Your comics", comics_path %></li>
+    <li class="breadcrumb-item"><%= link_to @issue.series, comics_path(series: @issue.series) %></li>
+    <li class="breadcrumb-item active cs-issue-no" aria-current="page">#<%= @issue.issue %></li>
+  </ol>
+</nav>
+
+<div class="cs-issue">
+  <div class="cs-issue-side">
+    <%= render "shared/cover", tone: @issue.tone, issue: "##{@issue.issue}",
+               css: [ "cs-issue-cover", ("is-out" unless @issue.owned) ].compact.join(" ") %>
+    <%= render "comics/your_copy", issue: @issue %>
+    <%= render "comics/identifiers", issue: @issue %>
+    <%= render "comics/issue_nav", issue: @issue %>
+  </div>
+
+  <div class="cs-issue-main">
+    <header class="cs-issue-head">
+      <p class="cs-issue-meta mb-1">
+        <%= link_to @issue.series, comics_path(series: @issue.series), class: "fw-bold" %>
+        <span aria-hidden="true">·</span> <span class="cs-issue-no"><%= @issue.cover_date.year %></span>
+        <span aria-hidden="true">·</span> <%= @issue.publisher %>
+      </p>
+      <h1 class="mb-1"><%= @issue.series %> <span class="cs-issue-no">#<%= @issue.issue %></span></h1>
+      <p class="cs-issue-subtitle mb-0"><%= @issue.title %></p>
+    </header>
+
+    <div class="cs-issue-body">
+      <ul class="cs-tags" aria-label="Format and rating">
+        <% @issue.tags.each do |tag| %>
+          <li><%= tag %></li>
+        <% end %>
+      </ul>
+
+      <dl class="cs-facts">
+        <div><dt>Publisher</dt><dd><%= @issue.publisher %></dd></div>
+        <div><dt>Cover date</dt><dd class="cs-issue-no"><%= @issue.cover_date.strftime("%b %Y") %></dd></div>
+        <div><dt>In shops</dt><dd class="cs-issue-no"><%= @issue.store_date.strftime("%-d %b %Y") %></dd></div>
+        <div>
+          <dt>Cover price</dt>
+          <dd class="cs-issue-no"><%= number_to_currency(@issue.price) %> <span class="fw-normal text-body-secondary">USD</span></dd>
+        </div>
+        <div><dt>Pages</dt><dd class="cs-issue-no"><%= @issue.pages %></dd></div>
+        <% if @issue.arc %>
+          <div>
+            <dt>Story arc</dt>
+            <dd><%= link_to @issue.arc, search_path(q: @issue.arc) %> <span class="fw-normal text-body-secondary">· part <%= @issue.arc_part %></span></dd>
+          </div>
+        <% end %>
+      </dl>
+
+      <section aria-labelledby="about-title" data-controller="read-more">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+          <h2 id="about-title" class="h4 mb-0">About this issue</h2>
+          <span class="cs-caption">Publisher’s solicitation</span>
+        </div>
+        <p id="issue-description" class="mb-1" data-read-more-target="text"><%= @issue.description %></p>
+        <button type="button" class="btn btn-link px-0 d-lg-none" hidden
+                aria-controls="issue-description" aria-expanded="false"
+                data-read-more-target="button" data-action="read-more#toggle">Read more</button>
+      </section>
+
+      <section aria-labelledby="characters-title">
+        <h2 id="characters-title" class="h4 mb-2">Characters</h2>
+        <ul class="cs-chips">
+          <% @issue.characters.each do |name| %>
+            <li>
+              <%= link_to search_path(q: name), class: "cs-chip" do %>
+                <span class="cs-chip-avatar" aria-hidden="true"><%= initials(name) %></span><%= name %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </section>
+
+      <%= render "comics/creators", issue: @issue %>
+    </div>
+  </div>
+</div>

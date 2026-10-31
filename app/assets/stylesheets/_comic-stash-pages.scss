@@ -356,3 +356,319 @@
   background: var(--danger-soft);
   color: var(--danger);
 }
+
+// View issue -------------------------------------------------------------------
+// Phones: one column in the wireframe's order, with the cover beside the title.
+// The two wrappers are display: contents, so their children join this grid
+// and grid-template-areas can put them in any order.
+// From lg: the wrappers become real columns, cover side left, issue right.
+.cs-issue {
+  display: grid;
+  grid-template-columns: 8.25rem minmax(0, 1fr);
+  grid-template-areas:
+    "cover head"
+    "copy  copy"
+    "body  body"
+    "ids   ids"
+    "nav   nav";
+  gap: var(--space-4) var(--space-3);
+  align-items: start;
+}
+.cs-issue-side,
+.cs-issue-main {
+  display: contents;
+}
+.cs-issue-cover {
+  grid-area: cover;
+  // overflow: hidden would let the grid row shrink below the cover's 2:3
+  // height (the title's row would win and the cover would overlap the panel).
+  // clip still trims the corners but keeps the cover's full height.
+  overflow: clip;
+}
+.cs-issue-head {
+  grid-area: head;
+}
+.cs-your-copy {
+  grid-area: copy;
+}
+.cs-issue-body {
+  grid-area: body;
+}
+.cs-issue-ids {
+  grid-area: ids;
+}
+.cs-issue-nav {
+  grid-area: nav;
+}
+
+@include media-breakpoint-up(lg) {
+  .cs-issue {
+    grid-template-columns: 18rem minmax(0, 1fr);
+    grid-template-areas: "side main";
+    column-gap: var(--space-5);
+  }
+  .cs-issue-side,
+  .cs-issue-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .cs-issue-side {
+    grid-area: side;
+  }
+  .cs-issue-main {
+    grid-area: main;
+  }
+}
+
+// A cover you don't own is greyed out, as in the wireframe.
+.cs-cover.is-out {
+  filter: grayscale(1);
+  opacity: 0.45;
+}
+
+// Title block: series line, big title, story title.
+.cs-issue-meta {
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+}
+.cs-issue-head h1 {
+  font-size: clamp(2rem, 1.25rem + 2.5vw, 3rem);
+  line-height: 1.1;
+}
+.cs-issue-subtitle {
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+.cs-issue-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+// "Your copy" panel.
+.cs-your-copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+}
+.cs-your-copy-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+
+  .btn {
+    width: 100%;
+    min-height: 3rem;
+  }
+
+  @include media-breakpoint-up(lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Format and rating tags.
+.cs-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.75rem;
+    padding: 0 0.625rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+}
+
+// Key facts as a grid of boxes: 2 across on phones, 4 from md.
+// Each box draws its right and bottom border; the -1px margins push the
+// last column's and last row's borders under the clipped outer edge.
+.cs-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  overflow: hidden;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+
+  > div {
+    margin: 0 -1px -1px 0;
+    padding: 0.75rem 0.875rem;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  dt {
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--ink-muted);
+  }
+  dd {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  @include media-breakpoint-up(md) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+// Long description cut to four lines on phones (read_more_controller.js).
+@include media-breakpoint-down(lg) {
+  .cs-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// Character chips: initials badge + name, 44px tall so they are easy to tap.
+.cs-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cs-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: 0 0.875rem 0 0.5rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+
+  &:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+}
+.cs-chip-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.75rem;
+}
+
+// Creators box, and the label/value pairs used there and in Identifiers.
+.cs-credits {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+
+  @include media-breakpoint-up(md) {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+.cs-credits-label {
+  margin: 0 0 0.375rem;
+  font: 700 0.75rem/1rem var(--font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.cs-pairs {
+  display: grid;
+  grid-template-columns: minmax(5rem, max-content) minmax(0, 1fr);
+  gap: 0.25rem var(--space-2);
+  margin: 0;
+
+  dt {
+    font-weight: 400;
+    color: var(--ink-muted);
+  }
+  dd {
+    margin: 0;
+    font-weight: 700;
+  }
+}
+
+// Editorial: a <details> styled as a box with a +/− sign.
+.cs-disclosure {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+
+  > summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 3rem;
+    padding: 0 var(--space-3);
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+    &::after {
+      content: "+";
+      font-family: var(--font-mono);
+    }
+  }
+  &[open] > summary::after {
+    content: "\2212";
+  }
+  > dl {
+    padding: 0.75rem var(--space-3) var(--space-3);
+    border-top: 1px solid var(--line);
+  }
+}
+
+// Identifiers: a quiet sunken box.
+.cs-issue-ids {
+  padding: var(--space-3);
+  background: var(--paper-sunken);
+  border-radius: var(--radius-lg);
+}
+
+// Previous / next issue.
+.cs-issue-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    min-height: 3rem;
+    padding-inline: 0.5rem;
+    white-space: nowrap;
+  }
+}

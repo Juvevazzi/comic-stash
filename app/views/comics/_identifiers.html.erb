@@ -1,0 +1,13 @@
+<%# Numbers that tie this issue to the outside world. The Metron id is the
+    one the API import will use to fetch and refresh the issue. %>
+<section class="cs-issue-ids" aria-labelledby="ids-title">
+  <h2 id="ids-title" class="h6 mb-2">Identifiers</h2>
+  <dl class="cs-pairs mb-2">
+    <dt>UPC</dt><dd class="cs-issue-no text-break"><%= issue.upc %></dd>
+    <dt>Metron</dt><dd class="cs-issue-no"><%= issue.metron_id %></dd>
+  </dl>
+  <p class="small text-body-secondary mb-0">
+    Issue data will come from
+    <%= link_to "https://metron.cloud/", target: "_blank", rel: "noopener" do %>Metron<span class="visually-hidden"> (opens in a new tab)</span><% end %>.
+  </p>
+</section>
