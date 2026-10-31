@@ -1,0 +1,15 @@
+<%# A sortable column heading. Clicking sorts by this column; clicking again
+    flips the direction. The link keeps the current filters. aria-sort tells
+    screen readers which column the table is sorted by, and which way.
+    Locals: label, key, sort, direction, link_params (the filters to keep),
+            align (optional: "end" for number columns). %>
+<% active = sort == key %>
+<% next_direction = active && direction == "asc" ? "desc" : "asc" %>
+<th scope="col" aria-sort="<%= active ? "#{direction}ending" : "none" %>"
+    class="<%= "text-end" if local_assigns[:align] == "end" %>">
+  <%= link_to url_for(link_params.merge(sort: key, direction: next_direction)),
+              class: "cs-sort-link #{"is-active" if active}" do %>
+    <%= label %>
+    <%= icon(active ? (direction == "asc" ? "arrow-up" : "arrow-down") : "arrow-down-up") %>
+  <% end %>
+</th>

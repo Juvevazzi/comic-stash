@@ -108,6 +108,160 @@
   }
 }
 
+// View series and View comics -----------------------------------------------
+
+// The card around a data table; overflow keeps the table inside its corners.
+.cs-table-card {
+  overflow: hidden;
+}
+
+// Above the table: row count on the left, filters on / Clear on the right.
+.cs-table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  min-height: 3.75rem;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--line);
+}
+
+.cs-data-table {
+  --bs-table-bg: var(--paper-raised);
+  font-size: 0.875rem;
+
+  th,
+  td {
+    padding: 0.625rem 0.75rem;
+    vertical-align: middle;
+  }
+  thead th {
+    background: var(--paper-sunken);
+    white-space: nowrap;
+  }
+  tbody th {
+    font-weight: 700;
+  }
+  // Rows for issues you're missing get the soft "missing" tint.
+  tbody tr.is-missing > * {
+    --bs-table-bg: var(--missing-soft);
+  }
+}
+
+// The second header row, holding one filter per column.
+.cs-filter-row td {
+  background: var(--paper-sunken);
+  padding-top: 0;
+
+  .form-control,
+  .form-select {
+    min-width: 6.5rem;
+  }
+}
+
+// Column heading that sorts the table.
+.cs-sort-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--ink-muted);
+  text-decoration: none;
+
+  &:hover,
+  &.is-active {
+    color: var(--ink);
+  }
+  .bi {
+    font-size: 0.75rem;
+  }
+}
+
+// Tiny cover in a table row; "no cover" box when there isn't one.
+.cs-thumb-xs {
+  width: 2rem;
+  flex: none;
+}
+.cs-cover-none {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-muted);
+}
+
+// Long descriptions show two lines; the full text is in the title tooltip.
+.cs-truncate {
+  display: -webkit-box;
+  max-width: 18rem;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+// Extra status pills for series.
+.cs-status-ended {
+  background: var(--paper-sunken);
+  color: var(--ink-muted);
+}
+.cs-status-hiatus {
+  background: var(--yellow-soft);
+  color: var(--ink);
+}
+
+// Under the table: page summary and page links.
+.cs-table-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+
+.cs-empty {
+  padding: var(--space-5) var(--space-3);
+  text-align: center;
+}
+
+// Phones: search box plus a Filters panel that opens below it.
+.cs-filter-panel {
+  display: grid;
+  gap: var(--space-2);
+}
+.cs-filter-details {
+  > summary {
+    list-style: none; // hide the default triangle; the button says what it does
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+  &[open] > summary {
+    margin-bottom: var(--space-2);
+  }
+}
+
+// Phones: one card per series or comic.
+.cs-card-list {
+  list-style: none;
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+.cs-list-card {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+
+  .cs-thumb-xs {
+    width: 2.75rem;
+  }
+}
 // Add comics -----------------------------------------------------------------
 
 // The "Add one comic" form: the page's one comic panel (.cs-panel).

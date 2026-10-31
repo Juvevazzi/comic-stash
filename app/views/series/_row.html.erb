@@ -1,0 +1,18 @@
+<%# One row of the series table (desktop). Local: series (a SampleStash::SeriesRow for now). %>
+<tr>
+  <td><%= render "series/cover", series: series %></td>
+  <th scope="row"><%= series.name %></th>
+  <td class="cs-issue-no"><%= series.began %></td>
+  <td class="<%= series.ended ? "cs-issue-no" : "text-body-secondary" %>"><%= series.ended || "Present" %></td>
+  <td><%= series.publisher %></td>
+  <td><%= series.series_type %></td>
+  <td><span class="cs-status <%= series_status_class(series.status) %>"><%= series.status %></span></td>
+  <td class="text-end cs-issue-no"><%= series.issue_count %></td>
+  <td class="text-end"><%= render "series/missing", series: series %></td>
+  <td class="text-end">
+    <%= link_to comics_path(series: series.name), class: "btn btn-link btn-sm text-nowrap",
+                "aria-label": "View comics in #{series.name}" do %>
+      View comics <%= icon("arrow-right") %>
+    <% end %>
+  </td>
+</tr>

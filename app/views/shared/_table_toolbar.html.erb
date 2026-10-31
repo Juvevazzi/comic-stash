@@ -1,0 +1,17 @@
+<%# Above a filtered list: how many rows match, how many filters are on,
+    and a link that clears them.
+    Locals: shown, total, noun ("series", "comics"), filters (the active ones),
+            clear_path, id (for aria-labelledby). %>
+<div class="cs-table-toolbar">
+  <span id="<%= id %>" class="fw-bold" role="status">
+    <%= shown == total ? "Showing #{total} #{noun}" : "Showing #{shown} of #{total} #{noun}" %>
+  </span>
+  <% if filters.any? %>
+    <div class="d-flex align-items-center gap-2">
+      <span class="cs-status cs-status-owned"><%= pluralize(filters.size, "filter") %> on</span>
+      <%= link_to clear_path, class: "btn btn-secondary btn-sm" do %>
+        <%= icon("x-lg") %> Clear filters
+      <% end %>
+    </div>
+  <% end %>
+</div>

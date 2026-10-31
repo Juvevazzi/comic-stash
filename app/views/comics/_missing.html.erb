@@ -1,0 +1,6 @@
+<%# Whether you're missing this issue: icon and word, never colour alone. Local: comic. %>
+<% if comic.missing %>
+  <span class="cs-status cs-status-missing"><%= icon("dash-circle-dotted") %>Missing</span>
+<% else %>
+  <span class="cs-status cs-status-owned"><%= icon("check2") %>Owned</span>
+<% end %>

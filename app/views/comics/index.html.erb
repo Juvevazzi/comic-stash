@@ -1,4 +1,137 @@
-<%# Wireframe: View comics placeholder. %>
-<%= render "shared/page_header", title: "Your comics", breadcrumbs: [ [ "Dashboard", dashboard_path ] ] %>
+<%# Your comics (wireframes: View comics - Desktop / Mobile). Same layout as
+    Your series: a sortable, filterable table on desktop, cards on phones.
+    "View comics" on the series page links here with ?series=... set. %>
+<%= render "shared/page_header", title: "Your comics",
+           lead: "Every issue across your series, including the ones you’re still missing.",
+           breadcrumbs: [ [ "Dashboard", dashboard_path ] ],
+           action: link_to(safe_join([ icon("plus-lg"), "Add comics" ], " "), new_comic_path, class: "btn btn-primary") %>
 
-<div class="alert alert-info"><%= icon("info-circle") %><div>This page is a placeholder.</div></div>
+<% keep = @filters.merge(sort: @sort, direction: @direction) %>
+<% columns = [ [ "Series", "series" ], [ "No.", "issue" ], [ "Title", "title" ], [ "Publisher", "publisher" ],
+               [ "Cover date", "cover_date" ], [ "Description", nil ], [ "Cover artist", "artists" ],
+               [ "Missing", "missing" ] ] %>
+
+<div data-controller="auto-submit">
+  <%# ---------- Desktop: table ---------- %>
+  <section class="card cs-table-card d-none d-lg-block" aria-labelledby="comics-count">
+    <%= render "shared/table_toolbar", id: "comics-count", shown: @page.count, total: @total, noun: "comics",
+               filters: @filters, clear_path: comics_path(sort: @sort, direction: @direction) %>
+
+    <%= form_with url: comics_path, method: :get, id: "comics-filters" do %>
+      <%= hidden_field_tag :sort, @sort, id: nil %>
+      <%= hidden_field_tag :direction, @direction, id: nil %>
+      <button type="submit" class="visually-hidden">Apply filters</button>
+    <% end %>
+
+    <div class="table-responsive">
+      <table class="table cs-data-table mb-0">
+        <caption class="visually-hidden">Comics in your series, with a filter for each column</caption>
+        <thead>
+          <tr>
+            <th scope="col"><span class="visually-hidden">Cover</span></th>
+            <% columns.each do |label, key| %>
+              <% if key %>
+                <%= render "shared/sort_header", label: label, key: key,
+                           sort: @sort, direction: @direction, link_params: @filters %>
+              <% else %>
+                <th scope="col"><%= label %></th>
+              <% end %>
+            <% end %>
+            <th scope="col"><span class="visually-hidden">Actions</span></th>
+          </tr>
+          <tr class="cs-filter-row">
+            <td></td>
+            <td><%= render "shared/filter_field", form: "comics-filters", name: :series, label: "Filter by series",
+                           options: @options[:series], value: @filters[:series], compact: true %></td>
+            <td><%= render "shared/filter_field", form: "comics-filters", name: :issue, label: "Filter by issue number",
+                           value: @filters[:issue], placeholder: "#", compact: true %></td>
+            <td><%= render "shared/filter_field", form: "comics-filters", name: :title, label: "Filter by title",
+                           value: @filters[:title], placeholder: "Title", compact: true %></td>
+            <td><%= render "shared/filter_field", form: "comics-filters", name: :publisher, label: "Filter by publisher",
+                           options: @options[:publisher], value: @filters[:publisher], compact: true %></td>
+            <td><%= render "shared/filter_field", form: "comics-filters", name: :year, label: "Filter by cover year",
+                           options: @options[:year], value: @filters[:year], compact: true %></td>
+            <td><%= render "shared/filter_field", form: "comics-filters", name: :description,
+                           label: "Filter by description", value: @filters[:description],
+                           placeholder: "Words in the description", compact: true %></td>
+            <td><%= render "shared/filter_field", form: "comics-filters", name: :artist, label: "Filter by cover artist",
+                           value: @filters[:artist], placeholder: "Artist", compact: true %></td>
+            <td><%= render "shared/filter_field", form: "comics-filters", name: :missing, label: "Filter by missing",
+                           options: @options[:missing], value: @filters[:missing], compact: true %></td>
+            <td></td>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: "comics/row", collection: @page.items, as: :comic %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if @page.items.empty? %>
+      <div class="cs-empty">
+        <p class="fw-bold mb-2">No comics match those filters</p>
+        <%= link_to "Clear filters", comics_path, class: "btn btn-secondary" %>
+      </div>
+    <% end %>
+
+    <%= render "shared/pagination", page: @page, link_params: keep %>
+  </section>
+
+  <%# ---------- Phones: search, Filters panel, cards ---------- %>
+  <section class="d-lg-none" aria-labelledby="comics-count-narrow">
+    <%= form_with url: comics_path, method: :get, id: "comics-filters-narrow", class: "cs-filter-panel" do %>
+      <%= hidden_field_tag :direction, @direction, id: nil %>
+      <%= render "shared/filter_field", form: "comics-filters-narrow", name: :title, label: "Filter by title",
+                 value: @filters[:title], placeholder: "Title", compact: true %>
+
+      <details class="cs-filter-details" <%= "open" if @filters.except(:title).any? %>>
+        <summary class="btn btn-secondary">
+          <%= icon("sliders") %> Filters
+          <% if @filters.except(:title).any? %>
+            <span class="badge text-bg-dark"><%= @filters.except(:title).size %></span>
+          <% end %>
+        </summary>
+        <div class="row row-cols-2 g-3 mt-1">
+          <% { series: "Series", publisher: "Publisher", year: "Cover year", missing: "Missing" }.each do |name, label| %>
+            <div class="col">
+              <%= render "shared/filter_field", form: "comics-filters-narrow", name: name, label: label,
+                         options: @options[name], value: @filters[name] %>
+            </div>
+          <% end %>
+          <% { issue: "Issue number", artist: "Cover artist", description: "Description" }.each do |name, label| %>
+            <div class="col">
+              <%= render "shared/filter_field", form: "comics-filters-narrow", name: name, label: label,
+                         value: @filters[name] %>
+            </div>
+          <% end %>
+          <div class="col">
+            <%= label_tag "comics-sort", "Sort by", class: "form-label small fw-bold" %>
+            <%= select_tag :sort, options_for_select(columns.select(&:last).map { |label, key| [ label, key ] }, @sort),
+                           id: "comics-sort", class: "form-select", data: { action: "change->auto-submit#submit" } %>
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+          <%= link_to "Clear all", comics_path, class: "btn btn-secondary flex-fill" %>
+          <button type="submit" class="btn btn-primary flex-fill">Show results</button>
+        </div>
+      </details>
+    <% end %>
+
+    <p id="comics-count-narrow" class="fw-bold my-3" role="status">
+      <%= @page.count == @total ? "Showing #{@total} comics" : "Showing #{@page.count} of #{@total} comics" %>
+    </p>
+
+    <ul class="cs-card-list">
+      <%= render partial: "comics/card", collection: @page.items, as: :comic %>
+    </ul>
+
+    <% if @page.items.empty? %>
+      <div class="cs-empty">
+        <p class="fw-bold mb-2">No comics match those filters</p>
+        <%= link_to "Clear filters", comics_path, class: "btn btn-secondary" %>
+      </div>
+    <% end %>
+
+    <%= render "shared/pagination", page: @page, link_params: keep %>
+  </section>
+</div>
