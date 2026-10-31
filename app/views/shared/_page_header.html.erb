@@ -1,6 +1,7 @@
 <%# Breadcrumb + caption box + page title for every app page.
     Locals: title (h1 and tab title), caption (optional yellow box),
-            lead (optional sentence), breadcrumbs (optional [label, path] pairs).
+            lead (optional sentence), breadcrumbs (optional [label, path] pairs),
+            action (optional button or link shown on the right, e.g. Add comics).
     Example: render "shared/page_header", title: "Your series",
                     breadcrumbs: [["Dashboard", dashboard_path]]
 %>
@@ -18,11 +19,16 @@
     </nav>
   <% end %>
 
-  <% if local_assigns[:caption] %>
-    <span class="cs-caption mb-2"><%= caption %></span>
-  <% end %>
-  <h1 class="mb-1"><%= title %></h1>
-  <% if local_assigns[:lead] %>
-    <p class="lead text-body-secondary mb-0"><%= lead %></p>
-  <% end %>
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-3">
+    <div>
+      <% if local_assigns[:caption] %>
+        <span class="cs-caption mb-2"><%= caption %></span>
+      <% end %>
+      <h1 class="mb-1"><%= title %></h1>
+      <% if local_assigns[:lead] %>
+        <p class="lead text-body-secondary mb-0"><%= lead %></p>
+      <% end %>
+    </div>
+    <%= local_assigns[:action] %>
+  </div>
 </div>

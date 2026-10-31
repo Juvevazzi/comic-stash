@@ -1,0 +1,7 @@
+<%# Small cover for a series row or card, or a "no cover" box when the
+    series has none. Local: series. %>
+<% if series.tone %>
+  <%= render "shared/cover", tone: series.tone, css: "cs-thumb-xs" %>
+<% else %>
+  <span class="cs-cover cs-thumb-xs cs-cover-none" role="img" aria-label="No cover image"><%= icon("image") %></span>
+<% end %>

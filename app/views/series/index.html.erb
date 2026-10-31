@@ -1,4 +1,129 @@
-<%# Wireframe: Your series placeholder. %>
-<%= render "shared/page_header", title: "Your series", breadcrumbs: [ [ "Dashboard", dashboard_path ] ] %>
+<%# Your series (wireframes: View series - Desktop / Mobile).
+    Desktop: a table with a sort link on every heading and a filter under it.
+    Phones: a search box, a Filters panel and cards. Each layout has its own
+    filter form, so the two sets of fields never clash. %>
+<%= render "shared/page_header", title: "Your series",
+           lead: "#{@total} series in your stash. Filter any column to find a run, then jump into its comics.",
+           breadcrumbs: [ [ "Dashboard", dashboard_path ] ],
+           action: link_to(safe_join([ icon("plus-lg"), "Add comics" ], " "), new_comic_path, class: "btn btn-primary") %>
 
-<div class="alert alert-info"><%= icon("info-circle") %><div>This page is next on the build plan.</div></div>
+<% keep = @filters.merge(sort: @sort, direction: @direction) %>
+<% columns = [ [ "Series name", "name" ], [ "Began", "began" ], [ "Ended", "ended" ], [ "Publisher", "publisher" ],
+               [ "Type", "series_type" ], [ "Status", "status" ], [ "Issues", "issue_count", "end" ],
+               [ "Missing", "missing", "end" ] ] %>
+<% labels = { began: "Year began", ended: "Year ended", publisher: "Publisher", series_type: "Type",
+              status: "Status", missing: "Issues missing" } %>
+
+<div data-controller="auto-submit">
+  <%# ---------- Desktop: table ---------- %>
+  <section class="card cs-table-card d-none d-lg-block" aria-labelledby="series-count">
+    <%= render "shared/table_toolbar", id: "series-count", shown: @page.count, total: @total, noun: "series",
+               filters: @filters, clear_path: series_index_path(sort: @sort, direction: @direction) %>
+
+    <%# The filter fields live in the table header and join this form by id. %>
+    <%= form_with url: series_index_path, method: :get, id: "series-filters" do %>
+      <%= hidden_field_tag :sort, @sort, id: nil %>
+      <%= hidden_field_tag :direction, @direction, id: nil %>
+      <button type="submit" class="visually-hidden">Apply filters</button>
+    <% end %>
+
+    <div class="table-responsive">
+      <table class="table cs-data-table mb-0">
+        <caption class="visually-hidden">Series in your stash, with a filter for each column</caption>
+        <thead>
+          <tr>
+            <th scope="col"><span class="visually-hidden">Cover</span></th>
+            <% columns.each do |label, key, align| %>
+              <%= render "shared/sort_header", label: label, key: key, align: align,
+                         sort: @sort, direction: @direction, link_params: @filters %>
+            <% end %>
+            <th scope="col"><span class="visually-hidden">Actions</span></th>
+          </tr>
+          <tr class="cs-filter-row">
+            <td></td>
+            <td><%= render "shared/filter_field", form: "series-filters", name: :name, label: "Filter by series name",
+                           value: @filters[:name], placeholder: "Series name", compact: true %></td>
+            <% %i[began ended publisher series_type status].each do |name| %>
+              <td><%= render "shared/filter_field", form: "series-filters", name: name, compact: true,
+                             label: "Filter by #{labels[name].downcase}",
+                             options: @options[name], value: @filters[name] %></td>
+            <% end %>
+            <td><%= render "shared/filter_field", form: "series-filters", name: :min_issues, type: "number",
+                           label: "Minimum issue count", value: @filters[:min_issues], placeholder: "Min", compact: true %></td>
+            <td><%= render "shared/filter_field", form: "series-filters", name: :missing, compact: true,
+                           label: "Filter by issues missing", options: @options[:missing], value: @filters[:missing] %></td>
+            <td></td>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: "series/row", collection: @page.items, as: :series %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if @page.items.empty? %>
+      <div class="cs-empty">
+        <p class="fw-bold mb-2">No series match those filters</p>
+        <%= link_to "Clear filters", series_index_path, class: "btn btn-secondary" %>
+      </div>
+    <% end %>
+
+    <%= render "shared/pagination", page: @page, link_params: keep %>
+  </section>
+
+  <%# ---------- Phones: search, Filters panel, cards ---------- %>
+  <section class="d-lg-none" aria-labelledby="series-count-narrow">
+    <%= form_with url: series_index_path, method: :get, id: "series-filters-narrow", class: "cs-filter-panel" do %>
+      <%= hidden_field_tag :direction, @direction, id: nil %>
+      <%= render "shared/filter_field", form: "series-filters-narrow", name: :name, label: "Filter by series name",
+                 value: @filters[:name], placeholder: "Series name", compact: true %>
+
+      <details class="cs-filter-details" <%= "open" if @filters.except(:name).any? %>>
+        <summary class="btn btn-secondary">
+          <%= icon("sliders") %> Filters
+          <% if @filters.except(:name).any? %>
+            <span class="badge text-bg-dark"><%= @filters.except(:name).size %></span>
+          <% end %>
+        </summary>
+        <div class="row row-cols-2 g-3 mt-1">
+          <% %i[publisher series_type status began ended missing].each do |name| %>
+            <div class="col">
+              <%= render "shared/filter_field", form: "series-filters-narrow", name: name,
+                         label: labels[name], options: @options[name], value: @filters[name] %>
+            </div>
+          <% end %>
+          <div class="col">
+            <%= render "shared/filter_field", form: "series-filters-narrow", name: :min_issues, type: "number",
+                       label: "Min. issues", value: @filters[:min_issues], placeholder: "Any" %>
+          </div>
+          <div class="col">
+            <%= label_tag "series-sort", "Sort by", class: "form-label small fw-bold" %>
+            <%= select_tag :sort, options_for_select(columns.map { |label, key| [ label, key ] }, @sort),
+                           id: "series-sort", class: "form-select", data: { action: "change->auto-submit#submit" } %>
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+          <%= link_to "Clear all", series_index_path, class: "btn btn-secondary flex-fill" %>
+          <button type="submit" class="btn btn-primary flex-fill">Show results</button>
+        </div>
+      </details>
+    <% end %>
+
+    <p id="series-count-narrow" class="fw-bold my-3" role="status">
+      <%= @page.count == @total ? "Showing #{@total} series" : "Showing #{@page.count} of #{@total} series" %>
+    </p>
+
+    <ul class="cs-card-list">
+      <%= render partial: "series/card", collection: @page.items, as: :series %>
+    </ul>
+
+    <% if @page.items.empty? %>
+      <div class="cs-empty">
+        <p class="fw-bold mb-2">No series match those filters</p>
+        <%= link_to "Clear filters", series_index_path, class: "btn btn-secondary" %>
+      </div>
+    <% end %>
+
+    <%= render "shared/pagination", page: @page, link_params: keep %>
+  </section>
+</div>
