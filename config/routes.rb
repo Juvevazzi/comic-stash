@@ -13,7 +13,7 @@ Rails.application.routes.draw do
 
   # Collection full CRUD
   # create, bulk and destroy are front-end stubs for now (they redirect back).
-  resources :comics, only: %i[index show new create destroy] do
+  resources :comics, only: %i[index show new create update destroy] do
     post :bulk, on: :collection # POST /comics/bulk -> comics#bulk
   end
   resources :series, only: :index
