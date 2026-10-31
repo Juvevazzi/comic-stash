@@ -1,0 +1,18 @@
+<%# One comic as a card (phones). Local: comic (a SampleStash::ComicRow for now). %>
+<li class="cs-list-card">
+  <%= render "shared/cover", tone: comic.tone, issue: "##{comic.issue}", css: "cs-thumb" %>
+  <div class="cs-grow">
+    <div class="d-flex justify-content-between align-items-start gap-2">
+      <span class="fw-bold"><%= comic.series %> <span class="cs-issue-no">#<%= comic.issue %></span></span>
+      <%= render "comics/missing", comic: comic %>
+    </div>
+    <p class="mb-1"><%= comic.title %></p>
+    <p class="small text-body-secondary mb-2">
+      <%= comic.cover_date.strftime("%b %Y") %> · <%= comic.publisher %> · <%= comic.artists %>
+    </p>
+    <%= link_to comic_path(comic.id), class: "btn btn-link btn-sm px-0",
+                "aria-label": "View issue #{comic.series} ##{comic.issue}" do %>
+      View issue <%= icon("arrow-right") %>
+    <% end %>
+  </div>
+</li>

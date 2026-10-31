@@ -1,0 +1,18 @@
+<%# One row of the comics table (desktop). Local: comic (a SampleStash::ComicRow for now). %>
+<tr class="<%= "is-missing" if comic.missing %>">
+  <td><%= render "shared/cover", tone: comic.tone, css: "cs-thumb-xs" %></td>
+  <td><%= comic.series %></td>
+  <td class="cs-issue-no">#<%= comic.issue %></td>
+  <th scope="row"><%= comic.title %></th>
+  <td><%= comic.publisher %></td>
+  <td class="text-nowrap"><%= comic.cover_date.strftime("%b %Y") %></td>
+  <td><span class="cs-truncate" title="<%= comic.description %>"><%= comic.description %></span></td>
+  <td><%= comic.artists %></td>
+  <td><%= render "comics/missing", comic: comic %></td>
+  <td class="text-end">
+    <%= link_to comic_path(comic.id), class: "btn btn-link btn-sm text-nowrap",
+                "aria-label": "View issue #{comic.series} ##{comic.issue}" do %>
+      View issue <%= icon("arrow-right") %>
+    <% end %>
+  </td>
+</tr>
