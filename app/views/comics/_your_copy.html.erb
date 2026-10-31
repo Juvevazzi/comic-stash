@@ -1,0 +1,27 @@
+<%# "Your copy": whether you own this issue and what you can do about it.
+    Both forms PATCH the comic's owned flag (ComicsController#update). %>
+<section class="cs-panel cs-your-copy" aria-label="Your copy">
+  <% if issue.owned %>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <span class="cs-status cs-status-owned"><%= icon("check-circle") %>In your stash</span>
+      <span class="small text-body-secondary">Added <%= issue.added_on.strftime("%-d %b %Y") %></span>
+    </div>
+    <%= button_to comic_path(issue.id), method: :patch, params: { comic: { owned: false } },
+                  class: "btn btn-outline-danger w-100",
+                  form: { data: { turbo_confirm: "Remove #{issue.series} ##{issue.issue} from your collection?" } } do %>
+      <%= icon("trash3") %> Remove from collection
+    <% end %>
+  <% else %>
+    <div class="d-flex flex-column align-items-start gap-1">
+      <span class="cs-status cs-status-missing"><%= icon("dash-circle-dotted") %>Missing from your stash</span>
+      <span class="small text-body-secondary"><%= gap_note(issue) %></span>
+    </div>
+    <div class="cs-your-copy-actions">
+      <%= button_to comic_path(issue.id), method: :patch, params: { comic: { owned: true } },
+                    class: "btn btn-primary" do %>
+        <%= icon("check-circle") %> Got it
+      <% end %>
+      <%= render "shared/hunt_button", on: issue.hunting %>
+    </div>
+  <% end %>
+</section>

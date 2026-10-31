@@ -6,7 +6,7 @@ class StaticPagesTest < ActionDispatch::IntegrationTest
     "/dashboard" => "Welcome back",
     "/comics" => "Your comics",
     "/comics/new" => "Add comics",
-    "/comics/1" => "Issue details",
+    "/comics/1" => "Night Signal #53",
     "/series" => "Your series",
     "/gaps" => "Find the gaps",
     "/search" => "Search",

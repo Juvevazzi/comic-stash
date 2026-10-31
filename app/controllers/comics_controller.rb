@@ -1,6 +1,6 @@
 # A user's comics. index = View comics, show = View issue, new = Add comics.
 # Front-end stage: index filters the SampleStash list (see SampleTable);
-# create, bulk and destroy only redirect back with a message.
+# create, update, bulk and destroy only redirect back with a message.
 class ComicsController < ApplicationController
   include SampleTable
 
@@ -39,7 +39,9 @@ class ComicsController < ApplicationController
     }
   end
 
+  # View issue. With the models this becomes current_user.comics.find(params[:id]).
   def show
+    @issue = SampleStash.issue(params[:id])
   end
 
   # Add comics page: the one-comic form, "Added just now" and bulk add.
@@ -54,6 +56,16 @@ class ComicsController < ApplicationController
     comic = params.expect(comic: [ :series_name, :issue_number, :barcode ])
     redirect_to new_comic_path(series: comic[:series_name]),
                 notice: "Added. #{comic[:series_name]} ##{comic[:issue_number]} is in your collection."
+  end
+
+  # "Got it" and "Remove from collection" on View issue. Both change one thing,
+  # whether you own this comic, so they share the RESTful update action.
+  def update
+    issue = SampleStash.issue(params[:id])
+    owned = params.expect(comic: [ :owned ])[:owned] == "true"
+    label = "#{issue.series} ##{issue.issue}"
+    redirect_to comic_path(issue.id),
+                notice: owned ? "Got it. #{label} is in your stash." : "Removed. #{label} is back on your gaps."
   end
 
   # "Add in bulk": an issue range, a pasted list or a CSV file.

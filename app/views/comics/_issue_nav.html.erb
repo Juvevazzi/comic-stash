@@ -1,0 +1,19 @@
+<%# Previous and next issue of this series in your stash. At either end the
+    button becomes plain text, so there is never a link that goes nowhere. %>
+<nav class="cs-issue-nav" aria-label="Issues in this series">
+  <% if issue.previous_issue %>
+    <%= link_to comic_path(issue.previous_issue.id), class: "btn btn-secondary", rel: "prev" do %>
+      <%= icon("chevron-left") %> Previous <span class="cs-issue-no">#<%= issue.previous_issue.issue %></span>
+    <% end %>
+  <% else %>
+    <span class="btn btn-secondary disabled"><%= icon("chevron-left") %> First issue</span>
+  <% end %>
+
+  <% if issue.next_issue %>
+    <%= link_to comic_path(issue.next_issue.id), class: "btn btn-secondary", rel: "next" do %>
+      Next <span class="cs-issue-no">#<%= issue.next_issue.issue %></span> <%= icon("chevron-right") %>
+    <% end %>
+  <% else %>
+    <span class="btn btn-secondary disabled">Latest issue <%= icon("chevron-right") %></span>
+  <% end %>
+</nav>

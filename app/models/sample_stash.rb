@@ -159,4 +159,45 @@ module SampleStash
       Addition.new(id: 2, title: "Glasshouse", issue: "#9", barcode: nil, added_label: "5 min ago", tone: :yellow)
     ]
   end
+
+  # One issue in full, for View issue. The fields from comics_list change from
+  # issue to issue; the rest are the same sample extras on every issue until
+  # the Metron import supplies the real ones.
+  Issue = Data.define(:id, :series, :issue, :title, :publisher, :cover_date, :store_date, :price, :pages,
+                      :arc, :arc_part, :tags, :description, :characters, :credits, :cover_artists, :editors,
+                      :upc, :metron_id, :owned, :added_on, :hunting, :tone, :previous_issue, :next_issue)
+
+  BLURB = "Back issues, long boxes and one stubborn gap: this is the issue collectors argue about. " \
+          "Read it for the art, keep it for the cover, and do not lend it to anyone."
+
+  # Finds a comic by id like Comic.find will: an unknown id raises
+  # RecordNotFound, which Rails turns into a 404 page.
+  def self.issue(id)
+    comic = comics_list.find { |row| row.id == id.to_i }
+    raise ActiveRecord::RecordNotFound, "No sample comic with id #{id}" unless comic
+
+    # The other issues of this series in your stash, in number order.
+    run = comics_list.select { |row| row.series == comic.series }.sort_by(&:issue)
+    place = run.index(comic)
+
+    # "Lights Out, Part 4" -> story arc "Lights Out", part 4.
+    arc_name, arc_part = comic.title.match(/\A(.+), Part (\d+)\z/)&.captures
+
+    Issue.new(
+      id: comic.id, series: comic.series, issue: comic.issue, title: comic.title,
+      publisher: comic.publisher, cover_date: comic.cover_date, tone: comic.tone,
+      description: "#{comic.description} #{BLURB}",
+      owned: !comic.missing, hunting: false, added_on: Date.new(2026, 10, 12),
+      store_date: comic.cover_date - 2.months + 5.days, price: 3.99, pages: 32,
+      arc: arc_name, arc_part: arc_part&.to_i,
+      tags: [ "Single issue", "Mystery", "Rated Teen", "English" ],
+      characters: [ "Juno Vale", "The Operator", "Marlo Finch" ],
+      credits: [ [ "Writer", "Ada Moreno" ], [ "Artist", comic.artists ], [ "Colorist", "Priya Shah" ],
+                 [ "Letterer", "Tom Ellery" ] ],
+      cover_artists: [ *comic.artists.split(", "), "Kit Hale" ],
+      editors: [ [ "Editor", "June Park" ], [ "Group Editor", "Sam Ortiz" ], [ "Editor in Chief", "Lena Brook" ] ],
+      upc: "761941#{comic.id.to_s.rjust(5, "0")}00111", metron_id: 129_000 + comic.id,
+      previous_issue: (run[place - 1] if place.positive?), next_issue: run[place + 1]
+    )
+  end
 end
