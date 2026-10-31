@@ -1,0 +1,13 @@
+<%# What you can do with an issue in the results: open it if you own it,
+    otherwise Hunt it / Got it. Locals: comic, status. %>
+<% if status == "owned" %>
+  <div class="d-flex justify-content-md-end">
+    <%= link_to comic_path(comic.id), class: "btn btn-link btn-sm px-md-2 px-0",
+                "aria-label": "View issue #{comic.series} ##{comic.issue}" do %>
+      View issue <%= icon("arrow-right") %>
+    <% end %>
+  </div>
+<% else %>
+  <%= render "shared/issue_actions", comic_id: comic.id, label: "#{comic.series} ##{comic.issue}",
+             hunting: status == "hunting" %>
+<% end %>

@@ -1,0 +1,59 @@
+<%# Your issues that match: a table on desktop, a list on phones.
+    Locals: issues (SampleStash::ComicRow), term. %>
+<% if issues.empty? %>
+  <p class="text-body-secondary">
+    No issues with that status match.
+    <%= link_to "Show all statuses", search_path(q: term, tab: @tab) %>
+  </p>
+<% else %>
+  <table class="table cs-data-table d-none d-md-table">
+    <caption class="visually-hidden">Issues in your stash matching your search</caption>
+    <thead>
+      <tr>
+        <th scope="col"><span class="visually-hidden">Cover</span></th>
+        <th scope="col">Issue</th>
+        <th scope="col">Title</th>
+        <th scope="col">Cover date</th>
+        <th scope="col">Cover artist</th>
+        <th scope="col">Status</th>
+        <th scope="col"><span class="visually-hidden">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% issues.each do |comic| %>
+        <% status = SampleSearch.status(comic) %>
+        <tr>
+          <td><%= render "shared/cover", tone: comic.tone, css: "cs-thumb-xs #{"is-out" unless status == "owned"}" %></td>
+          <td class="text-nowrap"><%= highlight(comic.series, term) %> <span class="cs-issue-no">#<%= comic.issue %></span></td>
+          <th scope="row"><%= link_to highlight(comic.title, term), comic_path(comic.id), class: "cs-gap-title" %></th>
+          <td class="cs-issue-no text-nowrap"><%= comic.cover_date.strftime("%b %Y") %></td>
+          <td><%= highlight(comic.artists, term) %></td>
+          <td><%= status_pill(status) %></td>
+          <td><%= render "search/issue_action", comic: comic, status: status %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <ul class="cs-gap-list cs-result-list d-md-none" aria-label="Issues in your stash matching your search">
+    <% issues.each do |comic| %>
+      <% status = SampleSearch.status(comic) %>
+      <li>
+        <%= render "shared/cover", tone: comic.tone, css: "cs-thumb-xs #{"is-out" unless status == "owned"}" %>
+        <div class="cs-grow">
+          <div class="d-flex justify-content-between align-items-start gap-2">
+            <p class="mb-0">
+              <%= highlight(comic.series, term) %> <span class="cs-issue-no">#<%= comic.issue %></span><br>
+              <%= link_to highlight(comic.title, term), comic_path(comic.id), class: "cs-gap-title" %>
+            </p>
+            <%= status_pill(status) %>
+          </div>
+          <p class="small text-body-secondary mb-2">
+            <span class="cs-issue-no"><%= comic.cover_date.strftime("%b %Y") %></span> · Cover: <%= highlight(comic.artists, term) %>
+          </p>
+          <%= render "search/issue_action", comic: comic, status: status %>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

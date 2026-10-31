@@ -41,7 +41,7 @@
           <th scope="row"><%= render "gaps/issue_title", group: group, issue: issue %></th>
           <td class="cs-issue-no text-nowrap"><%= issue.cover_date.strftime("%b %Y") %></td>
           <td><%= issue.artists %></td>
-          <td><%= render "gaps/actions", group: group, issue: issue %></td>
+          <td><%= render "shared/issue_actions", comic_id: issue.id, label: "#{group.name} ##{issue.issue}", hunting: issue.hunting %></td>
         </tr>
       <% end %>
     </tbody>
@@ -60,7 +60,7 @@
           <p class="small text-body-secondary mb-2">
             <span class="cs-issue-no"><%= issue.cover_date.strftime("%b %Y") %></span> · Cover: <%= issue.artists %>
           </p>
-          <%= render "gaps/actions", group: group, issue: issue %>
+          <%= render "shared/issue_actions", comic_id: issue.id, label: "#{group.name} ##{issue.issue}", hunting: issue.hunting %>
         </div>
       </li>
     <% end %>

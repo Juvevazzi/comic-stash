@@ -1,0 +1,13 @@
+<%# A catalogue series you don't have yet. Locals: entry (a SampleStash::CatalogueSeries), term. %>
+<article class="cs-result-card">
+  <%= render "shared/cover", tone: entry.tone, css: "cs-thumb-xs" %>
+  <div class="cs-grow">
+    <h3 class="h6 mb-0"><%= highlight(entry.name, term) %></h3>
+    <p class="small text-body-secondary mb-1"><%= entry.meta %></p>
+    <p class="small cs-issue-no mb-2"><%= pluralize(entry.issue_count, "issue") %></p>
+    <%= link_to new_comic_path(series: entry.name), class: "btn btn-secondary btn-sm",
+                "aria-label": "Add #{entry.name} to your stash" do %>
+      <%= icon("plus-lg") %> Add to stash
+    <% end %>
+  </div>
+</article>

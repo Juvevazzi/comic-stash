@@ -1,4 +1,75 @@
-<%# Wireframe: Search placeholder. %>
-<%= render "shared/page_header", title: "Search", breadcrumbs: [ [ "Dashboard", dashboard_path ] ] %>
+<%# Search results (wireframes: SERP - Desktop / Mobile). Three sections:
+    your series, your issues, and series from the catalogue you don't have.
+    The tabs are links, so each tab is its own URL. %>
+<% term = @search.term %>
+<%= render "shared/page_header",
+           title: @search.blank? ? "Search your stash" : "Results for “#{term}”",
+           lead: @search.blank? ? "Search series, issue titles, issue numbers and creators." :
+                                  "#{pluralize(@counts["all"], "result")} across your stash and the catalogue",
+           breadcrumbs: [ [ "Dashboard", dashboard_path ] ] %>
 
-<div class="alert alert-info"><%= icon("info-circle") %><div>This page is a placeholder.</div></div>
+<%# Phones have no search box in the navbar, so the page brings its own. %>
+<%= form_with url: search_path, method: :get, class: "cs-search-page-form d-lg-none", role: "search" do |f| %>
+  <%= f.label :q, "Search your stash", class: "visually-hidden", for: "search-page-q" %>
+  <div class="input-group">
+    <span class="input-group-text"><%= icon("search") %></span>
+    <%= f.search_field :q, value: term, id: "search-page-q", class: "form-control",
+                       placeholder: "Series, issues or creators" %>
+    <button type="submit" class="btn btn-primary">Search</button>
+  </div>
+<% end %>
+
+<% if @search.blank? %>
+  <div class="cs-search-prompt">
+    Type a series, an issue title, an issue number like <span class="cs-issue-no">#12</span>, or a creator’s name.
+  </div>
+<% else %>
+  <nav class="cs-result-tabs" aria-label="Result types">
+    <ul class="nav nav-underline flex-nowrap">
+      <% SearchController::TABS.each do |key, label| %>
+        <li class="nav-item">
+          <%= link_to search_tab_path(key), class: "nav-link #{"active" if @tab == key}",
+                      "aria-current": ("page" if @tab == key) do %>
+            <%= label %> <span class="cs-count cs-issue-no"><%= @counts[key] %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </nav>
+
+  <% if @counts["all"].zero? && @statuses.empty? %>
+    <div class="cs-empty cs-gaps-empty">
+      <p class="fw-bold mb-1">No matches for “<%= term %>”</p>
+      <p class="text-body-secondary mb-3">
+        Check the spelling, try fewer words, or search by issue number like <span class="cs-issue-no">#12</span>.
+        If it isn’t in your stash yet, add it.
+      </p>
+      <%= link_to new_comic_path, class: "btn btn-primary" do %><%= icon("plus-lg") %> Add comics<% end %>
+    </div>
+  <% end %>
+
+  <% if @tab.in?(%w[all series]) && @series.any? %>
+    <%= render "search/section", key: "series", title: "Your series", count: @series.size do %>
+      <div class="cs-result-grid">
+        <%= render partial: "search/series", collection: shown(@series, "series"), as: :series, locals: { term: term } %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if @tab.in?(%w[all issues]) && (@issues.any? || @statuses.any?) %>
+    <%= render "search/section", key: "issues", title: "Your issues", count: @issues.size,
+               count_note: ("of #{@all_issues.size}" if @statuses.any?) do %>
+      <%= render "search/status_chips" %>
+      <%= render "search/issues", issues: shown(@issues, "issues"), term: term %>
+    <% end %>
+  <% end %>
+
+  <% if @tab.in?(%w[all catalogue]) && @catalogue.any? %>
+    <%= render "search/section", key: "catalogue", title: "Not in your stash yet", count: @catalogue.size,
+               lead: "From the comics catalogue. Add a series to start tracking it." do %>
+      <div class="cs-result-grid">
+        <%= render partial: "search/catalogue", collection: shown(@catalogue, "catalogue"), as: :entry, locals: { term: term } %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>
