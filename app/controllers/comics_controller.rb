@@ -58,14 +58,16 @@ class ComicsController < ApplicationController
                 notice: "Added. #{comic[:series_name]} ##{comic[:issue_number]} is in your collection."
   end
 
-  # "Got it" and "Remove from collection" on View issue. Both change one thing,
-  # whether you own this comic, so they share the RESTful update action.
+  # "Got it" and "Remove from collection" (View issue, Find the gaps). Both
+  # change one thing, whether you own this comic, so they share the RESTful
+  # update action. It returns to the page you came from.
   def update
     issue = SampleStash.issue(params[:id])
     owned = params.expect(comic: [ :owned ])[:owned] == "true"
     label = "#{issue.series} ##{issue.issue}"
-    redirect_to comic_path(issue.id),
-                notice: owned ? "Got it. #{label} is in your stash." : "Removed. #{label} is back on your gaps."
+    flash[:undo] = issue.id if owned # the flash message offers Undo after "Got it"
+    redirect_back_or_to comic_path(issue.id),
+                        notice: owned ? "Got it. #{label} is in your stash." : "Removed. #{label} is back on your gaps."
   end
 
   # "Add in bulk": an issue range, a pasted list or a CSV file.

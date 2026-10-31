@@ -17,14 +17,14 @@ class ViewIssueTest < ActionDispatch::IntegrationTest
 
   test "a missing issue offers Got it and the hunt list, and says where it fits" do
     get comic_path(2)
-    assert_select "section[aria-label='Your copy']", /Fills the gap between #48 and #53/
+    assert_select "section[aria-label='Your copy']", /Fills the gap between #51 and #53/
     assert_select "button", /Got it/
     assert_select "button[data-controller=hunt-button]"
   end
 
   test "previous and next link to the neighbouring issues in the series" do
     get comic_path(2)
-    assert_select "nav[aria-label='Issues in this series'] a[rel=prev][href=?]", comic_path(3)
+    assert_select "nav[aria-label='Issues in this series'] a[rel=prev][href=?]", comic_path(17)
     assert_select "nav[aria-label='Issues in this series'] a[rel=next][href=?]", comic_path(1)
   end
 

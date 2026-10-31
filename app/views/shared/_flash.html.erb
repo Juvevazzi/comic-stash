@@ -1,10 +1,15 @@
 <%# Flash messages as Bootstrap alerts, always icon + words, never colour alone.
-    Renders nothing until a controller sets flash[:notice] or flash[:alert]. %>
+    Renders nothing until a controller sets flash[:notice] or flash[:alert].
+    After "Got it", flash[:undo] holds the comic's id and the notice offers Undo. %>
 <% { notice: [ "success", "check2-circle" ], alert: [ "danger", "exclamation-octagon" ] }.each do |key, (style, icon_name)| %>
   <% if flash[key].present? %>
     <div class="alert alert-<%= style %>" role="<%= key == :alert ? "alert" : "status" %>">
       <%= icon(icon_name) %>
-      <div><%= flash[key] %></div>
+      <div class="flex-grow-1"><%= flash[key] %></div>
+      <% if key == :notice && flash[:undo] %>
+        <%= button_to "Undo", comic_path(flash[:undo]), method: :patch, params: { comic: { owned: false } },
+                      class: "btn btn-secondary btn-sm" %>
+      <% end %>
     </div>
   <% end %>
 <% end %>
