@@ -173,11 +173,11 @@ module SampleStash
   # Finds a comic by id like Comic.find will: an unknown id raises
   # RecordNotFound, which Rails turns into a 404 page.
   def self.issue(id)
-    comic = comics_list.find { |row| row.id == id.to_i }
+    comic = all_comics.find { |row| row.id == id.to_i }
     raise ActiveRecord::RecordNotFound, "No sample comic with id #{id}" unless comic
 
     # The other issues of this series in your stash, in number order.
-    run = comics_list.select { |row| row.series == comic.series }.sort_by(&:issue)
+    run = all_comics.select { |row| row.series == comic.series }.sort_by(&:issue)
     place = run.index(comic)
 
     # "Lights Out, Part 4" -> story arc "Lights Out", part 4.
@@ -187,7 +187,7 @@ module SampleStash
       id: comic.id, series: comic.series, issue: comic.issue, title: comic.title,
       publisher: comic.publisher, cover_date: comic.cover_date, tone: comic.tone,
       description: "#{comic.description} #{BLURB}",
-      owned: !comic.missing, hunting: false, added_on: Date.new(2026, 10, 12),
+      owned: !comic.missing, hunting: HUNTING.include?(comic.id), added_on: Date.new(2026, 10, 12),
       store_date: comic.cover_date - 2.months + 5.days, price: 3.99, pages: 32,
       arc: arc_name, arc_part: arc_part&.to_i,
       tags: [ "Single issue", "Mystery", "Rated Teen", "English" ],
@@ -199,5 +199,70 @@ module SampleStash
       upc: "761941#{comic.id.to_s.rjust(5, "0")}00111", metron_id: 129_000 + comic.id,
       previous_issue: (run[place - 1] if place.positive?), next_issue: run[place + 1]
     )
+  end
+
+  # Find the gaps: one group per series with gaps, holding its missing issues.
+  GapGroup = Data.define(:name, :meta, :owned, :total, :tone, :issues)
+  GapIssue = Data.define(:id, :issue, :title, :cover_date, :artists, :hunting)
+
+  # Missing issues that aren't in comics_list, so every gap in series_list
+  # has an issue behind it: [series, number, title, cover date, cover artist].
+  EXTRA_GAPS = [
+    [ "Night Signal", 49, "Dead Air", Date.new(2026, 5, 1), "Mara Quill" ],
+    [ "Night Signal", 50, "Fifty Frequencies", Date.new(2026, 6, 1), "Mara Quill, Theo Banks" ],
+    [ "Night Signal", 51, "Lights Out, Part 1", Date.new(2026, 7, 1), "Mara Quill" ],
+    [ "Paper Moons", 7, "Waning", Date.new(2023, 8, 1), "Ines Varga" ],
+    [ "Iron Tide", 3, "Ballast", Date.new(2022, 8, 1), "Dev Okafor" ],
+    [ "Glasshouse", 4, "Condensation", Date.new(2024, 4, 1), "Ines Varga" ],
+    [ "Glasshouse", 10, "Frost Line", Date.new(2024, 10, 1), "Ines Varga" ],
+    [ "The Long Box Kids", 4, "Variant Hunters", Date.new(2026, 8, 1), "Pip Harrow" ],
+    [ "The Long Box Kids", 5, "Back Issue Bin", Date.new(2026, 9, 1), "Pip Harrow" ],
+    [ "Hollow Crown", 2, "Cinders", Date.new(2024, 2, 1), "Theo Banks" ],
+    [ "Hollow Crown", 3, "The Regent", Date.new(2024, 3, 1), "Theo Banks" ],
+    [ "Hollow Crown", 4, "Bone Orchard", Date.new(2024, 4, 1), "Theo Banks" ],
+    [ "Hollow Crown", 5, "Usurper", Date.new(2024, 5, 1), "Theo Banks" ],
+    [ "Hollow Crown", 6, "A Court of Moths", Date.new(2024, 6, 1), "Theo Banks" ],
+    [ "Hollow Crown", 7, "Last Rites", Date.new(2024, 7, 1), "Theo Banks" ],
+    [ "Hollow Crown", 8, "Crowned", Date.new(2024, 8, 1), "Theo Banks" ],
+    [ "Wolf Hours", 3, "Moonrise", Date.new(2024, 5, 1), "Dev Okafor" ],
+    [ "Wolf Hours", 5, "Tracks", Date.new(2024, 7, 1), "Dev Okafor" ],
+    [ "Wolf Hours", 9, "The Long Night", Date.new(2024, 11, 1), "Lu Chen" ],
+    [ "Wolf Hours", 10, "Pack", Date.new(2024, 12, 1), "Dev Okafor" ],
+    [ "Wolf Hours", 11, "Howl", Date.new(2025, 1, 1), "Dev Okafor" ],
+    [ "Wolf Hours", 14, "Daybreak", Date.new(2025, 4, 1), "Dev Okafor" ]
+  ].freeze
+
+  # Ids of the missing issues on your hunt list: Iron Tide #11, Static Saints #49, Paper Moons #7.
+  HUNTING = [ 7, 14, 18 ].freeze
+
+  # EXTRA_GAPS as ComicRows, numbered on from comics_list (ids 15 to 36).
+  def self.extra_gaps
+    EXTRA_GAPS.each_with_index.map do |(series, number, title, cover_date, artists), index|
+      info = series_list.find { |row| row.name == series }
+      ComicRow.new(id: 15 + index, series: series, issue: number, title: title, publisher: info.publisher,
+                   cover_date: cover_date, artists: artists, missing: true, tone: info.tone,
+                   description: "#{title}: the full solicitation arrives with the Metron import.")
+    end
+  end
+
+  # Every sample comic: your list plus the extra missing issues.
+  def self.all_comics
+    comics_list + extra_gaps
+  end
+
+  # One GapGroup per series that has gaps, its missing issues in number order.
+  def self.gap_groups
+    missing = all_comics.select(&:missing)
+
+    series_list.select { |series| series.missing.positive? }.map do |series|
+      issues = missing.select { |comic| comic.series == series.name }.sort_by(&:issue).map do |comic|
+        GapIssue.new(id: comic.id, issue: comic.issue, title: comic.title, cover_date: comic.cover_date,
+                     artists: comic.artists, hunting: HUNTING.include?(comic.id))
+      end
+
+      GapGroup.new(name: series.name, tone: series.tone, issues: issues,
+                   owned: series.issue_count - series.missing, total: series.issue_count,
+                   meta: "#{series.series_type} · #{series.began}–#{series.ended || "present"} · #{series.publisher}")
+    end
   end
 end

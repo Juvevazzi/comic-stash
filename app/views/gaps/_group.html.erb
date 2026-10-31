@@ -1,0 +1,72 @@
+<%# One series and its missing issues. Locals: group (a SampleStash::GapGroup),
+    shown (the issues that pass the search and switches), open, filtering.
+    Desktop shows a table, phones a list; both come from the same issues. %>
+<% hunting = group.issues.count(&:hunting) %>
+<details class="cs-gap-group" <%= "open" if open %> data-gaps-target="group">
+  <summary>
+    <%= render "shared/cover", tone: group.tone, css: "cs-gap-cover" %>
+    <h2 class="cs-gap-name h5 mb-0"><%= group.name %></h2>
+    <span class="cs-gap-meta small text-body-secondary"><%= group.meta %></span>
+    <span class="cs-gap-progress">
+      <span class="small"><span class="text-body-secondary">Owned</span> <span class="cs-issue-no"><%= group.owned %> of <%= group.total %></span></span>
+      <%= render "shared/run_progress", owned: group.owned, total: group.total %>
+    </span>
+    <span class="cs-gap-pills">
+      <% if hunting.positive? %>
+        <span class="cs-status cs-status-hunting"><%= icon("bookmark-fill") %><%= hunting %> hunting</span>
+      <% end %>
+      <span class="cs-status cs-status-missing"><%= icon("dash-circle-dotted") %><%= group.issues.size %> missing</span>
+    </span>
+    <%= icon("chevron-right", class: "cs-gap-chevron") %>
+  </summary>
+
+  <%# Desktop: a table of the missing issues. %>
+  <table class="table cs-data-table cs-gap-table d-none d-md-table mb-0">
+    <caption class="visually-hidden">Missing issues of <%= group.name %></caption>
+    <thead>
+      <tr>
+        <th scope="col"><span class="visually-hidden">Cover</span></th>
+        <th scope="col">No.</th>
+        <th scope="col">Title</th>
+        <th scope="col">Cover date</th>
+        <th scope="col">Cover artist</th>
+        <th scope="col"><span class="visually-hidden">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% shown.each do |issue| %>
+        <tr>
+          <td><%= render "shared/cover", tone: group.tone, css: "cs-thumb-xs is-out" %></td>
+          <td class="cs-issue-no">#<%= issue.issue %></td>
+          <th scope="row"><%= render "gaps/issue_title", group: group, issue: issue %></th>
+          <td class="cs-issue-no text-nowrap"><%= issue.cover_date.strftime("%b %Y") %></td>
+          <td><%= issue.artists %></td>
+          <td><%= render "gaps/actions", group: group, issue: issue %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%# Phones: the same issues as a list. %>
+  <ul class="cs-gap-list d-md-none" aria-label="Missing issues of <%= group.name %>">
+    <% shown.each do |issue| %>
+      <li>
+        <%= render "shared/cover", tone: group.tone, css: "cs-thumb-xs is-out" %>
+        <div class="cs-grow">
+          <p class="mb-0">
+            <span class="cs-issue-no cs-missing-no">#<%= issue.issue %></span>
+            <%= render "gaps/issue_title", group: group, issue: issue %>
+          </p>
+          <p class="small text-body-secondary mb-2">
+            <span class="cs-issue-no"><%= issue.cover_date.strftime("%b %Y") %></span> · Cover: <%= issue.artists %>
+          </p>
+          <%= render "gaps/actions", group: group, issue: issue %>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+
+  <% if filtering && shown.size < group.issues.size %>
+    <p class="cs-gap-note">Showing <%= shown.size %> of <%= group.issues.size %> missing issues in this series</p>
+  <% end %>
+</details>

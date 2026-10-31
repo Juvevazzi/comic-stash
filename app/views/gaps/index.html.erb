@@ -1,4 +1,62 @@
-<%# Wireframe: Find the gaps placeholder. %>
-<%= render "shared/page_header", title: "Find the gaps", breadcrumbs: [ [ "Dashboard", dashboard_path ] ] %>
+<%# Find the gaps (wireframes: Find the gaps - Desktop / Mobile). Every missing
+    issue, grouped by series. Each series is a <details> that opens and closes
+    without JavaScript; Expand all / Collapse all is the gaps Stimulus controller. %>
+<%= render "shared/page_header", title: "Find the gaps",
+           lead: "#{pluralize(@total_missing, "issue")} missing across #{pluralize(@series_count, "series")}. Tick them off as you find them.",
+           breadcrumbs: [ [ "Dashboard", dashboard_path ] ] %>
 
-<div class="alert alert-info"><%= icon("info-circle") %><div>This page is a placeholder.</div></div>
+<div data-controller="gaps">
+  <%= form_with url: gaps_path, method: :get, class: "cs-gaps-toolbar", role: "search",
+                data: { controller: "auto-submit" } do |f| %>
+    <div class="cs-gaps-search">
+      <%= f.label :q, "Search series and issues", class: "form-label small fw-bold" %>
+      <%= f.search_field :q, value: @q, class: "form-control", placeholder: "Series, issue number or title",
+                         data: { action: "change->auto-submit#submit" } %>
+    </div>
+
+    <div class="cs-gaps-switches">
+      <div class="form-check form-switch">
+        <%= f.check_box :hunt, { checked: @hunt_only, class: "form-check-input", role: "switch",
+                                 data: { action: "change->auto-submit#submit" } }, "1", nil %>
+        <%= f.label :hunt, "Hunt list only (#{@hunt_count})", class: "form-check-label" %>
+      </div>
+      <div class="form-check form-switch">
+        <%= f.check_box :new, { checked: @new_only, class: "form-check-input", role: "switch",
+                                data: { action: "change->auto-submit#submit" } }, "1", nil %>
+        <%= f.label :new, "New releases only (#{@new_count})", class: "form-check-label" %>
+      </div>
+    </div>
+
+    <div class="cs-gaps-sort">
+      <%= f.label :sort, "Sort series by", class: "form-label small fw-bold" %>
+      <%= f.select :sort, [ [ "Closest to complete", "closest" ], [ "Most missing", "most" ], [ "Series A–Z", "az" ] ],
+                   { selected: @sort }, class: "form-select", data: { action: "change->auto-submit#submit" } %>
+    </div>
+
+    <div class="cs-gaps-actions">
+      <button type="submit" class="btn btn-primary" data-gaps-target="apply">Show results</button>
+      <button type="button" class="btn btn-link" hidden data-gaps-target="toggle" data-action="gaps#expandAll">Expand all</button>
+      <button type="button" class="btn btn-link" hidden data-gaps-target="toggle" data-action="gaps#collapseAll">Collapse all</button>
+    </div>
+  <% end %>
+
+  <% if @groups.empty? %>
+    <div class="cs-empty cs-gaps-empty">
+      <p class="fw-bold mb-1">
+        <%= @q.present? ? "Nothing matches “#{@q}”" : "Nothing to show with those switches on" %>
+      </p>
+      <p class="text-body-secondary mb-3">
+        <%= @q.present? ? "Try a series name, an issue number like #12, or part of a title." :
+                          "Use Add to hunt list on any missing issue and it will show up here." %>
+      </p>
+      <%= link_to "Show every gap", gaps_path(sort: @sort), class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+
+  <div class="cs-gap-groups">
+    <% @groups.each_with_index do |(group, shown), index| %>
+      <%= render "gaps/group", group: group, shown: shown,
+                 open: @filtering || index < 2, filtering: @filtering %>
+    <% end %>
+  </div>
+</div>
