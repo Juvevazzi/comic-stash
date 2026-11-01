@@ -1,4 +1,79 @@
-<%# Wireframe: Help placeholder. %>
-<%= render "shared/page_header", title: "How can we help?" %>
+<%# Help (wireframe: Help - Desktop). Answers filter by topic and by a search,
+    both in the URL like every list in the app. Each answer is a <details>,
+    so it opens and closes without JavaScript. %>
+<% content_for :title, "Help" %>
+<% filtering = @q.present? || @topic %>
 
-<div class="alert alert-info"><%= icon("info-circle") %><div>This page is a placeholder.</div></div>
+<section class="cs-help-hero">
+  <span class="cs-caption mb-2">Help</span>
+  <h1>How can we help?</h1>
+  <%= form_with url: help_path, method: :get, role: "search", class: "cs-help-search" do |f| %>
+    <%= hidden_field_tag :topic, @topic, id: nil if @topic %>
+    <%= f.label :q, "Search help", class: "visually-hidden" %>
+    <div class="input-group input-group-lg">
+      <span class="input-group-text"><%= icon("search") %></span>
+      <%= f.search_field :q, value: @q, class: "form-control", placeholder: "Search help, e.g. export, hunt list" %>
+      <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+  <% end %>
+</section>
+
+<div class="cs-help">
+  <div>
+    <nav class="cs-help-topics" aria-label="Topics">
+      <%= link_to "All topics", help_path(q: @q.presence), class: "btn btn-sm cs-chip-toggle #{"active" unless @topic}",
+                  "aria-current": ("page" unless @topic) %>
+      <% PagesController::HELP_TOPICS.each do |key, label| %>
+        <%= link_to label, help_path(topic: key, q: @q.presence), class: "btn btn-sm cs-chip-toggle #{"active" if @topic == key}",
+                    "aria-current": ("page" if @topic == key) %>
+      <% end %>
+    </nav>
+
+    <p class="small text-body-secondary" role="status">
+      <%= filtering ? "#{pluralize(@answers.size, "answer")} found" : "#{pluralize(@answers.size, "answer")} to common questions" %>
+    </p>
+
+    <% if @answers.empty? %>
+      <div class="cs-empty cs-gaps-empty">
+        <p class="fw-bold mb-1">No answers match that</p>
+        <p class="text-body-secondary mb-3">Try another word, or ask us directly.</p>
+        <%= link_to "Show all answers", help_path, class: "btn btn-secondary" %>
+      </div>
+    <% else %>
+      <div class="cs-faq">
+        <% @answers.each_with_index do |(topic, question, answer), index| %>
+          <details class="cs-disclosure" <%= "open" if filtering || index.zero? %>>
+            <summary>
+              <h2 class="h6 mb-0">
+                <span class="d-block small fw-normal text-body-secondary"><%= PagesController::HELP_TOPICS[topic] %></span>
+                <%= highlight(question, @q) %>
+              </h2>
+            </summary>
+            <p class="cs-faq-answer"><%= highlight(answer, @q) %></p>
+          </details>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="cs-help-side">
+    <aside class="cs-panel p-4" aria-labelledby="contact-title">
+      <h2 id="contact-title" class="h5">Still stuck?</h2>
+      <p>Email us and a real person will get back to you, usually within [RESPONSE TIME].</p>
+      <%= mail_to "[SUPPORT EMAIL]", class: "btn btn-primary mb-3" do %><%= icon("envelope") %> Email us<% end %>
+      <p class="small text-body-secondary mb-0">
+        Spotted wrong issue details? Those come from
+        <%= link_to "https://metron.cloud/", target: "_blank", rel: "noopener" do %>Metron<span class="visually-hidden"> (opens in a new tab)</span><% end %>.
+        Reporting them there fixes them for everyone.
+      </p>
+    </aside>
+
+    <nav class="cs-help-links" aria-labelledby="jump-title">
+      <h2 id="jump-title" class="h6">Jump straight in</h2>
+      <%= link_to new_comic_path do %><%= icon("plus-lg") %> Add comics<% end %>
+      <%= link_to gaps_path do %><%= icon("dash-circle-dotted") %> Find the gaps<% end %>
+      <%= link_to profile_path do %><%= icon("person") %> Your profile and data<% end %>
+      <%= link_to forgot_password_path do %><%= icon("key") %> Reset your password<% end %>
+    </nav>
+  </div>
+</div>

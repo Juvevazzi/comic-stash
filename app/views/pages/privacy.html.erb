@@ -1,4 +1,60 @@
-<%# Wireframe: Privacy placeholder. %>
-<%= render "shared/page_header", title: "Privacy policy" %>
+<%# Privacy notice, laid out like Terms. Words in [BRACKETS] are placeholders
+    to fill in before Comic Stash goes live; have the final text checked
+    against GDPR before real users sign up. %>
+<% contents = [ [ "who", "Who we are" ], [ "collect", "What we collect" ], [ "why", "Why we use it" ],
+                [ "cookies", "Cookies and your browser" ], [ "sharing", "Who we share it with" ],
+                [ "keeping", "How long we keep it" ], [ "rights", "Your rights" ], [ "security", "Keeping it safe" ],
+                [ "changes", "Changes to this notice" ], [ "contact", "Contact us" ] ] %>
 
-<div class="alert alert-info"><%= icon("info-circle") %><div>This page is a placeholder.</div></div>
+<%= render "pages/legal", title: "Privacy notice", updated: "[DATE]", see_also: [ "Terms of use", terms_path ],
+           contents: contents,
+           short_version: [ "We keep only what Comic Stash needs: your name, email, password and your collection.",
+                            "We never sell your data or show you ads.",
+                            "You can export or delete everything yourself, from your profile." ] do %>
+
+  <%= legal_section(contents, "who") do %>
+    <p>Comic Stash is run by [OPERATOR NAME], [ADDRESS] (“we”, “us”). We are the controller of the personal data described here.</p>
+  <% end %>
+
+  <%= legal_section(contents, "collect") do %>
+    <ul>
+      <li><strong>Account details:</strong> your display name, email address and password. Passwords are stored only as a secure hash, never as the text you typed.</li>
+      <li><strong>Your collection:</strong> the series and issues you add, what you own and miss, your hunt list and your preferences.</li>
+      <li><strong>Technical data:</strong> server logs with your IP address, browser and the pages requested, used to keep the service running and secure.</li>
+    </ul>
+  <% end %>
+
+  <%= legal_section(contents, "why") do %>
+    <p>We use your account details and collection to provide Comic Stash to you (performing our contract with you). We send the email alerts you switch on with your consent, which you can withdraw in <%= link_to "Notifications", profile_path(anchor: "notifications") %> at any time. We keep logs because we have a legitimate interest in running a secure, reliable service.</p>
+  <% end %>
+
+  <%= legal_section(contents, "cookies") do %>
+    <p>We use one essential cookie to keep you logged in. Your light or dark theme is remembered in your own browser (local storage) and is never sent to us. We use no advertising or tracking cookies.</p>
+  <% end %>
+
+  <%= legal_section(contents, "sharing") do %>
+    <p>We use a small number of service providers, who process data only on our instructions: [HOSTING PROVIDER] to run the app and [EMAIL PROVIDER] to send emails. Issue details are fetched from Metron, but we never send Metron anything about you.</p>
+    <p>We do not sell your data, and we only share it with others if the law requires us to.</p>
+  <% end %>
+
+  <%= legal_section(contents, "keeping") do %>
+    <p>We keep your account and collection until you delete your account. Deleted data is removed from our live systems straight away and from backups within [BACKUP PERIOD]. Server logs are kept for [LOG PERIOD].</p>
+  <% end %>
+
+  <%= legal_section(contents, "rights") do %>
+    <p>Under data protection law you can ask to see, correct, delete or take a copy of your data, and object to how we use it. Two of these you can do yourself at any time: <%= link_to "Export CSV", profile_path(anchor: "data") %> gives you a copy of your collection, and <%= link_to "Delete account", profile_path(anchor: "account") %> erases it.</p>
+    <p>For anything else, email [CONTACT EMAIL]. If you are unhappy with our answer, you can complain to the Data Protection Commission (Ireland) or the data protection authority where you live.</p>
+  <% end %>
+
+  <%= legal_section(contents, "security") do %>
+    <p>Comic Stash is only served over HTTPS, passwords are hashed, and access to our systems is limited to the people who run the service.</p>
+  <% end %>
+
+  <%= legal_section(contents, "changes") do %>
+    <p>If we change this notice in a way that matters, we will email you before the change takes effect.</p>
+  <% end %>
+
+  <%= legal_section(contents, "contact") do %>
+    <p>Questions about your data? Email [CONTACT EMAIL] or visit <%= link_to "Help", help_path %>.</p>
+  <% end %>
+<% end %>

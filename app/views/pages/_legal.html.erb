@@ -1,0 +1,33 @@
+<%# Shared layout for Terms and Privacy: the contents list on the left (on
+    top on phones), the document on the right. Locals: title, updated,
+    see_also ([label, path]), short_version (list of sentences), contents
+    ([id, heading] pairs); the block is the numbered sections. %>
+<% content_for :title, title %>
+<div class="cs-legal">
+  <nav class="cs-legal-contents" aria-labelledby="contents-title">
+    <h2 id="contents-title" class="cs-credits-label">On this page</h2>
+    <ol>
+      <% contents.each do |id, heading| %>
+        <li><%= link_to heading, "##{id}" %></li>
+      <% end %>
+    </ol>
+  </nav>
+
+  <article class="cs-legal-article">
+    <h1><%= title %></h1>
+    <p class="text-body-secondary">
+      Last updated <%= updated %> · See also our <%= link_to see_also.first, see_also.last %>
+    </p>
+
+    <aside class="cs-legal-short" aria-labelledby="short-title">
+      <h2 id="short-title" class="cs-caption mb-2">The short version</h2>
+      <ul class="mb-0">
+        <% short_version.each do |line| %>
+          <li><%= line %></li>
+        <% end %>
+      </ul>
+    </aside>
+
+    <%= yield %>
+  </article>
+</div>
