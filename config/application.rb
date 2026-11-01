@@ -16,6 +16,10 @@ module ComicStash
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    # Render error pages with ErrorsController (and the app's own layout and
+    # styles) instead of the static files in public/.
+    config.exceptions_app = routes
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
