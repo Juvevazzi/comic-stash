@@ -1,0 +1,33 @@
+<%# Your data: export, import and where issue details come from. %>
+<section id="data" class="cs-profile-section" aria-labelledby="data-title">
+  <h2 id="data-title" class="h4 mb-1">Your data</h2>
+  <p class="text-body-secondary">Your collection is yours. Take it with you any time.</p>
+
+  <ul class="cs-settings">
+    <li class="cs-setting">
+      <span class="cs-grow">
+        <span class="fw-bold d-block">Export your collection</span>
+        <span class="small text-body-secondary">Every series and issue, with what's owned, missing and on your hunt list, as a CSV file.</span>
+      </span>
+      <%= link_to profile_export_path(format: :csv), class: "btn btn-secondary", data: { turbo: false } do %>
+        <%= icon("download") %> Export CSV
+      <% end %>
+    </li>
+    <li class="cs-setting">
+      <span class="cs-grow">
+        <span class="fw-bold d-block">Import from a CSV</span>
+        <span class="small text-body-secondary">Bring in a list from a spreadsheet or another app.</span>
+      </span>
+      <%= link_to new_comic_path(anchor: "bulk-add"), class: "btn btn-secondary" do %>
+        <%= icon("upload") %> Import
+      <% end %>
+    </li>
+    <li class="cs-setting">
+      <span class="cs-grow">
+        <span class="fw-bold d-block">Issue data</span>
+        <span class="small text-body-secondary">Covers, credits and release dates come from Metron.</span>
+      </span>
+      <span class="cs-status cs-status-owned"><%= icon("check2") %>Connected</span>
+    </li>
+  </ul>
+</section>

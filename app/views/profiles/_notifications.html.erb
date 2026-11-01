@@ -1,0 +1,19 @@
+<%# Email notifications, saved the same way as Preferences. %>
+<section id="notifications" class="cs-profile-section" aria-labelledby="notifications-title">
+  <h2 id="notifications-title" class="h4 mb-1">Notifications</h2>
+  <p class="text-body-secondary">Emails to <strong class="text-body"><%= @account.email_address %></strong>. No spam, ever.</p>
+
+  <%= form_with scope: :preferences, url: profile_preferences_path, method: :patch,
+                data: { controller: "auto-submit" } do |f| %>
+    <%= hidden_field_tag :section, "notifications", id: nil %>
+    <ul class="cs-settings">
+      <%= render "profiles/switch", form: f, field: :new_issues, label: "New issues in your series",
+                 description: "An email when a new issue of a series you collect is out.", checked: @preferences.new_issues %>
+      <%= render "profiles/switch", form: f, field: :hunt_reminder, label: "Hunt list reminder",
+                 description: "A short list of what to look for, every Wednesday morning.", checked: @preferences.hunt_reminder %>
+      <%= render "profiles/switch", form: f, field: :monthly_report, label: "Monthly gap report",
+                 description: "How your runs are going and what's still missing.", checked: @preferences.monthly_report %>
+    </ul>
+    <noscript><%= f.submit "Save notifications", class: "btn btn-primary mt-3" %></noscript>
+  <% end %>
+</section>
