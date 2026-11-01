@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   post "signup", to: "registrations#create"
   get "forgot-password", to: "passwords#new", as: :forgot_password
   post "forgot-password", to: "passwords#create"
+  delete "logout", to: "sessions#destroy", as: :logout
 
   # Collection full CRUD
   # create, bulk and destroy are front-end stubs for now (they redirect back).
@@ -19,7 +20,12 @@ Rails.application.routes.draw do
   resources :series, only: :index
   get "gaps", to: "gaps#index", as: :gaps
   get "search", to: "search#index", as: :search
-  resource :profile, only: :show
+
+  # Your profile: details (update), delete account (destroy), preferences and the CSV export.
+  resource :profile, only: %i[show update destroy] do
+    resource :preferences, only: :update # PATCH /profile/preferences
+    resource :export, only: :show # GET /profile/export.csv
+  end
 
   # Static content
   get "help", to: "pages#help", as: :help

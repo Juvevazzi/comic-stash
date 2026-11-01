@@ -1,0 +1,17 @@
+<%# Who you are and your collection in four numbers. %>
+<section class="cs-panel cs-profile-summary" aria-label="Profile summary">
+  <span class="cs-profile-avatar" aria-hidden="true"><%= @account.initials %></span>
+  <div class="cs-grow">
+    <h1 class="mb-1">Your profile</h1>
+    <p class="fw-bold mb-0"><%= @account.name %></p>
+    <p class="small text-body-secondary mb-0">
+      <%= @account.email_address %> · Collecting since <span class="cs-issue-no"><%= @account.member_since.strftime("%b %Y") %></span>
+    </p>
+  </div>
+  <dl class="cs-profile-stats">
+    <div class="cs-stat"><dt class="cs-stat-label">Series</dt><dd class="cs-stat-value"><%= @stats.series_count %></dd></div>
+    <div class="cs-stat"><dt class="cs-stat-label">Comics</dt><dd class="cs-stat-value"><%= @stats.comic_count %></dd></div>
+    <div class="cs-stat is-missing"><dt class="cs-stat-label">Missing</dt><dd class="cs-stat-value"><%= @stats.missing_count %></dd></div>
+    <div class="cs-stat"><dt class="cs-stat-label">Hunting</dt><dd class="cs-stat-value"><%= SampleStash::HUNTING.size %></dd></div>
+  </dl>
+</section>

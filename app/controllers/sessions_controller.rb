@@ -12,4 +12,9 @@ class SessionsController < ApplicationController
   def create
     redirect_to dashboard_path, notice: "Welcome back."
   end
+
+  # DELETE /logout
+  def destroy
+    redirect_to login_path, notice: "You're logged out. Your collection is safe until you're back."
+  end
 end

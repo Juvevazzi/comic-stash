@@ -976,3 +976,209 @@
   color: inherit;
   box-shadow: inset 0 -2px 0 var(--yellow);
 }
+
+// User profile ------------------------------------------------------------------
+
+// Summary: avatar, name and email, and four collection numbers.
+.cs-profile-summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+  margin-bottom: var(--space-4);
+  padding: var(--space-3);
+
+  @include media-breakpoint-up(lg) {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    padding: var(--space-4);
+  }
+}
+.cs-profile-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  background: var(--yellow);
+  color: var(--on-yellow);
+  border: 2px solid var(--on-yellow);
+  border-radius: 50%;
+  font: 800 1.5rem/1 var(--font-display);
+
+  @include media-breakpoint-up(lg) {
+    width: 5.5rem;
+    height: 5.5rem;
+    font-size: 2rem;
+  }
+}
+.cs-profile-stats {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+
+  dd {
+    margin: 0;
+    font-size: 1.75rem;
+  }
+
+  @include media-breakpoint-up(lg) {
+    grid-column: auto;
+    gap: var(--space-4);
+  }
+}
+
+// Desktop: a sticky menu of sections on the left. Phones: one column.
+.cs-profile {
+  display: grid;
+  gap: var(--space-4);
+
+  @include media-breakpoint-up(lg) {
+    grid-template-columns: 12rem minmax(0, 1fr);
+    align-items: start;
+  }
+}
+.cs-profile-nav {
+  display: none;
+
+  @include media-breakpoint-up(lg) {
+    position: sticky;
+    top: 6rem;
+    display: grid;
+    gap: var(--space-1);
+
+    a {
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      color: var(--ink);
+      font-weight: 700;
+      text-decoration: none;
+
+      &:hover {
+        background: var(--paper-sunken);
+      }
+    }
+  }
+}
+.cs-profile-sections {
+  display: grid;
+  gap: var(--space-4);
+}
+.cs-profile-section {
+  padding: var(--space-4) var(--space-3);
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  scroll-margin-top: 6rem; // clear of the sticky navbar when a menu link jumps here
+
+  @include media-breakpoint-up(md) {
+    padding: var(--space-4);
+  }
+}
+
+// Rows of settings: words on the left, a switch or button on the right.
+.cs-settings {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cs-setting {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--line);
+
+  .form-check-input {
+    width: 2.75em;
+    height: 1.5em;
+    margin: 0;
+    float: none;
+  }
+  // A row with a switch keeps it on the right, even on phones.
+  &:has(.form-switch) {
+    flex-wrap: nowrap;
+  }
+  .cs-grow {
+    min-width: 0;
+  }
+}
+
+// Appearance: three cards that work as radio buttons (btn-check).
+.cs-appearance {
+  display: grid;
+  gap: var(--space-2);
+
+  @include media-breakpoint-up(md) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.cs-appearance-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: 100%;
+  padding: var(--space-3);
+  background: var(--paper-raised);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+.btn-check:checked + .cs-appearance-option {
+  background: var(--cyan-soft);
+  border-color: var(--ink);
+}
+.btn-check:focus-visible + .cs-appearance-option {
+  box-shadow:
+    0 0 0 2px var(--paper),
+    0 0 0 4px var(--focus);
+}
+[class^="cs-swatch-"] {
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--line-strong);
+  border-radius: 50%;
+}
+.cs-swatch-light {
+  background: #f6f2e9;
+}
+.cs-swatch-dark {
+  background: #141318;
+}
+.cs-swatch-system {
+  background: linear-gradient(135deg, #f6f2e9 50%, #141318 50%);
+}
+.cs-currency {
+  max-width: 20rem;
+}
+
+// Delete account: a <details> that opens into the confirmation form.
+.cs-danger-zone {
+  border-top: 1px solid var(--line);
+
+  > summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    padding: var(--space-3) 0;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+}
+.cs-danger-panel {
+  padding: var(--space-3);
+  background: var(--danger-soft);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-md);
+}
+.cs-confirm-input {
+  max-width: 18rem;
+}

@@ -1,4 +1,32 @@
-<%# Wireframe: Profile placeholder. %>
-<%= render "shared/page_header", title: "Your profile", breadcrumbs: [ [ "Dashboard", dashboard_path ] ] %>
+<%# Your profile (wireframes: User profile - Desktop / Mobile). A summary at
+    the top, then five sections with a menu of them on the left on desktop.
+    Each section is its own form or set of links, so saving one never
+    touches the others. %>
+<% content_for :title, "Your profile" %>
+<% sections = { "profile" => "Profile", "preferences" => "Preferences", "notifications" => "Notifications",
+                "data" => "Your data", "account" => "Account" } %>
 
-<div class="alert alert-info"><%= icon("info-circle") %><div>This page is a placeholder.</div></div>
+<nav aria-label="Breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><%= link_to "Dashboard", dashboard_path %></li>
+    <li class="breadcrumb-item active" aria-current="page">Your profile</li>
+  </ol>
+</nav>
+
+<%= render "profiles/summary" %>
+
+<div class="cs-profile">
+  <nav class="cs-profile-nav" aria-label="Profile sections">
+    <% sections.each do |id, label| %>
+      <%= link_to label, "##{id}" %>
+    <% end %>
+  </nav>
+
+  <div class="cs-profile-sections">
+    <%= render "profiles/details" %>
+    <%= render "profiles/preferences" %>
+    <%= render "profiles/notifications" %>
+    <%= render "profiles/data" %>
+    <%= render "profiles/account" %>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+<%# One on/off setting: label and description on the left, a switch on the
+    right. Locals: form, field, label, description, checked. %>
+<li class="cs-setting">
+  <span class="cs-grow">
+    <%= form.label field, label, class: "fw-bold d-block" %>
+    <span id="<%= field %>-desc" class="small text-body-secondary"><%= description %></span>
+  </span>
+  <span class="form-check form-switch m-0">
+    <%= form.check_box field, { checked: checked, class: "form-check-input", role: "switch",
+                                aria: { describedby: "#{field}-desc" },
+                                data: { action: "change->auto-submit#submit" } } %>
+  </span>
+</li>
