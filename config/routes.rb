@@ -32,5 +32,11 @@ Rails.application.routes.draw do
   get "terms", to: "pages#terms", as: :terms
   get "privacy", to: "pages#privacy", as: :privacy
 
+  # Branded error pages (config.exceptions_app in config/application.rb).
+  # via: :all because a failed POST or PATCH arrives here with its own method.
+  %w[404 422 500].each do |code|
+    match code, to: "errors#show", defaults: { code: code }, via: :all
+  end
+
   get "up" => "rails/health#show", as: :rails_health_check
 end

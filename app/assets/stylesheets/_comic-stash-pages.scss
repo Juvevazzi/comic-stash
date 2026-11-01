@@ -1182,3 +1182,169 @@
 .cs-confirm-input {
   max-width: 18rem;
 }
+
+// Help, Terms, Privacy and error pages -------------------------------------------
+
+// Help: a halftone band with the search, then answers and a sidebar.
+.cs-help-hero {
+  margin-bottom: var(--space-4);
+  padding: var(--space-5) var(--space-3);
+  text-align: center;
+  background-color: var(--cyan-soft);
+  background-image: radial-gradient(var(--line) 15%, transparent 16%);
+  background-size: 10px 10px;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-lg);
+}
+.cs-help-search {
+  max-width: 40rem;
+  margin: var(--space-3) auto 0;
+}
+.cs-help {
+  display: grid;
+  gap: var(--space-4);
+
+  @include media-breakpoint-up(lg) {
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    align-items: start;
+  }
+}
+.cs-help-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.cs-faq {
+  display: grid;
+  gap: var(--space-2);
+
+  summary {
+    padding-block: var(--space-2);
+  }
+}
+.cs-faq-answer {
+  margin: 0;
+  padding: 0 var(--space-3) var(--space-3);
+}
+.cs-faq mark {
+  padding: 0 1px;
+  background: var(--yellow-soft);
+  color: inherit;
+  box-shadow: inset 0 -2px 0 var(--yellow);
+}
+.cs-help-side {
+  display: grid;
+  gap: var(--space-4);
+}
+.cs-help-links {
+  display: grid;
+  gap: var(--space-1);
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 2.75rem;
+    font-weight: 700;
+  }
+}
+
+// Terms and Privacy: contents on the left (sticky), the document on the right.
+.cs-legal {
+  display: grid;
+  gap: var(--space-4);
+
+  @include media-breakpoint-up(lg) {
+    grid-template-columns: 16rem minmax(0, 46rem);
+    align-items: start;
+  }
+}
+.cs-legal-contents {
+  padding: var(--space-3);
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+
+  ol {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+  li + li {
+    margin-top: var(--space-1);
+  }
+
+  @include media-breakpoint-up(lg) {
+    position: sticky;
+    top: var(--space-4);
+  }
+}
+.cs-legal-article {
+  line-height: 1.65;
+}
+.cs-legal-short {
+  margin-bottom: var(--space-4);
+  padding: var(--space-3);
+  background: var(--yellow-soft);
+  border-left: 4px solid var(--yellow);
+  border-radius: var(--radius-md);
+}
+.cs-legal-section {
+  margin-top: var(--space-4);
+  scroll-margin-top: var(
+    --space-4
+  ); // land with a little space above the heading
+
+  h2 {
+    margin-bottom: var(--space-2);
+  }
+}
+.cs-legal-no {
+  font-family: var(--font-mono);
+  color: var(--ink-muted);
+}
+
+// Error pages: a comic panel with the code beside the explanation.
+.cs-error {
+  display: grid;
+  gap: var(--space-4);
+  align-items: center;
+  max-width: 64rem;
+  margin: var(--space-4) auto;
+
+  @include media-breakpoint-up(md) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+}
+.cs-error-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  aspect-ratio: 4 / 3;
+  padding: var(--space-3);
+  background-color: var(--yellow);
+  border: 3px solid var(--on-yellow); // stays ink-black in dark mode, like the yellow
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-panel);
+  overflow: hidden;
+}
+.cs-error-code {
+  align-self: center;
+  font: 900 clamp(5rem, 18vw, 9rem)/1 var(--font-display);
+  font-variation-settings: "wdth" 125;
+  color: var(--on-yellow);
+  text-shadow: 6px 6px 0 #fff;
+}
+.cs-error-sfx {
+  align-self: flex-end;
+  padding: var(--space-1) var(--space-3);
+  background: #fff;
+  color: #9a1450;
+  border: 2px solid var(--on-yellow);
+  font: 800 1.5rem/1.2 var(--font-display);
+  text-transform: uppercase;
+  transform: rotate(-4deg);
+}

@@ -1,4 +1,65 @@
-<%# Wireframe: Terms placeholder. %>
-<%= render "shared/page_header", title: "Terms of use" %>
+<%# Terms of use (wireframe: Terms - Desktop). Words in [BRACKETS] are
+    placeholders to fill in before Comic Stash goes live. %>
+<% contents = [ [ "about", "About these terms" ], [ "account", "Your account" ], [ "collection", "Your collection" ],
+                [ "sources", "Issue information from other sources" ], [ "fair-use", "Using Comic Stash fairly" ],
+                [ "changes", "Changes to the service and these terms" ], [ "closing", "Closing your account" ],
+                [ "liability", "Our responsibility to you" ], [ "law", "Governing law" ], [ "contact", "Contact us" ] ] %>
 
-<div class="alert alert-info"><%= icon("info-circle") %><div>This page is a placeholder.</div></div>
+<%= render "pages/legal", title: "Terms of use", updated: "[DATE]", see_also: [ "Privacy notice", privacy_path ],
+           contents: contents,
+           short_version: [ "Your collection belongs to you. You can export it or delete it whenever you like.",
+                            "Keep your login to yourself and use Comic Stash fairly.",
+                            "Issue details come from outside sources, so treat them as a guide, not gospel." ] do %>
+
+  <%= legal_section(contents, "about") do %>
+    <p>These terms cover your use of Comic Stash, a tool for cataloguing your comic collection and tracking the issues you are missing. Comic Stash is run by [OPERATOR NAME] (“we”, “us”).</p>
+    <p>By creating an account, you agree to these terms and to our <%= link_to "privacy notice", privacy_path %>. If you do not agree, please do not use Comic Stash.</p>
+  <% end %>
+
+  <%= legal_section(contents, "account") do %>
+    <p>You need to be at least [MINIMUM AGE] to create an account. Use an email address you can access, because that is where we send password resets and any alerts you ask for.</p>
+    <p>You are responsible for keeping your password safe and for what happens under your account. If you think someone else has access, change your password and tell us at [CONTACT EMAIL].</p>
+  <% end %>
+
+  <%= legal_section(contents, "collection") do %>
+    <p>The series, issues, notes and prices you add are yours. We store them only so Comic Stash can show them back to you, work out your gaps and send the reminders you switch on.</p>
+    <p>You can download everything as a CSV file from your <%= link_to "profile", profile_path(anchor: "data") %> at any time.</p>
+  <% end %>
+
+  <%= legal_section(contents, "sources") do %>
+    <p>Details such as titles, credits, release dates and cover images come from third-party databases, mainly Metron. We do our best to keep them accurate, but we cannot promise they are complete or correct.</p>
+    <p>Cover art and characters belong to their publishers and creators. We show covers only to help you recognise your books.</p>
+  <% end %>
+
+  <%= legal_section(contents, "fair-use") do %>
+    <p>Please do not:</p>
+    <ul>
+      <li>try to access other people’s accounts or data</li>
+      <li>scrape, overload or reverse-engineer the service</li>
+      <li>upload anything unlawful or anything you do not have the right to share</li>
+      <li>use Comic Stash to send spam</li>
+    </ul>
+    <p>We may suspend accounts that break these rules. We will tell you why, unless the law stops us.</p>
+  <% end %>
+
+  <%= legal_section(contents, "changes") do %>
+    <p>Comic Stash is a growing project, so features may change or be removed. If we change these terms in a way that matters, we will email you at least [NOTICE PERIOD] before the change takes effect.</p>
+  <% end %>
+
+  <%= legal_section(contents, "closing") do %>
+    <p>You can delete your account from your <%= link_to "profile", profile_path(anchor: "account") %> whenever you like. Your collection and personal details are then deleted as described in our <%= link_to "privacy notice", privacy_path %>.</p>
+  <% end %>
+
+  <%= legal_section(contents, "liability") do %>
+    <p>We provide Comic Stash “as is”. To the extent the law allows, we are not liable for indirect losses, or for decisions you make based on issue information that turns out to be wrong.</p>
+    <p>Nothing in these terms limits any rights you have under consumer law that cannot be limited.</p>
+  <% end %>
+
+  <%= legal_section(contents, "law") do %>
+    <p>These terms are governed by the laws of [JURISDICTION], and disputes will be handled by the courts there, unless your local consumer law gives you the right to go to your own courts.</p>
+  <% end %>
+
+  <%= legal_section(contents, "contact") do %>
+    <p>Questions about these terms? Email [CONTACT EMAIL] or visit <%= link_to "Help", help_path %>.</p>
+  <% end %>
+<% end %>
