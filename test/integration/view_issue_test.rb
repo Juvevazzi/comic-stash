@@ -4,6 +4,7 @@ require "test_helper"
 #   1 = Night Signal #53 (missing)   2 = Night Signal #52 (missing, "Lights Out, Part 4")
 #   3 = Night Signal #48 (owned)
 class ViewIssueTest < ActionDispatch::IntegrationTest
+  setup { sign_in_as users(:ricardo) }
   test "an owned issue shows its details and a remove button" do
     get comic_path(3)
     assert_response :success

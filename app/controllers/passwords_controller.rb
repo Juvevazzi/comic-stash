@@ -14,14 +14,21 @@ class PasswordsController < ApplicationController
   def new
   end
 
-  # POST /forgot-password. Shows "Check your email" whether or not there's
-  # an account, so this page can't be used to find out who has one.
+  # POST /forgot-password. Always goes on to "Check your email", whether or
+  # not there's an account, so this page can't be used to find out who has
+  # one. It redirects rather than renders, because Turbo only follows a form
+  # to a new page when the response is a redirect.
   def create
-    @email = params[:email].to_s.strip.downcase
-    if (user = User.find_by(email_address: @email))
+    email = params[:email].to_s.strip.downcase
+    if (user = User.find_by(email_address: email))
       PasswordsMailer.reset(user).deliver_later
     end
-    render :sent
+    redirect_to password_reset_sent_path, flash: { reset_email: email }
+  end
+
+  # GET /forgot-password/sent. The flash carries the address for one page view.
+  def sent
+    @email = flash[:reset_email]
   end
 
   # GET /passwords/:token/edit

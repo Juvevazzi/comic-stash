@@ -3,6 +3,7 @@ require "test_helper"
 # Add comics: the page has every part of its wireframe, and the stub
 # actions answer the way the real ones will (redirect back with a message).
 class AddComicsTest < ActionDispatch::IntegrationTest
+  setup { sign_in_as users(:ricardo) }
   test "shows the one-comic form, Added just now and the bulk tabs" do
     get new_comic_path
     assert_response :success

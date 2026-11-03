@@ -72,6 +72,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_enqueued_emails 1 do
       post forgot_password_path, params: { email: "RG@example.com" }
     end
+    follow_redirect!
     assert_select "h1", "Check your email"
 
     token = users(:ricardo).password_reset_token
@@ -93,6 +94,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_no_enqueued_emails do
       post forgot_password_path, params: { email: "nobody@example.com" }
     end
+    follow_redirect!
     assert_select "h1", "Check your email"
   end
 

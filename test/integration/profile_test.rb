@@ -3,6 +3,7 @@ require "test_helper"
 # Your profile: the page, the Profile form (with server-side checks),
 # preferences, the CSV export, log out and delete account.
 class ProfileTest < ActionDispatch::IntegrationTest
+  setup { sign_in_as users(:ricardo) }
   test "the profile shows the summary and all five sections" do
     get profile_path
     assert_response :success

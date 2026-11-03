@@ -3,6 +3,7 @@ require "test_helper"
 # View series and View comics: filters, sort and paging all come from the
 # URL, so each test just requests a URL and checks the table it gets back.
 class SeriesAndComicsTest < ActionDispatch::IntegrationTest
+  setup { sign_in_as users(:ricardo) }
   test "series table shows the first page, sorted by name" do
     get series_index_path
     assert_response :success

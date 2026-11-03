@@ -32,7 +32,7 @@
 
     <details class="cs-disclosure mt-3" <%= "open" if @errors.key?(:password) || @errors.key?(:password_challenge) %>>
       <summary>
-        <span>Change password <span class="fw-normal text-body-secondary">· last changed <%= @account.password_changed %></span></span>
+        <span>Change password <span class="fw-normal text-body-secondary">· last changed <%= time_ago_in_words(@account.password_changed_at || @account.created_at) %> ago</span></span>
       </summary>
       <div class="row g-3 p-3">
         <div class="col-md-6">

@@ -4,6 +4,7 @@ require "test_helper"
 # (Night Signal #48 to #53 and Wolf Hours #9 "The Long Night") and
 # 3 catalogue series: 11 results.
 class SearchTest < ActionDispatch::IntegrationTest
+  setup { sign_in_as users(:ricardo) }
   test "with no search term the page asks for one" do
     get search_path
     assert_response :success

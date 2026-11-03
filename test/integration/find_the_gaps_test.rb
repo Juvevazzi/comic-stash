@@ -3,6 +3,7 @@ require "test_helper"
 # Find the gaps: 29 missing issues across 8 series (SampleStash.gap_groups).
 # Search, switches and sort come from the URL, so each test requests a URL.
 class FindTheGapsTest < ActionDispatch::IntegrationTest
+  setup { sign_in_as users(:ricardo) }
   test "every series with gaps, closest to complete first, the first two open" do
     get gaps_path
     assert_response :success
