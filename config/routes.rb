@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   post "forgot-password", to: "passwords#create"
   delete "logout", to: "sessions#destroy", as: :logout
 
+  resources :passwords, param: :token, only: %i[edit update]
+
   # Collection full CRUD
   # create, bulk and destroy are front-end stubs for now (they redirect back).
   resources :comics, only: %i[index show new create update destroy] do
