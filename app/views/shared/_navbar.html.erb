@@ -35,7 +35,7 @@
       <%= render "shared/theme_toggle" %>
 
       <%# Initials are hard-coded until there is a current user. %>
-      <%= link_to "RG", profile_path, class: "cs-avatar", "aria-label": "Your profile" %>
+      <%= link_to Current.user.initials, profile_path, class: "cs-avatar", "aria-label": "Your profile" %>
     </div>
   </div>
 </header>

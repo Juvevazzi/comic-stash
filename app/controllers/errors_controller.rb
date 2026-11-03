@@ -4,6 +4,8 @@
 class ErrorsController < ApplicationController
   layout "public"
 
+  allow_unauthenticated_access only: :show
+
   # A failed form (e.g. an expired one) arrives here as a POST, and checking
   # its CSRF token again would just raise the same error.
   skip_forgery_protection

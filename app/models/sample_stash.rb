@@ -280,18 +280,4 @@ module SampleStash
       CatalogueSeries.new(name: "Glass Saints", meta: "One-shot · 2024 · Inkwell", issue_count: 1, tone: :cyan)
     ]
   end
-  # Profile: the signed-in user and their settings, until there is a real User.
-  Account = Data.define(:name, :email_address, :initials, :member_since, :password_changed)
-  Preferences = Data.define(:appearance, :currency, :show_prices, :count_variants,
-                            :new_issues, :hunt_reminder, :monthly_report)
-
-  def self.account
-    Account.new(name: "Ricardo Giacovazzi", email_address: "rg@example.com", initials: "RG",
-                member_since: Date.new(2026, 10, 1), password_changed: "3 months ago")
-  end
-
-  def self.preferences
-    Preferences.new(appearance: "system", currency: "EUR", show_prices: true, count_variants: false,
-                    new_issues: true, hunt_reminder: true, monthly_report: false)
-  end
 end

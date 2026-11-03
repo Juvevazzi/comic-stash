@@ -16,6 +16,7 @@ class StaticPagesTest < ActionDispatch::IntegrationTest
   # One generated test per page, so a failure names the page that broke.
   APP_PAGES.each do |path, heading|
     test "#{path} renders inside the app shell" do
+      sign_in_as users(:ricardo)
       get path
       assert_response :success
       assert_select "h1", heading
@@ -32,6 +33,7 @@ class StaticPagesTest < ActionDispatch::IntegrationTest
 
   # The navbar should mark the current section.
   test "navbar marks the current section" do
+    sign_in_as users(:ricardo)
     get "/series"
     assert_select "header.cs-navbar a.active[aria-current=page]", "Series"
   end
@@ -61,18 +63,13 @@ class StaticPagesTest < ActionDispatch::IntegrationTest
   end
 
   # The forgot password page should use the auth layout and nest fields under user.
-  test "log in stub goes to the dashboard" do
-    post login_path, params: { email_address: "rg@example.com", password: "secret123" }
-    assert_redirected_to dashboard_path
-  end
-
-  # The forgot password page should use the auth layout and nest fields under user.
   test "forgot password shows the sent state with the typed email" do
     get forgot_password_path
     assert_select "h1", "Reset your password"
 
     post forgot_password_path, params: { email: "rg@example.com" }
-    assert_response :success
+    assert_redirected_to password_reset_sent_path
+    follow_redirect!
     assert_select "h1", "Check your email"
     assert_select "strong", "rg@example.com"
   end

@@ -1,6 +1,6 @@
 # Your profile (wireframe: User profile). show = the page, update = the
-# Profile form, destroy = Delete account. Front-end stage: the sample
-# account stands in for current_user, and nothing is saved yet.
+# Profile form, destroy = Delete account. Everything here is about the
+# logged-in user, Current.user, so there's no :id in the URL.
 class ProfilesController < ApplicationController
   CONFIRM_PHRASE = "delete my stash".freeze
 
@@ -11,23 +11,21 @@ class ProfilesController < ApplicationController
 
   # PATCH /profile: name, email and (optionally) a new password.
   def update
-    details = params.expect(user: [ :name, :email_address, :password_challenge, :password ])
-    @errors = profile_errors(details)
-
-    if @errors.any?
-      # Show the form again with what was typed and the messages. 422 tells
-      # Turbo to replace the page with this response.
-      @account = @account.with(name: details[:name], email_address: details[:email_address])
-      render :show, status: :unprocessable_content
-    else
+    if @account.update(profile_params)
       redirect_to profile_path, notice: "Saved. Your profile is up to date."
+    else
+      # Show the form again with what was typed and the model's messages.
+      @errors = @account.errors.messages.transform_values(&:first)
+      render :show, status: :unprocessable_content
     end
   end
 
   # DELETE /profile: only when the confirmation phrase was typed exactly.
   def destroy
     if params[:confirm].to_s.strip.downcase == CONFIRM_PHRASE
-      redirect_to login_path, notice: "Your account and your stash have been deleted."
+      terminate_session
+      @account.destroy # and, through dependent: :destroy, everything that belongs to it
+      redirect_to login_path, notice: "Your account and your stash have been deleted.", status: :see_other
     else
       redirect_to profile_path(anchor: "account"), alert: "Type “#{CONFIRM_PHRASE}” to delete your account."
     end
@@ -36,23 +34,21 @@ class ProfilesController < ApplicationController
   private
 
   def load_profile
-    @account = SampleStash.account
-    @preferences = SampleStash.preferences
-    @stats = SampleStash.stats
+    @account = Current.user
+    @preferences = Current.user
+    @stats = SampleStash.stats # real numbers in step 22
     @errors = {}
   end
 
-  # Field => message for everything wrong with the submitted details.
-  def profile_errors(details)
-    errors = {}
-    errors[:name] = "Enter the name to show on your profile." if details[:name].blank?
-    unless details[:email_address].to_s.match?(URI::MailTo::EMAIL_REGEXP)
-      errors[:email_address] = "Enter an email like name@example.com."
+  # Leaving the new password empty means "don't change it". When there is a
+  # new password, the current one is always checked: has_secure_password
+  # compares password_challenge with the saved password, and "" never matches.
+  def profile_params
+    details = params.expect(user: [ :name, :email_address, :password_challenge, :password ])
+    if details[:password].blank?
+      details.except(:password, :password_challenge)
+    else
+      details.merge(password_challenge: details[:password_challenge].to_s)
     end
-    if details[:password].present?
-      errors[:password_challenge] = "Enter your current password to change it." if details[:password_challenge].blank?
-      errors[:password] = "Use at least 8 characters, including a number." unless details[:password].match?(/\A(?=.*\d).{8,}\z/)
-    end
-    errors
   end
 end

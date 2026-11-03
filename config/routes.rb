@@ -10,7 +10,10 @@ Rails.application.routes.draw do
   post "signup", to: "registrations#create"
   get "forgot-password", to: "passwords#new", as: :forgot_password
   post "forgot-password", to: "passwords#create"
+  get "forgot-password/sent", to: "passwords#sent", as: :password_reset_sent
   delete "logout", to: "sessions#destroy", as: :logout
+
+  resources :passwords, param: :token, only: %i[edit update]
 
   # Collection full CRUD
   # create, bulk and destroy are front-end stubs for now (they redirect back).
