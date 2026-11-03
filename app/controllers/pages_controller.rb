@@ -2,6 +2,8 @@
 class PagesController < ApplicationController
   layout "public"
 
+  allow_unauthenticated_access only: %i[help terms privacy]
+
   HELP_TOPICS = { "start" => "Getting started", "adding" => "Adding comics",
                   "gaps" => "Gaps and hunting", "account" => "Account and data" }.freeze
 

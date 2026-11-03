@@ -1,9 +1,36 @@
-<h1>Update your password</h1>
+<%# Choose a new password: the page the reset email links to. The token in
+    the URL says whose password it is, so the page never shows the email. %>
+<% content_for :title, "Choose a new password" %>
+<% content_for :main_class, "cs-stage cs-halftone" %>
 
-<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
+<section class="cs-panel cs-stage-card">
+  <%= form_with url: password_path(params[:token]), method: :put, class: "d-flex flex-column gap-3",
+                "aria-labelledby": "new-password-title", data: { controller: "password-rules" } do |f| %>
+    <div class="d-flex flex-column align-items-start gap-2">
+      <span class="cs-caption">Back to the long box</span>
+      <h1 id="new-password-title" class="mb-0">Choose a new password</h1>
+      <p class="text-body-secondary mb-0">You'll be logged out everywhere else. Then log in with the new one.</p>
+    </div>
 
-<%= form_with url: password_path(params[:token]), method: :put do |form| %>
-  <%= form.password_field :password, required: true, autocomplete: "new-password", placeholder: "Enter new password", maxlength: 72 %><br>
-  <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password", placeholder: "Repeat new password", maxlength: 72 %><br>
-  <%= form.submit "Save" %>
-<% end %>
+    <div>
+      <%= f.label :password, "New password", class: "form-label fw-bold" %>
+      <%= render "shared/password_field", form: f, field: :password, autocomplete: "new-password",
+                                          describedby: "password-rules" %>
+      <ul id="password-rules" class="cs-password-rules">
+        <li data-password-rules-target="rule" data-pattern=".{8,}">
+          <%= icon("circle") %><%= icon("check-circle") %>At least 8 characters
+        </li>
+        <li data-password-rules-target="rule" data-pattern="[0-9]">
+          <%= icon("circle") %><%= icon("check-circle") %>Includes a number
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <%= f.label :password_confirmation, "Type it again", class: "form-label fw-bold" %>
+      <%= render "shared/password_field", form: f, field: :password_confirmation, autocomplete: "new-password" %>
+    </div>
+
+    <%= f.submit "Save new password", class: "btn btn-primary btn-lg w-100" %>
+  <% end %>
+</section>

@@ -36,22 +36,34 @@
 
 <%# scope: :user nests fields as user[name], user[email_address]..., ready for
     params.expect(user: [...]) in RegistrationsController#create. %>
-<%= form_with scope: :user, url: signup_path, class: "cs-panel cs-auth-card-form",
+<%# form_with model: @user fills the fields back in when the form comes back
+    with errors (except the password, which is never sent back). The scope
+    is still user, so the fields are user[name], user[email_address]... %>
+<%= form_with model: @user, url: signup_path, class: "cs-panel cs-auth-card-form",
               "aria-labelledby": "signup-title", data: { controller: "password-rules" } do |f| %>
   <div>
     <h1 id="signup-title" class="mb-2">Create your account</h1>
     <p class="text-body-secondary mb-0">Free to start. Your collection stays yours.</p>
   </div>
 
+  <% if @errors.any? %>
+    <div class="alert alert-danger mb-0" role="alert">
+      <%= icon("exclamation-octagon") %>
+      <div><strong>Your account wasn't created.</strong> Check the <%= pluralize(@errors.size, "field") %> marked below.</div>
+    </div>
+  <% end %>
+
   <div>
     <%= f.label :name, "Your name", class: "form-label fw-bold" %>
-    <%= f.text_field :name, class: "form-control", autocomplete: "name", required: true %>
+    <%= f.text_field :name, class: field_class(:name), aria: field_aria(:name), autocomplete: "name", required: true %>
+    <%= field_error(:name) %>
   </div>
 
   <div>
     <%= f.label :email_address, "Email", class: "form-label fw-bold" %>
-    <%= f.email_field :email_address, class: "form-control", autocomplete: "email", required: true,
-                      placeholder: "you@example.com" %>
+    <%= f.email_field :email_address, class: field_class(:email_address), aria: field_aria(:email_address),
+                      autocomplete: "email", required: true, placeholder: "you@example.com" %>
+    <%= field_error(:email_address) %>
   </div>
 
   <div>
@@ -68,11 +80,15 @@
     </ul>
   </div>
 
-  <div class="form-check d-flex align-items-start gap-2 ps-0 pt-2">
-    <%= f.check_box :terms_accepted, class: "form-check-input m-0 flex-shrink-0", required: true %>
-    <%= f.label :terms_accepted, class: "form-check-label small" do %>
-      I agree to the <%= link_to "Terms", terms_path %> and <%= link_to "Privacy policy", privacy_path %>.
-    <% end %>
+  <div>
+    <div class="form-check d-flex align-items-start gap-2 ps-0 pt-2">
+      <%= f.check_box :terms_accepted, class: field_class(:terms_accepted, "form-check-input m-0 flex-shrink-0"),
+                                       aria: field_aria(:terms_accepted), required: true %>
+      <%= f.label :terms_accepted, class: "form-check-label small" do %>
+        I agree to the <%= link_to "Terms", terms_path %> and <%= link_to "Privacy policy", privacy_path %>.
+      <% end %>
+    </div>
+    <%= field_error(:terms_accepted) %>
   </div>
 
   <%= f.button type: "submit", class: "btn btn-primary btn-lg w-100" do %>

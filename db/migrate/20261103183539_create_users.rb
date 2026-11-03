@@ -1,3 +1,5 @@
+# Accounts: who you are, how you log in, and the Preferences and
+# Notifications settings from your profile page.
 class CreateUsers < ActiveRecord::Migration[8.1]
   def change
     create_table :users do |t|

@@ -56,7 +56,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_select "#email_address-error", /already an account/
     assert_select "#password-error", /at least 8 characters/
     assert_select "#terms_accepted-error"
-    assert_select "input[name=?][value=?]", "user[email_address]", "rg@example.com"
+    assert_select "input[name=?][value=?]", "user[email_address]", "RG@example.com"
   end
 
   test "log out ends the session" do

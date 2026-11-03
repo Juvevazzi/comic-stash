@@ -24,8 +24,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_183540) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.string "name", null: false
     t.string "email_address", null: false
     t.string "password_digest", null: false
+    t.datetime "password_changed_at"
+    t.string "appearance", default: "system", null: false
+    t.string "currency", default: "EUR", null: false
+    t.boolean "show_prices", default: true, null: false
+    t.boolean "count_variants", default: false, null: false
+    t.boolean "new_issues", default: true, null: false
+    t.boolean "hunt_reminder", default: true, null: false
+    t.boolean "monthly_report", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true

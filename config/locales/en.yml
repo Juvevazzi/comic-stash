@@ -28,4 +28,14 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            password:
+              blank: "Enter a password."
+            password_confirmation:
+              confirmation: "The two passwords don't match."
+            password_challenge:
+              invalid: "That doesn't match your current password."
