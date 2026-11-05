@@ -96,6 +96,10 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Test the Longbox library
+        working-directory: gems/longbox
+        run: bundle exec rake test
+
       - name: Run tests
         env:
           RAILS_ENV: test

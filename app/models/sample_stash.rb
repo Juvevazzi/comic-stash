@@ -34,12 +34,17 @@ module SampleStash
               missing_count: 37, series_with_gaps: 9)
   end
 
+  # Built with the Longbox gem (step 18), so the gap labels are worked out,
+  # not typed. Step 22 swaps these sample numbers for your real collection.
   def self.closest_runs
     [
-      Run.new(title: "Paper Moons", volume: "Vol. 2", owned: 22, total: 24, gaps: [ "#7", "#19" ], tone: :magenta),
-      Run.new(title: "Iron Tide", volume: "Vol. 1", owned: 17, total: 20, gaps: [ "#3", "#11–12" ], tone: :cyan),
-      Run.new(title: "Glasshouse", volume: "Vol. 1", owned: 9, total: 12, gaps: [ "#4", "#8", "#10" ], tone: :yellow)
-    ]
+      [ "Paper Moons", "Vol. 2", :magenta, 24, [ 7, 19 ] ],
+      [ "Iron Tide", "Vol. 1", :cyan, 20, [ 3, 11, 12 ] ],
+      [ "Glasshouse", "Vol. 1", :yellow, 12, [ 4, 8, 10 ] ]
+    ].map do |title, volume, tone, total, missing|
+      run = Longbox::Run.new(released: 1..total, owned: (1..total).to_a - missing)
+      Run.new(title:, volume:, owned: run.owned_count, total: run.total, gaps: run.gaps, tone:)
+    end
   end
 
   def self.releases
