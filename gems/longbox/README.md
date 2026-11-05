@@ -18,3 +18,18 @@ Issue numbers are text (`"1.5"`, `"½"`) and sort like a collector expects.
 ## Tests
 
     cd gems/longbox && bundle exec rake test
+
+## The Metron client
+
+```ruby
+client = Longbox::Metron::Client.new(token: "...")  # an API token from your Metron profile
+client.search_series("Saga")  # first page of matching series
+client.series(id)  # one series
+client.series_issues(id)  # every issue in a series, all pages
+client.issue(id)  # one issue, with credits and characters
+client.rate_limit  # what's left of Metron's limits after the last request
+```
+
+Errors are all `Longbox::Metron::Error`: `AuthenticationError`, `NotFound`, `RateLimited` (with `retry_after` in seconds) and `ServerError`.
+
+Tests never touch the network: pass `transport:` any object with `call(uri, headers)` that returns a `Longbox::Metron::Response`. See `test/fake_transport.rb`.
