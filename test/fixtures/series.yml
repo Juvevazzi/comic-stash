@@ -1,0 +1,28 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined. If you add columns to the
+# model remove the "{}" from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+# Fixtures skip callbacks, so sort_name is written out here.
+paper_moons:
+  publisher: lantern
+  name: Paper Moons
+  sort_name: Paper Moons
+  volume: 2
+  year_began: 2022
+  series_type: Ongoing series
+  status: Publishing
+  issue_count: 5
+  metron_id: 2001
+
+night_signal:
+  publisher: northlight
+  name: Night Signal
+  sort_name: Night Signal
+  volume: 1
+  year_began: 2019
+  series_type: Ongoing series
+  status: Publishing
+  issue_count: 1
+  metron_id: 2002
