@@ -4,7 +4,7 @@ require_relative "fake_transport"
 class MetronClientTest < Minitest::Test
   def client_with(*responses)
     @transport = FakeTransport.new(*responses)
-    Longbox::Metron::Client.new(username: "reader", password: "s3cret", transport: @transport)
+    Longbox::Metron::Client.new(token: "s3cret-token", transport: @transport)
   end
 
   def last_request = @transport.requests.last
@@ -16,10 +16,10 @@ class MetronClientTest < Minitest::Test
     assert_equal "https://metron.cloud/api/series/12/", last_request[:uri]
   end
 
-  def test_logs_in_with_basic_auth_and_names_itself
+  def test_sends_the_api_token_and_names_itself
     client_with(FakeTransport.json({})).issue(5)
 
-    assert_equal "Basic #{[ "reader:s3cret" ].pack("m0")}", last_request[:headers]["Authorization"]
+    assert_equal "Bearer s3cret-token", last_request[:headers]["Authorization"]
     assert_equal "application/json", last_request[:headers]["Accept"]
     assert_match(/\AComicStash/, last_request[:headers]["User-Agent"])
   end
@@ -71,7 +71,7 @@ class MetronClientTest < Minitest::Test
     error = assert_raises(Longbox::Metron::AuthenticationError) do
       client_with(FakeTransport.json({}, status: 401)).issue(5)
     end
-    refute_includes error.message, "s3cret"
+    refute_includes error.message, "s3cret-token"
   end
 
   def test_unknown_records_and_server_trouble_have_their_own_errors
@@ -84,7 +84,7 @@ class MetronClientTest < Minitest::Test
     assert_operator Longbox::Metron::NotFound, :<, Longbox::Metron::Error
   end
 
-  def test_needs_a_username_and_password
-    assert_raises(ArgumentError) { Longbox::Metron::Client.new(username: "", password: "x") }
+  def test_needs_a_token
+    assert_raises(ArgumentError) { Longbox::Metron::Client.new(token: " ") }
   end
 end

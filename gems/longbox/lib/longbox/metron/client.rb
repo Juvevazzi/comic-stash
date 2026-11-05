@@ -2,7 +2,7 @@ module Longbox
   module Metron
     # A small client for Metron's REST API (https://metron.cloud/docs/).
     #
-    #   client = Longbox::Metron::Client.new(username: "...", password: "...")
+    #   client = Longbox::Metron::Client.new(token: "...")
     #   client.search_series("Paper Moons")  # => [{"id" => 1234, "series" => "Paper Moons (2022)", ...}]
     #   client.series(1234)                   # => {"id" => 1234, "name" => "Paper Moons", ...}
     #   client.series_issues(1234)            # => every issue, all pages
@@ -17,13 +17,13 @@ module Longbox
       # { burst_remaining: 19, sustained_remaining: 4999 }.
       attr_reader :rate_limit
 
+      # token: an API token from your Metron profile page (API Tokens).
       # transport: anything with call(uri, headers) that returns a Response.
       # Leave it out to use the real network; the tests pass a fake.
-      def initialize(username:, password:, transport: HttpTransport.new, base_url: BASE_URL)
-        raise ArgumentError, "Metron username and password are required" if username.to_s.empty? || password.to_s.empty?
+      def initialize(token:, transport: HttpTransport.new, base_url: BASE_URL)
+        raise ArgumentError, "a Metron API token is required" if token.to_s.strip.empty?
 
-        @username = username
-        @password = password
+        @token = token
         @transport = transport
         @base_url = base_url
         @rate_limit = {}
@@ -83,7 +83,7 @@ module Longbox
 
       def headers
         {
-          "Authorization" => "Basic #{[ "#{@username}:#{@password}" ].pack("m0")}",
+          "Authorization" => "Bearer #{@token}",
           "Accept" => "application/json",
           "User-Agent" => USER_AGENT
         }
@@ -94,7 +94,7 @@ module Longbox
       def handle(response)
         case response.status
         when 200 then JSON.parse(response.body)
-        when 401, 403 then raise AuthenticationError, "Metron refused the username or password"
+        when 401, 403 then raise AuthenticationError, "Metron refused the API token"
         when 404 then raise NotFound, "Metron has no record at that address"
         when 429 then raise RateLimited.new(retry_after: retry_after(response.headers))
         when 500..599 then raise ServerError, "Metron returned #{response.status}; try again later"
