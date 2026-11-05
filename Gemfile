@@ -68,3 +68,6 @@ end
 gem "cssbundling-rails", "~> 1.4"
 
 gem "csv", "~> 3.3"
+
+# Our own library: run-gap maths and (from step 19) the Metron API client.
+gem "longbox", path: "gems/longbox"
