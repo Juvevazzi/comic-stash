@@ -55,4 +55,31 @@ class UserTest < ActiveSupport::TestCase
     user.sessions.create!
     assert_difference("Session.count", -1) { user.destroy }
   end
+
+    test "your run of a series counts only released issues" do
+    run = users(:ricardo).run_for(series(:paper_moons))
+    assert_equal 4, run.total
+    assert_equal 3, run.owned_count
+    assert_equal [ "#3" ], run.gaps
+  end
+
+  test "owned and hunted issues are kept apart" do
+    ricardo = users(:ricardo)
+    assert_equal %w[1 2 4], ricardo.owned_issues.in_order.pluck(:number)
+    assert_equal %w[3], ricardo.hunted_issues.pluck(:number)
+  end
+
+  test "collected series are the ones with something in your stash" do
+    assert_equal [ series(:paper_moons) ], users(:ricardo).collected_series.to_a
+  end
+
+  test "each user has their own stash" do
+    assert_equal %w[1], users(:ada).owned_issues.pluck(:number)
+  end
+
+  test "deleting a user deletes their stash but not the catalogue" do
+    assert_difference -> { CollectionItem.count } => -4, -> { Issue.count } => 0 do
+      users(:ricardo).destroy
+    end
+  end
 end

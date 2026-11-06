@@ -1,0 +1,34 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined. If you add columns to the
+# model remove the "{}" from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+<%# Paper Moons #1-#4 are out; #5 is out next month. Fixtures skip
+    callbacks, so sort_number is written out too. %>
+<% (1..4).each do |n| %>
+paper_moons_<%= n %>:
+  series: paper_moons
+  number: "<%= n %>"
+  sort_number: <%= n %>
+  title: Paper Moons <%= n %>
+  cover_date: <%= (6 - n).months.ago.to_date %>
+  store_date: <%= (6 - n).months.ago.to_date - 2.weeks %>
+  metron_id: <%= 3000 + n %>
+<% end %>
+
+paper_moons_5:
+  series: paper_moons
+  number: "5"
+  sort_number: 5
+  title: Paper Moons 5
+  store_date: <%= 1.month.from_now.to_date %>
+  metron_id: 3005
+
+night_signal_1:
+  series: night_signal
+  number: "1"
+  sort_number: 1
+  title: Static on the Line
+  cover_date: <%= 1.year.ago.to_date %>
+  metron_id: 3101
