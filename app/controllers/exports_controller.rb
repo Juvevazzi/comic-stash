@@ -1,5 +1,6 @@
 require "csv"
 
+# Export CSV on your profile: every issue in your series, with your status.
 class ExportsController < ApplicationController
   HEADERS = [ "Series", "Issue", "Title", "Publisher", "Cover date", "Cover artist", "Status" ].freeze
 
@@ -14,11 +15,12 @@ class ExportsController < ApplicationController
   private
 
   def collection_csv
+    issues = Stash.new(Current.user).issues.includes(:series).order(:series_sort_name, :sort_number, :number)
     CSV.generate do |csv|
       csv << HEADERS
-      SampleStash.all_comics.sort_by { |comic| [ comic.series, comic.issue ] }.each do |comic|
-        csv << [ comic.series, comic.issue, comic.title, comic.publisher, comic.cover_date.iso8601,
-                 comic.artists, SampleSearch.status(comic) ]
+      issues.each do |issue|
+        csv << [ issue.series.display_name, issue.number, issue.title, issue.publisher_name,
+                 issue.cover_date&.iso8601, issue.cover_artists.join(", "), issue.stash_status ]
       end
     end
   end
