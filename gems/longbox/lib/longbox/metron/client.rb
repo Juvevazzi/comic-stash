@@ -1,14 +1,6 @@
 module Longbox
   module Metron
     # A small client for Metron's REST API (https://metron.cloud/docs/).
-    #
-    #   client = Longbox::Metron::Client.new(token: "...")
-    #   client.search_series("Paper Moons")  # => [{"id" => 1234, "series" => "Paper Moons (2022)", ...}]
-    #   client.series(1234)                   # => {"id" => 1234, "name" => "Paper Moons", ...}
-    #   client.series_issues(1234)            # => every issue, all pages
-    #   client.issue(56789)                   # => one issue with credits, characters...
-    #
-    # Results are Metron's JSON as plain Hashes; the app decides what to keep.
     class Client
       BASE_URL = "https://metron.cloud/api/".freeze
       USER_AGENT = "ComicStash/#{VERSION} (Longbox Ruby gem)".freeze

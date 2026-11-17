@@ -1,0 +1,49 @@
+{
+    "id": 9001,
+    "number": "1",
+    "title": "",
+    "name": [
+        "The First Pane"
+    ],
+    "cover_date": "2023-01-01",
+    "store_date": "2022-12-14",
+    "price": "3.99",
+    "page": 32,
+    "upc": "76194134182500111",
+    "isbn": "",
+    "desc": "Every window in the house shows a different year.",
+    "image": "https://static.metron.cloud/media/issue/9001.jpg",
+    "credits": [
+        {
+            "id": 1,
+            "creator": "Ines Varga",
+            "role": [
+                {
+                    "id": 1,
+                    "name": "Writer"
+                },
+                {
+                    "id": 2,
+                    "name": "Artist"
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "creator": "Kit Hale",
+            "role": [
+                {
+                    "id": 3,
+                    "name": "Cover"
+                }
+            ]
+        }
+    ],
+    "characters": [
+        {
+            "id": 10,
+            "name": "Juno Vale"
+        }
+    ],
+    "modified": "2026-10-01T12:00:00Z"
+}
