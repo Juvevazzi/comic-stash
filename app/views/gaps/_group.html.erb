@@ -1,15 +1,19 @@
-<%# One series and its missing issues. Locals: group (a SampleStash::GapGroup),
-    shown (the issues that pass the search and switches), open, filtering.
-    Desktop shows a table, phones a list; both come from the same issues. %>
-<% hunting = group.issues.count(&:hunting) %>
+<%# One series and its missing issues. Locals: group (a Stash::GapGroup: the
+    series, with its counts, and its missing issues), shown (the issues that
+    pass the search and switches), open, filtering. Desktop shows a table,
+    phones a list; both come from the same issues. %>
+<% series = group.series %>
+<% hunting = group.issues.count(&:hunting?) %>
 <details class="cs-gap-group" <%= "open" if open %> data-gaps-target="group">
   <summary>
-    <%= render "shared/cover", tone: group.tone, css: "cs-gap-cover" %>
-    <h2 class="cs-gap-name h5 mb-0"><%= group.name %></h2>
-    <span class="cs-gap-meta small text-body-secondary"><%= group.meta %></span>
+    <%= render "shared/cover", tone: series.tone, css: "cs-gap-cover" %>
+    <h2 class="cs-gap-name h5 mb-0"><%= series.display_name %></h2>
+    <span class="cs-gap-meta small text-body-secondary">
+      <%= [ series.series_type, series.years, series.publisher_name ].compact.join(" · ") %>
+    </span>
     <span class="cs-gap-progress">
-      <span class="small"><span class="text-body-secondary">Owned</span> <span class="cs-issue-no"><%= group.owned %> of <%= group.total %></span></span>
-      <%= render "shared/run_progress", owned: group.owned, total: group.total %>
+      <span class="small"><span class="text-body-secondary">Owned</span> <span class="cs-issue-no"><%= series.owned_count %> of <%= series.released_count %></span></span>
+      <%= render "shared/run_progress", owned: series.owned_count, total: series.released_count %>
     </span>
     <span class="cs-gap-pills">
       <% if hunting.positive? %>
@@ -22,13 +26,13 @@
 
   <%# Desktop: a table of the missing issues. %>
   <table class="table cs-data-table cs-gap-table d-none d-md-table mb-0">
-    <caption class="visually-hidden">Missing issues of <%= group.name %></caption>
+    <caption class="visually-hidden">Missing issues of <%= series.display_name %></caption>
     <thead>
       <tr>
         <th scope="col"><span class="visually-hidden">Cover</span></th>
         <th scope="col">No.</th>
         <th scope="col">Title</th>
-        <th scope="col">Cover date</th>
+        <th scope="col">Out</th>
         <th scope="col">Cover artist</th>
         <th scope="col"><span class="visually-hidden">Actions</span></th>
       </tr>
@@ -36,31 +40,32 @@
     <tbody>
       <% shown.each do |issue| %>
         <tr>
-          <td><%= render "shared/cover", tone: group.tone, css: "cs-thumb-xs is-out" %></td>
-          <td class="cs-issue-no">#<%= issue.issue %></td>
-          <th scope="row"><%= render "gaps/issue_title", group: group, issue: issue %></th>
-          <td class="cs-issue-no text-nowrap"><%= issue.cover_date.strftime("%b %Y") %></td>
-          <td><%= issue.artists %></td>
-          <td><%= render "shared/issue_actions", comic_id: issue.id, label: "#{group.name} ##{issue.issue}", hunting: issue.hunting %></td>
+          <td><%= render "shared/cover", tone: series.tone, css: "cs-thumb-xs is-out" %></td>
+          <td class="cs-issue-no"><%= issue.label %></td>
+          <th scope="row"><%= render "gaps/issue_title", issue: issue %></th>
+          <td class="cs-issue-no text-nowrap"><%= month_year(issue.released_on) %></td>
+          <td><%= issue.cover_artists.join(", ") %></td>
+          <td><%= render "shared/issue_actions", comic_id: issue.id, label: "#{series.display_name} #{issue.label}", hunting: issue.hunting? %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
 
   <%# Phones: the same issues as a list. %>
-  <ul class="cs-gap-list d-md-none" aria-label="Missing issues of <%= group.name %>">
+  <ul class="cs-gap-list d-md-none" aria-label="Missing issues of <%= series.display_name %>">
     <% shown.each do |issue| %>
       <li>
-        <%= render "shared/cover", tone: group.tone, css: "cs-thumb-xs is-out" %>
+        <%= render "shared/cover", tone: series.tone, css: "cs-thumb-xs is-out" %>
         <div class="cs-grow">
           <p class="mb-0">
-            <span class="cs-issue-no cs-missing-no">#<%= issue.issue %></span>
-            <%= render "gaps/issue_title", group: group, issue: issue %>
+            <span class="cs-issue-no cs-missing-no"><%= issue.label %></span>
+            <%= render "gaps/issue_title", issue: issue %>
           </p>
           <p class="small text-body-secondary mb-2">
-            <span class="cs-issue-no"><%= issue.cover_date.strftime("%b %Y") %></span> · Cover: <%= issue.artists %>
+            <span class="cs-issue-no"><%= month_year(issue.released_on) %></span>
+            <% if issue.cover_artists.any? %> · Cover: <%= issue.cover_artists.join(", ") %><% end %>
           </p>
-          <%= render "shared/issue_actions", comic_id: issue.id, label: "#{group.name} ##{issue.issue}", hunting: issue.hunting %>
+          <%= render "shared/issue_actions", comic_id: issue.id, label: "#{series.display_name} #{issue.label}", hunting: issue.hunting? %>
         </div>
       </li>
     <% end %>

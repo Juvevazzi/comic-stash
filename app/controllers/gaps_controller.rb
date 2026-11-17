@@ -1,25 +1,25 @@
 # Find the gaps (wireframe: Find the gaps). Every missing issue, grouped by
-# series. Search, the two switches and the sort travel in the URL like the
-# step 11 lists, so a filtered view can be bookmarked or shared.
+# series, from Stash#gap_groups. Search, the two switches and the sort
+# travel in the URL like the table pages, so a filtered view can be
+# bookmarked or shared. Your gaps are a short list, so the search and
+# switches narrow it in Ruby once it's loaded.
 class GapsController < ApplicationController
-  # "New releases" means a cover date from here on. The sample data is fixed
-  # in time; with real data this becomes 2.months.ago.beginning_of_month.
-  NEW_SINCE = Date.new(2026, 9, 1)
-
   # Sort name in the URL => the value to sort the series by.
   SORTS = {
-    "closest" => ->(group) { [ group.issues.size, group.name ] }, # fewest missing first
-    "most" => ->(group) { [ -group.issues.size, group.name ] }, # most missing first
-    "az" => ->(group) { group.name }
+    "closest" => ->(group) { [ group.issues.size, group.series.sort_name ] }, # fewest missing first
+    "most" => ->(group) { [ -group.issues.size, group.series.sort_name ] }, # most missing first
+    "az" => ->(group) { group.series.sort_name }
   }.freeze
 
+  helper_method :new_release?
+
   def index
-    groups = SampleStash.gap_groups
+    groups = Stash.new(Current.user).gap_groups
     issues = groups.flat_map(&:issues)
 
     @total_missing = issues.size
     @series_count = groups.size
-    @hunt_count = issues.count(&:hunting)
+    @hunt_count = issues.count(&:hunting?)
     @new_count = issues.count { |issue| new_release?(issue) }
 
     @q = params[:q].to_s.strip
@@ -41,13 +41,14 @@ class GapsController < ApplicationController
   # word in the title; then the two switches narrow it further.
   def show?(group, issue)
     term = @q.downcase.delete_prefix("#")
-    found = term.empty? || group.name.downcase.include?(term) ||
-            issue.issue.to_s == term || issue.title.downcase.include?(term)
+    found = term.empty? || group.series.name.downcase.include?(term) ||
+            issue.number.downcase == term || issue.title.to_s.downcase.include?(term)
 
-    found && (!@hunt_only || issue.hunting) && (!@new_only || new_release?(issue))
+    found && (!@hunt_only || issue.hunting?) && (!@new_only || new_release?(issue))
   end
 
+  # "New" means out since the start of last month.
   def new_release?(issue)
-    issue.cover_date >= NEW_SINCE
+    issue.released_on >= Date.current.prev_month.beginning_of_month
   end
 end

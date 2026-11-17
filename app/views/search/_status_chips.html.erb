@@ -4,7 +4,7 @@
   <%= hidden_field_tag :q, @search.term, id: nil %>
   <%= hidden_field_tag :tab, @tab, id: nil %>
   <span class="small fw-bold">Show</span>
-  <% SampleSearch::STATUSES.each do |status| %>
+  <% Stash::STATUSES.each do |status| %>
     <%= check_box_tag "status[]", status, @statuses.include?(status), id: "status-#{status}", class: "btn-check",
                       autocomplete: "off", data: { action: "change->auto-submit#submit" } %>
     <%= label_tag "status-#{status}", status.capitalize, class: "btn btn-sm cs-chip-toggle" %>

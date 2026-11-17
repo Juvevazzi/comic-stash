@@ -6,7 +6,6 @@ class StaticPagesTest < ActionDispatch::IntegrationTest
     "/dashboard" => "Welcome back",
     "/comics" => "Your comics",
     "/comics/new" => "Add comics",
-    "/comics/1" => "Night Signal #53",
     "/series" => "Your series",
     "/gaps" => "Find the gaps",
     "/search" => "Search your stash",
@@ -23,6 +22,15 @@ class StaticPagesTest < ActionDispatch::IntegrationTest
       assert_select "header.cs-navbar"
       assert_select "nav.cs-bottom-nav[aria-label=Main]"
     end
+  end
+
+  # View issue's URL holds a real issue id, so it gets its own test.
+  test "View issue renders inside the app shell" do
+    sign_in_as users(:ricardo)
+    get comic_path(issues(:paper_moons_1))
+    assert_response :success
+    assert_select "h1", "Paper Moons Vol. 2 #1"
+    assert_select "header.cs-navbar"
   end
 
   # The domain should redirect to the dashboard.
