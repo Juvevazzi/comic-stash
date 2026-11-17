@@ -7,4 +7,6 @@ class Publisher < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 120 }
   validates :metron_id, uniqueness: true, allow_nil: true
+  # Shown as its name, e.g. on View issue.
+  def to_s = name
 end

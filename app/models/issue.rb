@@ -21,6 +21,16 @@ class Issue < ApplicationRecord
   # date. Upcoming issues are never counted as missing.
   scope :released, ->(on = Date.current) { where("COALESCE(issues.store_date, issues.cover_date) <= ?", on) }
 
+  # Issues with a creator whose name contains text. role: "Cover" narrows it
+  # to cover artists. credits is jsonb, so PostgreSQL looks inside the list.
+  scope :by_creator, ->(text, role: nil) {
+    where(<<~SQL, like: "%#{sanitize_sql_like(text.strip)}%", role: role && [ role ].to_json)
+      EXISTS (SELECT 1 FROM jsonb_array_elements(issues.credits) credit
+              WHERE credit->>'name' ILIKE :like
+                AND (CAST(:role AS jsonb) IS NULL OR credit->'roles' @> CAST(:role AS jsonb)))
+    SQL
+  }
+
   def label = "##{number}"
 
   def released?(on = Date.current)
@@ -29,6 +39,38 @@ class Issue < ApplicationRecord
   end
 
   def to_s = "#{series.display_name} #{label}"
+
+  # A colour for the placeholder cover, shared by every issue of a series.
+  def tone = Series.tone_for(series_id)
+
+  # The day it came out, or comes out: the store date, else the cover date.
+  def released_on = store_date || cover_date
+
+  # "Paper Moons 3", or "Issue #3" until Metron sends a title.
+  def display_title = title.presence || "Issue #{label}"
+
+  # Your status for this issue. Only set on issues loaded through Stash,
+  # which adds stash_status to each row; anywhere else these are false.
+  def owned? = self[:stash_status] == "owned"
+  def hunting? = self[:stash_status] == "hunting"
+  def missing? = !owned?
+
+  # Metron's credits as [role, name] pairs, split the way View issue shows them.
+  def credit_pairs = credits.flat_map { |credit| Array(credit["roles"]).map { |role| [ role, credit["name"] ] } }
+  def cover_artists = credit_pairs.filter_map { |role, name| name if role == "Cover" }.uniq
+  def editors = credit_pairs.select { |role, _name| role.match?(/editor/i) }
+  def story_credits = credit_pairs.reject { |role, _name| role == "Cover" || role.match?(/editor/i) }
+
+  # From Metron, but its credits and description haven't been fetched yet.
+  def needs_details? = metron_id.present? && credits.empty? && description.blank?
+
+  # The issues either side of this one in its series: [previous, next],
+  # with nil at either end.
+  def neighbours
+    ids = series.issues.in_order.ids
+    place = ids.index(id)
+    [ (Issue.find(ids[place - 1]) if place.positive?), Issue.find_by(id: ids[place + 1]) ]
+  end
 
   private
 

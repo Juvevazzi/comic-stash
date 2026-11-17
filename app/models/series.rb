@@ -22,6 +22,20 @@ class Series < ApplicationRecord
     volume.to_i > 1 ? "#{name} Vol. #{volume}" : name
   end
 
+  TONES = %i[cyan magenta yellow].freeze
+
+  # A colour for the placeholder covers, picked from the id so it never changes.
+  def self.tone_for(id) = TONES[id.to_i % TONES.size]
+
+  def tone = self.class.tone_for(id)
+
+  # "2019–present", "2021–2023".
+  def years = year_began ? "#{year_began}–#{year_end || "present"}" : "Year unknown"
+
+  # Released issues you own. Only on series loaded through Stash#series,
+  # which counts released_count and missing_count in the database.
+  def owned_count = self[:released_count].to_i - self[:missing_count].to_i
+
   private
 
   def set_sort_name
