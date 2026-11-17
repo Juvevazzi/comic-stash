@@ -8,7 +8,7 @@ class ProfileTest < ActionDispatch::IntegrationTest
     get profile_path
     assert_response :success
     assert_select "h1", "Your profile"
-    assert_select ".cs-profile-stats dd", "412"
+    assert_select ".cs-profile-stats dd", "3" # comics Ricardo owns in the fixtures
     %w[profile preferences notifications data account].each do |id|
       assert_select "nav[aria-label='Profile sections'] a[href=?]", "##{id}"
       assert_select "section##{id}"
@@ -46,14 +46,15 @@ class ProfileTest < ActionDispatch::IntegrationTest
     assert_redirected_to profile_path(anchor: "notifications")
   end
 
-  test "the export is a CSV of every comic" do
+  test "the export is a CSV of every issue in your series" do
     get profile_export_path(format: :csv)
     assert_response :success
     assert_equal "text/csv", response.media_type
     lines = response.body.lines
     assert_equal "Series,Issue,Title,Publisher,Cover date,Cover artist,Status\n", lines.first
-    assert_equal SampleStash.all_comics.size + 1, lines.size
-    assert_includes response.body, "\"Mara Quill, Theo Banks\""
+    assert_equal Stash.new(users(:ricardo)).issues.count + 1, lines.size
+    assert_includes response.body, "\"Ines Varga, Kit Hale\""
+    assert_match(/^Paper Moons Vol\. 2,3,Paper Moons 3,Lantern Press,.*,hunting$/, response.body)
   end
 
   test "deleting the account needs the exact phrase" do
