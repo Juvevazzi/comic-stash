@@ -15,6 +15,17 @@ paper_moons_<%= n %>:
   cover_date: <%= (6 - n).months.ago.to_date %>
   store_date: <%= (6 - n).months.ago.to_date - 2.weeks %>
   metron_id: <%= 3000 + n %>
+  <% if n == 1 %>
+  description: Juno maps the moons and finds one that should not be there.
+  characters: [ Juno Vale ]
+  credits:
+    - name: Ines Varga
+      roles: [ Writer, Artist, Cover ]
+    - name: Kit Hale
+      roles: [ Cover ]
+    - name: June Park
+      roles: [ Editor ]
+<% end %>
 <% end %>
 
 paper_moons_5:

@@ -36,6 +36,12 @@ module Longbox
       total.zero? ? 0 : owned_count * 100 / total
     end
 
+    # How many issues you own in a row from the first one, before the first
+    # gap: owning #1–#48 of 53 is a streak of 48. "Longest unbroken run".
+    def streak
+      released.take_while { |number| owned?(number) }.size
+    end
+
     # Missing issues as short labels, with neighbours joined into a range:
     # ["#3", "#11–12"]. Neighbours means next to each other in the run, so
     # a series that skips a number still reads naturally.
