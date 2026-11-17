@@ -36,6 +36,12 @@ class RunTest < Minitest::Test
     assert_equal 0, run_of([], []).percent
   end
 
+  def test_streak_counts_owned_issues_from_the_first_until_a_gap
+    assert_equal 48, run_of(1..53, 1..48).streak
+    assert_equal 2, run_of(1..5, [ 1, 2, 4, 5 ]).streak
+    assert_equal 0, run_of(1..5, [ 2, 3 ]).streak
+    assert_equal 0, run_of([], []).streak
+  end
   def test_an_empty_run_is_not_complete
     refute run_of([], []).complete?
   end

@@ -36,7 +36,7 @@ class ProfilesController < ApplicationController
   def load_profile
     @account = Current.user
     @preferences = Current.user
-    @stats = SampleStash.stats # real numbers in step 22
+    @stats = Stash.new(Current.user).stats
     @errors = {}
   end
 

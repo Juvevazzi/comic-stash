@@ -1,30 +1,38 @@
-<%# Creators: story and art, covers, and the editorial team folded away in a
-    <details> element (opens and closes with no JavaScript). %>
+<%# Creators, from Metron's credits: story and art, covers, and the editorial
+    team folded away in a <details> element (opens and closes with no JavaScript). %>
 <section aria-labelledby="creators-title">
   <h2 id="creators-title" class="h4 mb-2">Creators</h2>
-  <div class="cs-credits">
-    <div>
-      <h3 class="cs-credits-label">Story and art</h3>
-      <dl class="cs-pairs mb-0">
-        <% issue.credits.each do |role, name| %>
-          <dt><%= role %></dt><dd><%= name %></dd>
-        <% end %>
-      </dl>
-    </div>
-    <div>
-      <h3 class="cs-credits-label">Covers</h3>
-      <p class="fw-bold mb-0"><%= issue.cover_artists.to_sentence %></p>
-    </div>
-  </div>
-
-  <details class="cs-disclosure mt-2">
-    <summary>
-      <span>Editorial <span class="fw-normal text-body-secondary">· <%= pluralize(issue.editors.size, "person") %></span></span>
-    </summary>
-    <dl class="cs-pairs mb-0">
-      <% issue.editors.each do |role, name| %>
-        <dt><%= role %></dt><dd><%= name %></dd>
+  <% if issue.credits.empty? %>
+    <p class="text-body-secondary mb-0">No creator credits yet.</p>
+  <% else %>
+    <div class="cs-credits">
+      <div>
+        <h3 class="cs-credits-label">Story and art</h3>
+        <dl class="cs-pairs mb-0">
+          <% issue.story_credits.each do |role, name| %>
+            <dt><%= role %></dt><dd><%= name %></dd>
+          <% end %>
+        </dl>
+      </div>
+      <% if issue.cover_artists.any? %>
+        <div>
+          <h3 class="cs-credits-label">Covers</h3>
+          <p class="fw-bold mb-0"><%= issue.cover_artists.to_sentence %></p>
+        </div>
       <% end %>
-    </dl>
-  </details>
+    </div>
+
+    <% if issue.editors.any? %>
+      <details class="cs-disclosure mt-2">
+        <summary>
+          <span>Editorial <span class="fw-normal text-body-secondary">· <%= pluralize(issue.editors.size, "person") %></span></span>
+        </summary>
+        <dl class="cs-pairs mb-0">
+          <% issue.editors.each do |role, name| %>
+            <dt><%= role %></dt><dd><%= name %></dd>
+          <% end %>
+        </dl>
+      </details>
+    <% end %>
+  <% end %>
 </section>

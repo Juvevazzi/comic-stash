@@ -1,15 +1,16 @@
-# One page of rows from an in-memory list, for the front-end stage.
-# It answers the same questions a pagination gem such as Pagy will:
-# which rows to show, which page this is, and how many pages there are.
-class SamplePage
+# One page of a database query, for the table pages. It answers the same
+# questions a pagination gem such as Pagy would: which rows to show, which
+# page this is, and how many pages there are. Two queries: a COUNT, then the
+# rows themselves with LIMIT and OFFSET, so only one page is ever loaded.
+class Page
   attr_reader :items, :page, :pages, :per, :count
 
   def initialize(rows, page:, per:)
-    @count = rows.size
+    @count = rows.count
     @per = per
     @pages = [ (count.to_f / per).ceil, 1 ].max
     @page = page.to_i.clamp(1, pages) # page=0, page=abc or page=99 all land on a real page
-    @items = rows.slice((@page - 1) * per, per) || []
+    @items = rows.offset((@page - 1) * per).limit(per).to_a
   end
 
   def first? = page == 1

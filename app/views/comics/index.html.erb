@@ -8,7 +8,7 @@
 
 <% keep = @filters.merge(sort: @sort, direction: @direction) %>
 <% columns = [ [ "Series", "series" ], [ "No.", "issue" ], [ "Title", "title" ], [ "Publisher", "publisher" ],
-               [ "Cover date", "cover_date" ], [ "Description", nil ], [ "Cover artist", "artists" ],
+               [ "Cover date", "cover_date" ], [ "Description", nil ], [ "Cover artist", nil ],
                [ "Missing", "missing" ] ] %>
 
 <div data-controller="auto-submit">

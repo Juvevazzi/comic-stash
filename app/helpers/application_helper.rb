@@ -21,4 +21,7 @@ module ApplicationHelper
   def icon(name, **options)
     tag.i(class: [ "bi", "bi-#{name}", options.delete(:class) ].compact.join(" "), "aria-hidden": true, **options)
   end
+
+  # "Oct 2026", or a dash while Metron hasn't sent a date.
+  def month_year(date) = date ? date.strftime("%b %Y") : "—"
 end

@@ -1,5 +1,5 @@
-<%# "Added just now": the comics added in this session, each with Undo.
-    Local: items (SampleStash::Addition objects for now). %>
+<%# "Added just now": what you added in the last hour, each with Undo.
+    Local: items (your newest CollectionItems). %>
 <section class="card h-100" aria-labelledby="added-h">
   <div class="card-body d-flex flex-column">
     <div class="cs-section-head">
@@ -13,15 +13,15 @@
       <ul class="cs-row-list mb-3">
         <% items.each do |item| %>
           <li class="align-items-center">
-            <%= render "shared/cover", tone: item.tone, css: "cs-thumb-sm" %>
+            <%= render "shared/cover", tone: item.issue.tone, css: "cs-thumb-sm" %>
             <div class="cs-grow">
-              <span class="d-block fw-bold"><%= item.title %> <span class="cs-issue-no"><%= item.issue %></span></span>
+              <span class="d-block fw-bold"><%= item.issue.series.display_name %> <span class="cs-issue-no"><%= item.issue.label %></span></span>
               <span class="small text-body-secondary">
-                <span class="font-monospace"><%= item.barcode || "No barcode" %></span> · <%= item.added_label %>
+                <span class="font-monospace"><%= item.issue.upc || "No barcode" %></span> · <%= time_ago_in_words(item.created_at) %> ago
               </span>
             </div>
-            <%= button_to "Undo", comic_path(item.id), method: :delete, class: "btn btn-link btn-sm",
-                          "aria-label": "Undo adding #{item.title} #{item.issue}" %>
+            <%= button_to "Undo", comic_path(item.issue), method: :delete, class: "btn btn-link btn-sm",
+                          "aria-label": "Undo adding #{item.issue}" %>
           </li>
         <% end %>
       </ul>

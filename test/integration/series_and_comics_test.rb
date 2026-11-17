@@ -1,9 +1,17 @@
 require "test_helper"
 
-# View series and View comics: filters, sort and paging all come from the
-# URL, so each test just requests a URL and checks the table it gets back.
+# View series and View comics: filters, sort and paging come from the URL
+# and run in the database. Ricardo collects Paper Moons (fixtures) plus
+# the series made in setup: 9 series, so the series table has 2 pages.
 class SeriesAndComicsTest < ActionDispatch::IntegrationTest
-  setup { sign_in_as users(:ricardo) }
+  setup do
+    sign_in_as users(:ricardo)
+    %w[Brass Cinder Dune Ember Flint Garnet Harbour].each_with_index do |name, index|
+      add_series name, issues: 2, owned: [ 1 ], year_began: 2010 + index, year_end: 2012 + index
+    end
+    add_series "Ash and Anchor", issues: 3, owned: [ 1, 2, 3 ], year_began: 2024
+  end
+
   test "series table shows the first page, sorted by name" do
     get series_index_path
     assert_response :success
@@ -15,11 +23,18 @@ class SeriesAndComicsTest < ActionDispatch::IntegrationTest
 
   test "filters and sort travel in the URL" do
     get series_index_path(ended: "present", sort: "began", direction: "desc")
-    assert_select "table tbody tr", 5
-    assert_select "table tbody tr:first-child th", "The Long Box Kids"
-    assert_select ".cs-table-toolbar", /Showing 5 of 12 series/
+    assert_select "table tbody tr", 2
+    assert_select "table tbody tr:first-child th", "Ash and Anchor"
+    assert_select ".cs-table-toolbar", /Showing 2 of 9 series/
     assert_select ".cs-table-toolbar", /1 filter on/
     assert_select "select[name=ended] option[selected]", "Present"
+  end
+
+  test "the missing filter uses the database's counts" do
+    get series_index_path(missing: "complete")
+    assert_select "table tbody tr", 1
+    assert_select "table tbody tr th", "Ash and Anchor"
+    assert_select "table tbody tr", /Complete/
   end
 
   test "unknown sort and page values fall back safely" do
@@ -30,17 +45,33 @@ class SeriesAndComicsTest < ActionDispatch::IntegrationTest
   end
 
   test "View comics on a series row filters the comics list" do
-    get series_index_path
-    assert_select "a[href=?]", comics_path(series: "Iron Tide")
+    paper_moons = series(:paper_moons)
+    get series_index_path(name: "moons")
+    assert_select "a[href=?]", comics_path(series: paper_moons.id)
 
-    get comics_path(series: "Iron Tide")
-    assert_select "table tbody tr", 3
-    assert_select "table tbody tr.is-missing", 2
+    get comics_path(series: paper_moons.id)
+    assert_select "table tbody tr", 4 # #5 isn't out yet
+    assert_select "table tbody tr.is-missing", 1
+  end
+
+  test "comics filter and sort in the database" do
+    get comics_path(series: series(:paper_moons).id, sort: "issue", direction: "desc")
+    assert_select "table tbody tr:first-child td.cs-issue-no", "#4"
+
+    get comics_path(artist: "kit")
+    assert_select "table tbody tr", 1
+    assert_select "table tbody tr th", "Paper Moons 1"
   end
 
   test "a filter with no matches shows the empty state" do
     get comics_path(title: "zzz")
     assert_response :success
     assert_select ".cs-empty", minimum: 1
+  end
+
+  test "another collector's series never show in yours" do
+    add_series "Ada Only", issues: 2, owned: [ 1 ], user: users(:ada)
+    get series_index_path(name: "ada")
+    assert_select "table tbody tr", 0
   end
 end

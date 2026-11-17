@@ -1,12 +1,12 @@
-# A user's dashboard. show = View dashboard.
-# TODO: front-end only first then add back-end functionality. Actions only render views for now.
-
+# Your dashboard (wireframe: User dashboard). Every number and list comes
+# from your stash: Stash for the counts and runs, plus your newest items.
 class DashboardController < ApplicationController
   def show
-    @stats = SampleStash.stats
-    @closest_runs = SampleStash.closest_runs
-    @releases = SampleStash.releases
-    @recent_series = SampleStash.recent_series
-    @recent_comics = SampleStash.recent_comics
+    stash = Stash.new(Current.user)
+    @stats = stash.stats
+    @closest_runs = stash.closest_runs
+    @releases = stash.releases.to_a
+    @recent_series = stash.series.order(Arel.sql("added_at DESC")).limit(3)
+    @recent_comics = Current.user.collection_items.owned.includes(issue: :series).order(created_at: :desc).limit(3)
   end
 end

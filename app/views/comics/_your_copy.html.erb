@@ -1,27 +1,31 @@
 <%# "Your copy": whether you own this issue and what you can do about it.
-    Both forms PATCH the comic's owned flag (ComicsController#update). %>
+    Both forms PATCH the comic's owned flag (ComicsController#update).
+    Locals: issue, item (your CollectionItem for it, or nil),
+            previous_issue and next_issue (for the note under Missing). %>
 <section class="cs-panel cs-your-copy" aria-label="Your copy">
-  <% if issue.owned %>
+  <% if item&.owned? %>
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
       <span class="cs-status cs-status-owned"><%= icon("check-circle") %>In your stash</span>
-      <span class="small text-body-secondary">Added <%= issue.added_on.strftime("%-d %b %Y") %></span>
+      <span class="small text-body-secondary">Added <%= item.created_at.strftime("%-d %b %Y") %></span>
     </div>
-    <%= button_to comic_path(issue.id), method: :patch, params: { comic: { owned: false } },
+    <%= button_to comic_path(issue), method: :patch, params: { comic: { owned: false } },
                   class: "btn btn-outline-danger w-100",
-                  form: { data: { turbo_confirm: "Remove #{issue.series} ##{issue.issue} from your collection?" } } do %>
+                  form: { data: { turbo_confirm: "Remove #{issue} from your collection?" } } do %>
       <%= icon("trash3") %> Remove from collection
     <% end %>
   <% else %>
     <div class="d-flex flex-column align-items-start gap-1">
       <span class="cs-status cs-status-missing"><%= icon("dash-circle-dotted") %>Missing from your stash</span>
-      <span class="small text-body-secondary"><%= gap_note(issue) %></span>
+      <span class="small text-body-secondary">
+        <%= issue.released? ? gap_note(previous_issue, next_issue) : "Not out yet." %>
+      </span>
     </div>
     <div class="cs-your-copy-actions">
-      <%= button_to comic_path(issue.id), method: :patch, params: { comic: { owned: true } },
+      <%= button_to comic_path(issue), method: :patch, params: { comic: { owned: true } },
                     class: "btn btn-primary" do %>
         <%= icon("check-circle") %> Got it
       <% end %>
-      <%= render "shared/hunt_button", on: issue.hunting %>
+      <%= render "shared/hunt_button", on: item&.hunting? || false %>
     </div>
   <% end %>
 </section>
