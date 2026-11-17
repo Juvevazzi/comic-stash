@@ -1,0 +1,26 @@
+[
+    {
+        "id": 9001,
+        "number": "1",
+        "cover_date": "2023-01-01",
+        "store_date": "2022-12-14",
+        "image": "https://static.metron.cloud/media/issue/9001.jpg",
+        "modified": "2026-10-01T12:00:00Z"
+    },
+    {
+        "id": 9002,
+        "number": "2",
+        "cover_date": "2023-02-01",
+        "store_date": "2023-01-11",
+        "image": "https://static.metron.cloud/media/issue/9002.jpg",
+        "modified": "2026-10-01T12:00:00Z"
+    },
+    {
+        "id": 9003,
+        "number": "3",
+        "cover_date": "2023-03-01",
+        "store_date": "2023-02-08",
+        "image": "https://static.metron.cloud/media/issue/9003.jpg",
+        "modified": "2026-10-01T12:00:00Z"
+    }
+]

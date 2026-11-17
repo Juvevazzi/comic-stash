@@ -1,0 +1,20 @@
+{
+    "id": 501,
+    "name": "Glasshouse",
+    "sort_name": "Glasshouse",
+    "volume": 1,
+    "series_type": {
+        "id": 2,
+        "name": "Limited Series"
+    },
+    "status": "Completed",
+    "publisher": {
+        "id": 101,
+        "name": "Lantern Press"
+    },
+    "year_began": 2023,
+    "year_end": 2024,
+    "desc": "Every window in the house shows a different year.",
+    "issue_count": 3,
+    "modified": "2026-10-01T12:00:00Z"
+}
