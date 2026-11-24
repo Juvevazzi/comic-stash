@@ -57,4 +57,12 @@ class MetronImportTest < ActiveSupport::TestCase
       assert_raises(Longbox::Metron::ServerError) { failing.import_series(501) }
     end
   end
+
+  test "an import adopts an issue typed in by hand instead of copying it" do
+    import.import_series(501)
+    Issue.find_by!(metron_id: 9003).update!(metron_id: nil) # as if added on Add comics
+
+    assert_no_difference("Issue.count") { import.import_series(501) }
+    assert_equal 9003, Series.find_by!(metron_id: 501).issues.find_by!(number: "3").metron_id
+  end
 end

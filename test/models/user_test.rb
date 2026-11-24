@@ -82,4 +82,37 @@ class UserTest < ActiveSupport::TestCase
       users(:ricardo).destroy
     end
   end
+
+  test "got it owns an issue, and takes it off the hunt list" do
+    assert_no_difference -> { CollectionItem.count } do
+      users(:ricardo).collect!(issues(:paper_moons_3))
+    end
+    assert collection_items(:ricardo_paper_moons_3).reload.owned?
+  end
+
+  test "hunting an issue you own leaves it owned" do
+    assert users(:ricardo).hunt!(issues(:paper_moons_1)).owned?
+  end
+
+  test "an issue goes on and off the hunt list" do
+    ada = users(:ada)
+    assert_difference -> { ada.hunted_issues.count }, 1 do
+      ada.hunt!(issues(:paper_moons_2))
+    end
+    assert_difference -> { ada.hunted_issues.count }, -1 do
+      ada.unhunt!(issues(:paper_moons_2))
+    end
+  end
+
+  test "taking an issue off the hunt list never removes one you own" do
+    assert_no_difference -> { CollectionItem.count } do
+      users(:ricardo).unhunt!(issues(:paper_moons_1))
+    end
+  end
+
+  test "removing an issue changes only your stash" do
+    assert_difference -> { users(:ricardo).collection_items.count } => -1, -> { users(:ada).collection_items.count } => 0 do
+      users(:ricardo).uncollect!(issues(:paper_moons_1))
+    end
+  end
 end
