@@ -78,4 +78,11 @@ class StashTest < ActiveSupport::TestCase
     assert_empty stash.closest_runs
     assert_empty stash.gap_groups
   end
+
+  test "series come with their cover, from the same query" do
+    issues(:paper_moons_1).update!(image_url: "https://static.metron.cloud/media/issue/pm1.jpg")
+    series = @stash.series.sole
+    assert series.has_attribute?(:cover_url), "cover_url should be a column of the Stash query"
+    assert_equal "https://static.metron.cloud/media/issue/pm1.jpg", series.cover_url
+  end
 end
