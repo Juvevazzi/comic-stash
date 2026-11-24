@@ -1,7 +1,14 @@
-<%# Comic cover thumbnail: a halftone placeholder until real cover images
-    arrive from the Metron API.%>
+<%# Comic cover thumbnail: the cover image from Metron when there is one,
+    otherwise a halftone placeholder in the series' colour. Decorative
+    (aria-hidden), because the title next to it already says which comic
+    it is. Locals: tone, image (optional URL), issue (optional, e.g. "#3",
+    shown as a flag), css (optional extra classes). %>
 <span class="cs-cover <%= local_assigns[:css] %>" aria-hidden="true">
-  <span class="cs-cover-placeholder <%= "is-#{tone}" unless tone.to_s == "yellow" %>"></span>
+  <% if local_assigns[:image].present? %>
+    <%= image_tag image, alt: "", loading: "lazy", decoding: "async" %>
+  <% else %>
+    <span class="cs-cover-placeholder <%= "is-#{tone}" unless tone.to_s == "yellow" %>"></span>
+  <% end %>
   <% if local_assigns[:issue] %>
     <span class="cs-cover-flag"><%= issue %></span>
   <% end %>

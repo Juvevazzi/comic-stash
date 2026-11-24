@@ -59,7 +59,7 @@ class Stash
   # queries in all, however many series you have.
   def runs
     @runs ||= begin
-      collected = user.collected_series.to_a
+      collected = user.collected_series.with_cover.to_a
       released = numbers_by_series(Issue.released(today).where(series: collected))
       owned = numbers_by_series(user.owned_issues)
       collected.index_with do |series|
@@ -108,7 +108,7 @@ class Stash
   def series_with_counts
     Series.where(id: user.issues.select(:series_id))
           .joins("LEFT JOIN publishers ON publishers.id = series.publisher_id")
-          .select("series.*", "publishers.name AS publisher_name", sql(<<~SQL))
+          .select("series.*", "publishers.name AS publisher_name", Series::COVER_SELECT, sql(<<~SQL))
             (SELECT COUNT(*) FROM issues i
               WHERE i.series_id = series.id AND COALESCE(i.store_date, i.cover_date) <= :today) AS released_count,
             (SELECT COUNT(*) FROM issues i

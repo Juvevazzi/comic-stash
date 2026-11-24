@@ -1,6 +1,6 @@
 <%# One comic as a card (phones). Local: comic (an Issue from Stash#issues). %>
 <li class="cs-list-card">
-  <%= render "shared/cover", tone: comic.tone, issue: comic.label, css: "cs-thumb" %>
+  <%= render "shared/cover", tone: comic.tone, image: comic.image_url, issue: comic.label, css: "cs-thumb" %>
   <div class="cs-grow">
     <div class="d-flex justify-content-between align-items-start gap-2">
       <span class="fw-bold"><%= comic.series.display_name %> <span class="cs-issue-no"><%= comic.label %></span></span>

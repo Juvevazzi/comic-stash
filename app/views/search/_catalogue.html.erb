@@ -1,6 +1,6 @@
 <%# A catalogue series you don't collect yet. Locals: entry (a Series), term. %>
 <article class="cs-result-card">
-  <%= render "shared/cover", tone: entry.tone, css: "cs-thumb-xs" %>
+  <%= render "shared/cover", tone: entry.tone, image: entry.cover_url, css: "cs-thumb-xs" %>
   <div class="cs-grow">
     <h3 class="h6 mb-0"><%= highlight(entry.display_name, term) %></h3>
     <p class="small text-body-secondary mb-1">

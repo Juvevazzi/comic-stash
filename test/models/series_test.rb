@@ -36,4 +36,16 @@ class SeriesTest < ActiveSupport::TestCase
       series(:paper_moons).destroy
     end
   end
+
+  test "a series' cover is its first issue that has one" do
+    issues(:paper_moons_2).update!(image_url: "https://static.metron.cloud/media/issue/pm2.jpg")
+    issues(:paper_moons_3).update!(image_url: "https://static.metron.cloud/media/issue/pm3.jpg")
+    assert_equal "https://static.metron.cloud/media/issue/pm2.jpg", series(:paper_moons).cover_url
+    assert_equal "https://static.metron.cloud/media/issue/pm2.jpg", Series.with_cover.find(series(:paper_moons).id).cover_url
+  end
+
+  test "a series without covers has none" do
+    assert_nil series(:night_signal).cover_url
+    assert_nil Series.with_cover.find(series(:night_signal).id).cover_url
+  end
 end

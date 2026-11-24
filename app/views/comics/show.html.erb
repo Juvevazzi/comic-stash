@@ -16,7 +16,7 @@
 
 <div class="cs-issue">
   <div class="cs-issue-side">
-    <%= render "shared/cover", tone: @issue.tone, issue: @issue.label,
+    <%= render "shared/cover", tone: @issue.tone, issue: @issue.label, image: @issue.image_url,
                css: [ "cs-issue-cover", ("is-out" unless @item&.owned?) ].compact.join(" ") %>
     <%= render "comics/your_copy", issue: @issue, item: @item,
                previous_issue: @previous_issue, next_issue: @next_issue %>
