@@ -19,7 +19,6 @@ default: &default
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-
 development:
   <<: *default
   database: comic_stash_development
@@ -85,20 +84,32 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
+  # Neon PostgreSQL, added through the Vercel Marketplace (25.6). Vercel puts
+  # the connection details in environment variables. Rails uses DATABASE_URL
+  # for the primary database on its own; that goes through Neon's connection
+  # pooler, which can't keep prepared statements or the lock Rails takes while
+  # migrating (both belong to one connection), so those are switched off.
+  # The other three databases connect directly, with the PG* variables.
   primary: &primary_production
     <<: *default
-    database: comic_stash_production
-    username: comic_stash
-    password: <%= ENV["COMIC_STASH_DATABASE_PASSWORD"] %>
+    host: <%= ENV["PGHOST_UNPOOLED"] %>
+    username: <%= ENV["PGUSER"] %>
+    password: <%= ENV["PGPASSWORD"] %>
+    database: <%= ENV["PGDATABASE"] %>
+    sslmode: require
+    prepared_statements: false
+    advisory_locks: false
+  # Solid Cache, Solid Queue and Solid Cable each get their own database on
+  # the same Neon server, as Rails 8 sets them up. You create them in 25.7.
   cache:
     <<: *primary_production
-    database: comic_stash_production_cache
+    database: comic_stash_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: comic_stash_production_queue
+    database: comic_stash_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: comic_stash_production_cable
+    database: comic_stash_cable
     migrations_paths: db/cable_migrate
