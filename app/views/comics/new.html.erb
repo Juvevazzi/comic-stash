@@ -2,7 +2,9 @@
     Three parts: add one comic, what you just added, and add in bulk. %>
 <%= render "shared/page_header", title: "Add comics",
            lead: "Add one issue at a time, or a whole run in one go.",
-           breadcrumbs: [ [ "Dashboard", dashboard_path ] ] %>
+           breadcrumbs: [ [ "Dashboard", dashboard_path ] ],
+           action: link_to(safe_join([ icon("cloud-download"), "Import from Metron" ], " "), new_import_path,
+                           class: "btn btn-secondary") %>
 
 <%# Series names offered while typing. Both forms point at this one list. %>
 <datalist id="series-options">
