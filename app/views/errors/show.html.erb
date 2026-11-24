@@ -1,0 +1,45 @@
+<%# Error page (wireframe: Error - Desktop): a comic panel with the code,
+    then what happened and where to go next. %>
+<% content_for :title, @name %>
+
+<section class="cs-error">
+  <div class="cs-error-panel cs-halftone" aria-hidden="true">
+    <span class="cs-caption">Meanwhile, at error <%= @code %>…</span>
+    <span class="cs-error-code"><%= @code %></span>
+    <span class="cs-error-sfx"><%= @code >= 500 ? "Ka-thunk!" : "Huh?!" %></span>
+  </div>
+
+  <div class="cs-error-text">
+    <p class="cs-credits-label mb-2">Error <%= @code %> · <%= @name %></p>
+    <h1><%= @headline %></h1>
+    <p class="lead"><%= @body %></p>
+
+    <% if @code == 404 %>
+      <%= form_with url: search_path, method: :get, role: "search", class: "mb-3" do |f| %>
+        <%= f.label :q, "Search your stash", class: "visually-hidden", for: "error-q" %>
+        <div class="input-group">
+          <span class="input-group-text"><%= icon("search") %></span>
+          <%= f.search_field :q, id: "error-q", class: "form-control", placeholder: "Search series, issues or creators" %>
+          <button type="submit" class="btn btn-secondary">Search</button>
+        </div>
+      <% end %>
+    <% end %>
+
+    <div class="d-flex flex-wrap gap-2 mb-3">
+      <% if @code == 500 && request.get? %>
+        <%= link_to "Try again", request.original_fullpath, class: "btn btn-primary" %>
+      <% elsif @code == 422 %>
+        <%= link_to "Go back", request.referer.presence || dashboard_path, class: "btn btn-primary" %>
+      <% end %>
+      <%= link_to "Go to your dashboard", dashboard_path, class: "btn #{@code == 404 ? "btn-primary" : "btn-secondary"}" %>
+    </div>
+
+    <% if @code >= 500 %>
+      <p class="small text-body-secondary">
+        If you contact us, include this reference: <span class="cs-issue-no"><%= request.request_id %></span>
+      </p>
+    <% else %>
+      <p class="small text-body-secondary">Need a hand? <%= link_to "Visit Help", help_path %></p>
+    <% end %>
+  </div>
+</section>

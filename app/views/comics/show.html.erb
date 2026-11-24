@@ -1,0 +1,103 @@
+<%# View issue (wireframe: View issue). One issue from the catalogue in full,
+    with your copy beside it. Desktop: cover and "your copy" on the left, the
+    issue on the right. Phones: one column in the wireframe's order, with the
+    cover beside the title (see .cs-issue). %>
+<% series = @issue.series %>
+<% content_for :title, @issue.to_s %>
+
+<nav aria-label="Breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><%= link_to "Dashboard", dashboard_path %></li>
+    <li class="breadcrumb-item"><%= link_to "Your comics", comics_path %></li>
+    <li class="breadcrumb-item"><%= link_to series.display_name, comics_path(series: series.id) %></li>
+    <li class="breadcrumb-item active cs-issue-no" aria-current="page"><%= @issue.label %></li>
+  </ol>
+</nav>
+
+<div class="cs-issue">
+  <div class="cs-issue-side">
+    <%= render "shared/cover", tone: @issue.tone, issue: @issue.label, image: @issue.image_url,
+               css: [ "cs-issue-cover", ("is-out" unless @item&.owned?) ].compact.join(" ") %>
+    <%= render "comics/your_copy", issue: @issue, item: @item,
+               previous_issue: @previous_issue, next_issue: @next_issue %>
+    <%= render "comics/identifiers", issue: @issue %>
+    <%= render "comics/issue_nav", previous_issue: @previous_issue, next_issue: @next_issue %>
+  </div>
+
+  <div class="cs-issue-main">
+    <header class="cs-issue-head">
+      <p class="cs-issue-meta mb-1">
+        <%= link_to series.display_name, comics_path(series: series.id), class: "fw-bold" %>
+        <% if @issue.released_on %>
+          <span aria-hidden="true">·</span> <span class="cs-issue-no"><%= @issue.released_on.year %></span>
+        <% end %>
+        <% if series.publisher %>
+          <span aria-hidden="true">·</span> <%= series.publisher %>
+        <% end %>
+      </p>
+      <h1 class="mb-1"><%= series.display_name %> <span class="cs-issue-no"><%= @issue.label %></span></h1>
+      <% if @issue.title.present? %>
+        <p class="cs-issue-subtitle mb-0"><%= @issue.title %></p>
+      <% end %>
+    </header>
+
+    <div class="cs-issue-body">
+      <% if series.series_type %>
+        <ul class="cs-tags" aria-label="Format">
+          <li><%= series.series_type %></li>
+        </ul>
+      <% end %>
+
+      <dl class="cs-facts">
+        <div><dt>Publisher</dt><dd><%= series.publisher || "—" %></dd></div>
+        <div><dt>Cover date</dt><dd class="cs-issue-no"><%= month_year(@issue.cover_date) %></dd></div>
+        <div><dt>In shops</dt><dd class="cs-issue-no"><%= @issue.store_date&.strftime("%-d %b %Y") || "—" %></dd></div>
+        <div>
+          <dt>Cover price</dt>
+          <dd class="cs-issue-no">
+            <% if @issue.price %>
+              <%= number_to_currency(@issue.price) %> <span class="fw-normal text-body-secondary">USD</span>
+            <% else %>
+              —
+            <% end %>
+          </dd>
+        </div>
+        <div><dt>Pages</dt><dd class="cs-issue-no"><%= @issue.page_count || "—" %></dd></div>
+      </dl>
+
+      <% if @issue.needs_details? %>
+        <p class="alert alert-info" role="status">
+          <%= icon("cloud-download") %> Fetching the credits and description from Metron. Reload in a minute to see them.
+        </p>
+      <% end %>
+
+      <section aria-labelledby="about-title" data-controller="read-more">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+          <h2 id="about-title" class="h4 mb-0">About this issue</h2>
+          <span class="cs-caption">Publisher’s solicitation</span>
+        </div>
+        <p id="issue-description" class="mb-1" data-read-more-target="text"><%= @issue.description.presence || "No description yet." %></p>
+        <button type="button" class="btn btn-link px-0 d-lg-none" hidden
+                aria-controls="issue-description" aria-expanded="false"
+                data-read-more-target="button" data-action="read-more#toggle">Read more</button>
+      </section>
+
+      <% if @issue.characters.any? %>
+        <section aria-labelledby="characters-title">
+          <h2 id="characters-title" class="h4 mb-2">Characters</h2>
+          <ul class="cs-chips">
+            <% @issue.characters.each do |name| %>
+              <li>
+                <%= link_to search_path(q: name), class: "cs-chip" do %>
+                  <span class="cs-chip-avatar" aria-hidden="true"><%= initials(name) %></span><%= name %>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
+
+      <%= render "comics/creators", issue: @issue %>
+    </div>
+  </div>
+</div>

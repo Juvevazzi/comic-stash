@@ -1,0 +1,32 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined. If you add columns to the
+# model remove the "{}" from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+# Ricardo owns Paper Moons #1, #2 and #4, and is hunting #3.
+# Ada owns #1 too, so tests can check the two stashes stay apart.
+ricardo_paper_moons_1:
+  user: ricardo
+  issue: paper_moons_1
+  status: owned
+
+ricardo_paper_moons_2:
+  user: ricardo
+  issue: paper_moons_2
+  status: owned
+
+ricardo_paper_moons_4:
+  user: ricardo
+  issue: paper_moons_4
+  status: owned
+
+ricardo_paper_moons_3:
+  user: ricardo
+  issue: paper_moons_3
+  status: hunting
+
+ada_paper_moons_1:
+  user: ada
+  issue: paper_moons_1
+  status: owned

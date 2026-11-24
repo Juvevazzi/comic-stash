@@ -1,0 +1,24 @@
+<%# One of your series in the results. Locals: series (from Stash#series, with its counts), term. %>
+<article class="cs-result-card">
+  <%= render "series/cover", series: series %>
+  <div class="cs-grow">
+    <div class="d-flex justify-content-between align-items-baseline gap-2">
+      <h3 class="h6 mb-0"><%= highlight(series.display_name, term) %></h3>
+      <span class="small cs-issue-no text-body-secondary text-nowrap"><%= series.owned_count %> of <%= series.released_count %></span>
+    </div>
+    <p class="small text-body-secondary mb-2">
+      <%= [ series.years, series.publisher_name ].compact.join(" · ") %>
+    </p>
+    <%= render "shared/run_progress", owned: series.owned_count, total: series.released_count %>
+    <div class="d-flex justify-content-between align-items-center mt-2">
+      <% if series.missing_count.positive? %>
+        <%= link_to gaps_path(q: series.name), class: "cs-status cs-status-missing text-decoration-none" do %>
+          <%= icon("dash-circle-dotted") %><%= series.missing_count %> missing
+        <% end %>
+      <% else %>
+        <span class="cs-status cs-status-owned"><%= icon("check2") %>Complete</span>
+      <% end %>
+      <%= link_to "View comics", comics_path(series: series.id), class: "btn btn-link btn-sm px-0" %>
+    </div>
+  </div>
+</article>

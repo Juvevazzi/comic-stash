@@ -1,0 +1,23 @@
+<%# One row of "Closest to complete". Local: closest (a Stash::ClosestRun:
+    the series and its Longbox::Run). %>
+<% series = closest.series %>
+<% run = closest.run %>
+<li>
+  <%= render "shared/cover", tone: series.tone, image: series.cover_url, css: "cs-thumb" %>
+  <div class="cs-grow">
+    <div class="cs-run-meta mb-2">
+      <%= link_to series.display_name, comics_path(series: series.id), class: "fw-bold" %>
+      <span class="cs-issue-no"><%= run.owned_count %> of <%= run.total %></span>
+    </div>
+    <%= render "shared/run_progress", owned: run.owned_count, total: run.total %>
+    <div class="d-flex flex-wrap align-items-center gap-1 mt-2 small">
+      <span class="text-body-secondary me-1">Missing</span>
+      <% run.gaps.each do |gap| %>
+        <span class="cs-status cs-status-missing cs-issue-no"><%= gap %></span>
+      <% end %>
+    </div>
+  </div>
+  <%= link_to gaps_path(q: series.name), class: "btn btn-hunt btn-sm flex-shrink-0" do %>
+    <%= icon("bookmark-plus") %> Hunt <%= run.missing_count %>
+  <% end %>
+</li>

@@ -1,0 +1,43 @@
+<%# Account: log out, and delete account behind a typed confirmation. The
+    confirm controller only enables the button once the phrase matches; the
+    server checks the phrase again, because JavaScript can be switched off. %>
+<section id="account" class="cs-profile-section" aria-labelledby="account-title">
+  <h2 id="account-title" class="h4 mb-3">Account</h2>
+
+  <ul class="cs-settings">
+    <li class="cs-setting">
+      <span class="cs-grow">
+        <span class="fw-bold d-block">Log out</span>
+        <span class="small text-body-secondary">Your collection stays safe until you log back in.</span>
+      </span>
+      <%= button_to "Log out", logout_path, method: :delete, class: "btn btn-secondary" %>
+    </li>
+  </ul>
+
+  <details class="cs-danger-zone">
+    <summary>
+      <span class="cs-grow">
+        <span class="fw-bold d-block">Delete account</span>
+        <span class="small text-body-secondary">Permanently removes your account and your whole stash.</span>
+      </span>
+      <span class="btn btn-outline-danger">Delete account</span>
+    </summary>
+
+    <%= form_with url: profile_path, method: :delete, class: "cs-danger-panel",
+                  data: { controller: "confirm", confirm_phrase_value: ProfilesController::CONFIRM_PHRASE } do |f| %>
+      <p class="mb-2">
+        <strong>This can't be undone.</strong> Deleting removes <%= pluralize(@stats.series_count, "series") %>,
+        <%= pluralize(@stats.comic_count, "comic") %> and your hunt list.
+        <%= link_to "Export your collection", profile_export_path(format: :csv), data: { turbo: false } %> first if you want a copy.
+      </p>
+      <%= f.label :confirm, class: "form-label" do %>
+        Type <span class="cs-issue-no">"<%= ProfilesController::CONFIRM_PHRASE %>"</span> to confirm
+      <% end %>
+      <div class="d-flex flex-wrap gap-2">
+        <%= f.text_field :confirm, class: "form-control cs-confirm-input", autocomplete: "off",
+                         data: { confirm_target: "input", action: "input->confirm#check" } %>
+        <%= f.submit "Delete my account", class: "btn btn-danger", data: { confirm_target: "button" } %>
+      </div>
+    <% end %>
+  </details>
+</section>

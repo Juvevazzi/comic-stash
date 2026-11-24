@@ -1,0 +1,19 @@
+<%# One row of "New in your series". Local: release (an Issue from
+    Stash#releases, so it knows your status: hunting? or not). %>
+<li>
+  <%= render "shared/cover", tone: release.tone, image: release.image_url, issue: release.label, css: "cs-thumb" %>
+  <div class="cs-grow">
+    <div class="d-flex flex-wrap align-items-center gap-2">
+      <span class="fw-bold"><%= release.series.display_name %> <span class="cs-issue-no"><%= release.label %></span></span>
+      <% unless release.released? %>
+        <span class="cs-status cs-status-upcoming"><%= icon("calendar-event") %>Upcoming</span>
+      <% end %>
+    </div>
+    <p class="small text-body-secondary mb-2"><%= release_note(release) %></p>
+    <% if release.released? %>
+      <%= render "shared/issue_actions", comic_id: release.id, label: release.to_s, hunting: release.hunting? %>
+    <% else %>
+      <%= render "shared/hunt_button", issue_id: release.id, on: release.hunting?, item: release.to_s %>
+    <% end %>
+  </div>
+</li>

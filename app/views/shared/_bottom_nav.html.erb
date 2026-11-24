@@ -1,0 +1,18 @@
+<%# Phone-only tab bar (hidden from lg up), as in the mobile wireframes. %>
+<nav class="cs-bottom-nav d-lg-none" aria-label="Main">
+  <%= nav_link_block dashboard_path, active: controller_name == "dashboard" do %>
+    <%= icon("house") %><span>Home</span>
+  <% end %>
+  <%= nav_link_block comics_path, active: controller_name == "comics" do %>
+    <%= icon("collection") %><span>Collection</span>
+  <% end %>
+  <%= nav_link_block series_index_path do %>
+    <%= icon("journals") %><span>Series</span>
+  <% end %>
+  <%= nav_link_block dashboard_path(anchor: "hunt"), active: false do %>
+    <%= icon("bookmark") %><span>Hunt list</span>
+  <% end %>
+  <%= nav_link_block dashboard_path(anchor: "insights"), active: false do %>
+    <%= icon("bar-chart") %><span>Insights</span>
+  <% end %>
+</nav>

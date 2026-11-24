@@ -1,0 +1,20 @@
+<%# One results section: heading with its count, an optional line under it,
+    and "See all" on the All tab when there are more than the preview shows.
+    Locals: key, title, count, count_note, lead; the block is the results. %>
+<% more = @tab == "all" && count > SearchController::PREVIEW.fetch(key) %>
+<section class="cs-result-section" aria-labelledby="results-<%= key %>">
+  <div class="cs-section-head">
+    <div>
+      <h2 id="results-<%= key %>" class="h4 mb-0">
+        <%= title %> <span class="cs-issue-no text-body-secondary fs-6"><%= count %> <%= local_assigns[:count_note] %></span>
+      </h2>
+      <% if local_assigns[:lead] %>
+        <p class="small text-body-secondary mb-0"><%= lead %></p>
+      <% end %>
+    </div>
+    <% if more %>
+      <%= link_to "See all #{count}", search_tab_path(key), class: "fw-bold" %>
+    <% end %>
+  </div>
+  <%= yield %>
+</section>

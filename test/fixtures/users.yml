@@ -1,0 +1,14 @@
+<%# Test users. Fixtures go straight into the database without validations,
+    so the digest is made here: both users' password is "password1". %>
+<% password_digest = BCrypt::Password.create("password1") %>
+
+ricardo:
+  name: Ricardo Giacovazzi
+  email_address: rg@example.com
+  password_digest: <%= password_digest %>
+  password_changed_at: <%= 3.months.ago.to_fs(:db) %>
+
+ada:
+  name: Ada Moreno
+  email_address: ada@example.com
+  password_digest: <%= password_digest %>

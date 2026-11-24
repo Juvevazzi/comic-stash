@@ -1,0 +1,17 @@
+<%# A catalogue series you don't collect yet. Locals: entry (a Series), term. %>
+<article class="cs-result-card">
+  <%= render "shared/cover", tone: entry.tone, image: entry.cover_url, css: "cs-thumb-xs" %>
+  <div class="cs-grow">
+    <h3 class="h6 mb-0"><%= highlight(entry.display_name, term) %></h3>
+    <p class="small text-body-secondary mb-1">
+      <%= [ entry.series_type, entry.years, entry.publisher&.name ].compact.join(" · ") %>
+    </p>
+    <% if entry.issue_count %>
+      <p class="small cs-issue-no mb-2"><%= pluralize(entry.issue_count, "issue") %></p>
+    <% end %>
+    <%= link_to new_comic_path(series: entry.display_name), class: "btn btn-secondary btn-sm",
+                "aria-label": "Add #{entry.display_name} to your stash" do %>
+      <%= icon("plus-lg") %> Add to stash
+    <% end %>
+  </div>
+</article>

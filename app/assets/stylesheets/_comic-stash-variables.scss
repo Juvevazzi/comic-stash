@@ -1,0 +1,104 @@
+// Theme colours
+$primary: #0b62a6;
+$secondary: #57534b;
+$success: #0d7377;
+$info: #0b62a6;
+$warning: #ffd23f;
+$danger: #c0262d;
+$light: #ece6d8;
+$dark: #18171c;
+
+// Body (light)
+$body-bg: #f6f2e9;
+$body-color: #18171c;
+$body-emphasis-color: #18171c;
+$body-secondary-color: #57534b;
+$body-secondary-bg: #ece6d8;
+$body-tertiary-color: #6f6a62;
+$body-tertiary-bg: #ece6d8;
+$border-color: #ddd5c4;
+$link-color: $primary;
+$link-hover-color: #094f86;
+$link-underline-offset: 0.2em;
+
+// Body (dark) — used by [data-bs-theme="dark"]
+$body-bg-dark: #141318;
+$body-color-dark: #f3eee4;
+$body-emphasis-color-dark: #f3eee4;
+$body-secondary-color-dark: #b8b1a5;
+$body-secondary-bg-dark: #0e0d11;
+$body-tertiary-color-dark: #9a9389;
+$body-tertiary-bg-dark: #0e0d11;
+$border-color-dark: #34323a;
+$link-color-dark: #5aaef0;
+$link-hover-color-dark: #7cc0f4;
+
+// Type
+$font-family-sans-serif:
+  "Atkinson Hyperlegible Next",
+  system-ui,
+  -apple-system,
+  "Segoe UI",
+  sans-serif;
+$font-family-monospace:
+  "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+$font-size-base: 1rem;
+$line-height-base: 1.5;
+$small-font-size: 0.875rem;
+$headings-font-weight: 700;
+$headings-line-height: 1.15;
+$h1-font-size: 2.5rem;
+$h2-font-size: 2rem;
+$h3-font-size: 1.75rem;
+$h4-font-size: 1.5rem;
+$h5-font-size: 1.25rem;
+$h6-font-size: 1rem;
+$display-font-family: "Archivo", "Arial Black", system-ui, sans-serif;
+$display-font-sizes: (
+  1: 4rem,
+  2: 3.5rem,
+  3: 3rem,
+  4: 2.5rem,
+  5: 2rem,
+  6: 1.75rem,
+);
+$display-font-weight: 800;
+$display-line-height: 1;
+
+// Shape
+$border-radius: 0.375rem; // 6px
+$border-radius-sm: 0.25rem; // 4px
+$border-radius-lg: 0.625rem; // 10px
+$border-radius-xl: 1rem; // 16px
+$border-radius-pill: 50rem;
+$enable-shadows: false;
+$enable-gradients: false;
+$box-shadow-sm: 0 1px 2px rgba(24, 23, 28, 0.08);
+$box-shadow: 0 8px 24px rgba(24, 23, 28, 0.12);
+
+// Controls
+$btn-font-weight: 700;
+$btn-border-width: 2px;
+$input-btn-padding-y: 0.4375rem;
+$input-btn-padding-x: 0.875rem;
+$input-border-color: #8b8476;
+$input-bg: #ffffff;
+$input-placeholder-color: #6f6a62;
+$form-check-input-border: 1px solid #8b8476;
+$form-label-font-weight: 700;
+$focus-ring-width: 2px;
+$focus-ring-opacity: 1;
+$focus-ring-color: #18171c;
+
+// Surfaces
+$card-bg: #ffffff;
+$card-border-color: #ddd5c4;
+$card-cap-bg: transparent;
+$card-border-radius: 0.625rem;
+$navbar-brand-font-size: 1.25rem;
+$progress-height: 0.75rem;
+$progress-border-radius: 50rem;
+$badge-font-weight: 700;
+$table-cell-padding-y: 0.625rem;
+$table-cell-padding-x: 0.75rem;
+$alert-border-width: 0;

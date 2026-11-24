@@ -1,0 +1,43 @@
+<%# Preferences: appearance, currency and two display switches. Changes save
+    as soon as they're made (auto-submit); Appearance also applies at once
+    through the appearance controller. %>
+<section id="preferences" class="cs-profile-section" aria-labelledby="preferences-title">
+  <h2 id="preferences-title" class="h4 mb-1">Preferences</h2>
+  <p class="text-body-secondary">How Comic Stash looks and counts things.</p>
+
+  <%= form_with scope: :preferences, url: profile_preferences_path, method: :patch,
+                data: { controller: "auto-submit" } do |f| %>
+    <%= hidden_field_tag :section, "preferences", id: nil %>
+
+    <fieldset class="mb-3" data-controller="appearance">
+      <legend class="fs-6 fw-bold">Appearance</legend>
+      <div class="cs-appearance">
+        <% [ [ "light", "Light", "Newsprint paper" ], [ "dark", "Dark", "Inked night" ],
+             [ "system", "Match my device", "Follows your system setting" ] ].each do |value, label, description| %>
+          <%= f.radio_button :appearance, value, checked: @preferences.appearance == value, class: "btn-check",
+                             data: { appearance_target: "choice", action: "change->appearance#apply change->auto-submit#submit" } %>
+          <%= f.label "appearance_#{value}", class: "cs-appearance-option" do %>
+            <span class="cs-swatch-<%= value %>" aria-hidden="true"></span>
+            <span><span class="fw-bold d-block"><%= label %></span><span class="small text-body-secondary"><%= description %></span></span>
+          <% end %>
+        <% end %>
+      </div>
+    </fieldset>
+
+    <div class="mb-3">
+      <%= f.label :currency, "Currency", class: "form-label fw-bold" %>
+      <%= f.select :currency, [ [ "Euro (€)", "EUR" ], [ "Pound (£)", "GBP" ], [ "US dollar ($)", "USD" ], [ "Canadian dollar ($)", "CAD" ] ],
+                   { selected: @preferences.currency }, class: "form-select cs-currency",
+                   aria: { describedby: "currency-desc" }, data: { action: "change->auto-submit#submit" } %>
+      <div id="currency-desc" class="form-text">Used for cover prices and what you've spent.</div>
+    </div>
+
+    <ul class="cs-settings">
+      <%= render "profiles/switch", form: f, field: :show_prices, label: "Show cover prices",
+                 description: "Shown on issue pages, in your chosen currency.", checked: @preferences.show_prices %>
+      <%= render "profiles/switch", form: f, field: :count_variants, label: "Count variant covers separately",
+                 description: "Off counts one issue per number, whatever the cover.", checked: @preferences.count_variants %>
+    </ul>
+    <noscript><%= f.submit "Save preferences", class: "btn btn-primary mt-3" %></noscript>
+  <% end %>
+</section>

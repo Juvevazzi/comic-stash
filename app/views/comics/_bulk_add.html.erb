@@ -1,0 +1,28 @@
+<%# "Add in bulk": three ways to add many comics, one tab each. The tabs
+    controller shows one panel at a time; each panel is its own form posting
+    to ComicsController#bulk with a hidden "source" saying which way it came. %>
+<% tabs = [ [ "range", "Issue range" ], [ "paste", "Paste a list" ], [ "csv", "Upload a CSV" ] ] %>
+<section class="card cs-section" aria-labelledby="bulk-h" data-controller="tabs">
+  <div class="card-body">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+      <div>
+        <h2 id="bulk-h" class="h3">Add in bulk</h2>
+        <p class="text-body-secondary mb-0">Got a long box to catch up on? Add a run of issues, paste a list, or upload a CSV.</p>
+      </div>
+      <div class="cs-tablist" role="tablist" aria-label="Bulk add method">
+        <% tabs.each_with_index do |(key, label), index| %>
+          <button type="button" role="tab" id="tab-<%= key %>" aria-controls="panel-<%= key %>"
+                  aria-selected="<%= index.zero? %>" tabindex="<%= index.zero? ? 0 : -1 %>"
+                  data-tabs-target="tab" data-action="tabs#select keydown->tabs#move"><%= label %></button>
+        <% end %>
+      </div>
+    </div>
+
+    <% tabs.each_with_index do |(key, _label), index| %>
+      <div id="panel-<%= key %>" role="tabpanel" aria-labelledby="tab-<%= key %>"
+           data-tabs-target="panel" <%= "hidden" unless index.zero? %>>
+        <%= render "comics/bulk_#{key}" %>
+      </div>
+    <% end %>
+  </div>
+</section>

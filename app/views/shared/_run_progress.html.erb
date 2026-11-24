@@ -1,0 +1,6 @@
+<%# Owned-vs-missing bar for a run.%>
+<% percent = total.zero? ? 0 : (owned * 100.0 / total).round %>
+<div class="progress" role="progressbar" aria-label="<%= owned %> of <%= total %> owned"
+     aria-valuenow="<%= percent %>" aria-valuemin="0" aria-valuemax="100">
+  <div class="progress-bar" style="width: <%= percent %>%"></div>
+</div>

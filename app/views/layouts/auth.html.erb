@@ -1,0 +1,36 @@
+<%# Split screen for log in and sign up: cyan brand panel left (each view fills it with content_for :aside), form right. On phones the panel becomes a short header above the form. %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%= render "layouts/head" %>
+  </head>
+
+  <body>
+    <div class="cs-auth">
+      <section class="cs-auth-aside cs-halftone" aria-label="About Comic Stash">
+        <%= link_to "Comic Stash", dashboard_path, class: "cs-wordmark cs-auth-wordmark" %>
+        <div class="cs-auth-aside-body">
+          <%= yield :aside %>
+        </div>
+        <p class="cs-auth-aside-footer small mb-0">
+          Built for collectors who want to know what is on the shelf and what is still out there.
+        </p>
+      </section>
+
+      <main id="main" class="cs-auth-main">
+        <div class="cs-auth-switch"><%= yield :switch %></div>
+
+        <div class="cs-auth-form-wrap">
+          <%= render "shared/flash" %>
+          <%= yield %>
+        </div>
+
+        <nav class="cs-auth-links" aria-label="Legal and help">
+          <%= link_to "Privacy", privacy_path %>
+          <%= link_to "Terms", terms_path %>
+          <%= link_to "Help", help_path %>
+        </nav>
+      </main>
+    </div>
+  </body>
+</html>

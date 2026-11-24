@@ -1,0 +1,26 @@
+<%# One series as a card (phones). Local: series (from Stash#series). %>
+<li class="cs-list-card">
+  <%= render "series/cover", series: series %>
+  <div class="cs-grow">
+    <div class="d-flex justify-content-between align-items-start gap-2">
+      <span class="fw-bold"><%= series.display_name %></span>
+      <% if series.status %>
+        <span class="cs-status <%= series_status_class(series.status) %>"><%= series.status %></span>
+      <% end %>
+    </div>
+    <p class="small text-body-secondary mb-2">
+      <span class="cs-issue-no"><%= series.years %></span>
+      <% [ series.series_type, series.publisher_name ].compact.each do |detail| %>· <%= detail %><% end %>
+    </p>
+    <div class="d-flex justify-content-between align-items-center gap-2">
+      <span class="small">
+        <span class="cs-issue-no"><%= pluralize(series.released_count, "issue") %></span>
+        <%= render "series/missing", series: series %>
+      </span>
+      <%= link_to comics_path(series: series.id), class: "btn btn-link btn-sm",
+                  "aria-label": "View comics in #{series.display_name}" do %>
+        View comics <%= icon("arrow-right") %>
+      <% end %>
+    </div>
+  </div>
+</li>

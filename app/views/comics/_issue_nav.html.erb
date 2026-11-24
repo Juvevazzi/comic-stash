@@ -1,0 +1,20 @@
+<%# Previous and next issue of this series. At either end the button becomes
+    plain text, so there is never a link that goes nowhere.
+    Locals: previous_issue, next_issue (nil at either end). %>
+<nav class="cs-issue-nav" aria-label="Issues in this series">
+  <% if previous_issue %>
+    <%= link_to comic_path(previous_issue), class: "btn btn-secondary", rel: "prev" do %>
+      <%= icon("chevron-left") %> Previous <span class="cs-issue-no"><%= previous_issue.label %></span>
+    <% end %>
+  <% else %>
+    <span class="btn btn-secondary disabled"><%= icon("chevron-left") %> First issue</span>
+  <% end %>
+
+  <% if next_issue %>
+    <%= link_to comic_path(next_issue), class: "btn btn-secondary", rel: "next" do %>
+      Next <span class="cs-issue-no"><%= next_issue.label %></span> <%= icon("chevron-right") %>
+    <% end %>
+  <% else %>
+    <span class="btn btn-secondary disabled">Latest issue <%= icon("chevron-right") %></span>
+  <% end %>
+</nav>

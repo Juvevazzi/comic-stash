@@ -1,0 +1,6 @@
+<%# How many released issues are missing from a series, or "Complete". Local: series. %>
+<% if series.missing_count.positive? %>
+  <span class="cs-status cs-status-missing"><%= icon("dash-circle-dotted") %><%= series.missing_count %> missing</span>
+<% else %>
+  <span class="cs-status cs-status-owned"><%= icon("check2") %>Complete</span>
+<% end %>

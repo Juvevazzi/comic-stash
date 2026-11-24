@@ -1,0 +1,23 @@
+<%# One filter control for a list, with its label.
+    In the desktop table's filter row, compact: true hides the label visually
+    (screen readers still read it). On phones the label shows above the field.
+    The field joins its filter form through the form attribute, so it can sit
+    in a table cell outside the <form> element.
+    Locals: form (the filter form's id), name, label, value,
+            options (makes it a dropdown; leave out for a text box),
+            placeholder, type ("search" or "number"), compact. %>
+<% field_id = "#{form}-#{name}" %>
+<% compact = local_assigns.fetch(:compact, false) %>
+<%= label_tag field_id, label, class: compact ? "visually-hidden" : "form-label small fw-bold" %>
+<% if local_assigns[:options] %>
+  <%= select_tag name, options_for_select(options, value), include_blank: "Any",
+                 id: field_id, form: form, class: "form-select#{" form-select-sm" if compact}",
+                 data: { action: "change->auto-submit#submit" } %>
+<% else %>
+  <% type = local_assigns.fetch(:type, "search") %>
+  <%= text_field_tag name, value, type: type, id: field_id, form: form,
+                     placeholder: local_assigns[:placeholder], min: (0 if type == "number"),
+                     inputmode: (type == "number" ? "numeric" : nil),
+                     class: "form-control#{" form-control-sm" if compact}",
+                     data: { action: "change->auto-submit#submit" } %>
+<% end %>

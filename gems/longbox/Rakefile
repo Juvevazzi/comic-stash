@@ -1,0 +1,9 @@
+require "rake/testtask"
+
+# rake test: runs every file in test/ that ends in _test.rb.
+Rake::TestTask.new(:test) do |t|
+  t.libs << "lib" << "test"
+  t.pattern = "test/**/*_test.rb"
+end
+
+task default: :test

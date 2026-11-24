@@ -1,0 +1,14 @@
+<%# Add to / take off the hunt list: a one-button form, POST to put the issue
+    on the list and DELETE to take it off (HuntsController). The hunt-button
+    controller flips the label straight away; the page then comes back with
+    the saved state.
+    Locals: issue_id, on (true if already hunting), item (optional, e.g.
+    "Night Signal #49", read out by screen readers after the label when
+    there are many buttons). %>
+<%= button_to comic_hunt_path(issue_id), method: on ? :delete : :post, class: "btn btn-hunt btn-sm",
+              aria: { pressed: on },
+              data: { controller: "hunt-button", hunt_button_on_value: on, action: "hunt-button#toggle" } do %>
+  <%= icon("bookmark") %>
+  <span data-hunt-button-target="label"><%= on ? "On your hunt list" : "Add to hunt list" %></span>
+  <% if local_assigns[:item] %><span class="visually-hidden"><%= item %></span><% end %>
+<% end %>

@@ -1,0 +1,26 @@
+<%# Pages anyone can see without logging in. Slim header, content, footer. %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%= render "layouts/head" %>
+  </head>
+
+  <body class="cs-app">
+    <header class="cs-public-header">
+      <div class="container-xl d-flex align-items-center justify-content-between">
+        <%= link_to "Comic Stash", dashboard_path, class: "cs-wordmark text-decoration-none text-body" %>
+        <div class="d-flex align-items-center gap-3">
+          <%= link_to "Help", help_path, class: "fw-bold text-body-secondary text-decoration-none" %>
+          <%= link_to "Log in", login_path, class: "btn btn-secondary" %>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" class="<%= content_for?(:main_class) ? yield(:main_class) : "container-xl cs-main" %>">
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </main>
+
+    <%= render "shared/footer" %>
+  </body>
+</html>

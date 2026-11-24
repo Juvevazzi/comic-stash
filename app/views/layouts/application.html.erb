@@ -1,0 +1,20 @@
+<%# Signed-in pages: top navbar, content, footer, and a bottom tab bar on phones. %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%= render "layouts/head" %>
+  </head>
+
+  <body class="cs-app">
+    <a class="visually-hidden-focusable cs-skip-link" href="#main">Skip to content</a>
+    <%= render "shared/navbar" %>
+
+    <main id="main" class="container-xl cs-main">
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </main>
+
+    <%= render "shared/footer" %>
+    <%= render "shared/bottom_nav" %>
+  </body>
+</html>

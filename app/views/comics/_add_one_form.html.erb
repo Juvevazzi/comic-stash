@@ -1,0 +1,56 @@
+<%# "Add one comic". Posts comic[series_name], comic[issue_number] and
+    comic[barcode] to ComicsController#create. The browser checks the rules
+    (required, pattern); the form-validation controller shows the messages. %>
+<%= form_with scope: :comic, url: comics_path, class: "cs-panel cs-form-panel", novalidate: true,
+              "aria-labelledby": "one-h",
+              data: { controller: "form-validation",
+                      action: "submit->form-validation#submit reset->form-validation#reset" } do |f| %>
+  <div class="d-flex justify-content-between align-items-baseline gap-3 mb-3">
+    <h2 id="one-h" class="h3 mb-0">Add one comic</h2>
+    <span class="small text-body-secondary"><span class="text-danger" aria-hidden="true">*</span> Required</span>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :series_name, class: "form-label fw-bold" do %>
+      Series name <span class="text-danger" aria-hidden="true">*</span>
+    <% end %>
+    <%= f.text_field :series_name, value: params[:series], class: "form-control form-control-lg",
+                     required: true, autocomplete: "off", list: "series-options",
+                     placeholder: "Start typing, e.g. Paper Moons",
+                     "aria-describedby": "series-help series-error" %>
+    <div id="series-help" class="form-text">Pick one from your stash or type a new one.</div>
+    <div id="series-error" class="invalid-feedback">Enter a series name.</div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-sm-5">
+      <%= f.label :issue_number, class: "form-label fw-bold" do %>
+        Issue number <span class="text-danger" aria-hidden="true">*</span>
+      <% end %>
+      <div class="input-group has-validation">
+        <span class="input-group-text cs-issue-no" aria-hidden="true">#</span>
+        <%= f.text_field :issue_number, class: "form-control", required: true, inputmode: "numeric",
+                         pattern: "[0-9]+[A-Za-z]?", placeholder: "23", "aria-describedby": "issue-error" %>
+        <div id="issue-error" class="invalid-feedback">Use a number, like 23.</div>
+      </div>
+    </div>
+    <div class="col-sm-7">
+      <%= f.label :barcode, class: "form-label fw-bold" do %>
+        Barcode <span class="fw-normal text-body-secondary">(optional)</span>
+      <% end %>
+      <%= f.text_field :barcode, class: "form-control font-monospace", inputmode: "numeric",
+                       pattern: "[0-9]{10,17}", placeholder: "76194134182502311",
+                       "aria-describedby": "barcode-help barcode-error" %>
+      <div id="barcode-help" class="form-text">The UPC or ISBN printed on the cover.</div>
+      <div id="barcode-error" class="invalid-feedback">Barcodes are 10 to 17 digits.</div>
+    </div>
+  </div>
+
+  <div class="d-flex flex-wrap align-items-center gap-2">
+    <%= f.button type: "submit", class: "btn btn-primary btn-lg" do %>
+      <%= icon("plus-lg") %> Add comic
+    <% end %>
+    <button type="reset" class="btn btn-secondary btn-lg">Clear</button>
+    <span class="small text-body-secondary">The series stays filled in for the next issue.</span>
+  </div>
+<% end %>

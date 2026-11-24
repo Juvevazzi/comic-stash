@@ -1,0 +1,5 @@
+<%# A missing issue's title, linking to View issue, with a New tag for recent releases. %>
+<%= link_to issue.display_title, comic_path(issue), class: "cs-gap-title" %>
+<% if new_release?(issue) %>
+  <span class="badge text-bg-warning">New</span>
+<% end %>
