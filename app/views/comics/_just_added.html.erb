@@ -13,7 +13,7 @@
       <ul class="cs-row-list mb-3">
         <% items.each do |item| %>
           <li class="align-items-center">
-            <%= render "shared/cover", tone: item.issue.tone, css: "cs-thumb-sm" %>
+            <%= render "shared/cover", tone: item.issue.tone, image: item.issue.image_url, css: "cs-thumb-sm" %>
             <div class="cs-grow">
               <span class="d-block fw-bold"><%= item.issue.series.display_name %> <span class="cs-issue-no"><%= item.issue.label %></span></span>
               <span class="small text-body-secondary">

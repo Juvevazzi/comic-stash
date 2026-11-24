@@ -75,7 +75,7 @@
     <ul class="cs-row-list">
       <% @recent_series.each do |series| %>
         <li>
-          <%= render "shared/cover", tone: series.tone, css: "cs-thumb" %>
+          <%= render "shared/cover", tone: series.tone, image: series.cover_url, css: "cs-thumb" %>
           <div class="cs-grow">
             <div class="cs-run-meta mb-2">
               <%= link_to series.display_name, comics_path(series: series.id), class: "fw-bold" %>
@@ -97,7 +97,7 @@
     <ul class="cs-row-list">
       <% @recent_comics.each do |item| %>
         <li>
-          <%= render "shared/cover", tone: item.issue.tone, issue: item.issue.label, css: "cs-thumb" %>
+          <%= render "shared/cover", tone: item.issue.tone, image: item.issue.image_url, issue: item.issue.label, css: "cs-thumb" %>
           <div class="cs-grow">
             <%= link_to comic_path(item.issue), class: "d-block fw-bold" do %>
               <%= item.issue.series.display_name %> <span class="cs-issue-no"><%= item.issue.label %></span>

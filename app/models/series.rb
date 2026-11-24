@@ -29,6 +29,25 @@ class Series < ApplicationRecord
 
   def tone = self.class.tone_for(id)
 
+  # The first issue's cover from Metron, as an extra column in a query.
+  COVER_SELECT = <<~SQL.squish.freeze
+    (SELECT i.image_url FROM issues i
+      WHERE i.series_id = series.id AND i.image_url <> ''
+      ORDER BY i.sort_number NULLS LAST, i.id LIMIT 1) AS cover_url
+  SQL
+
+  # Series with their cover_url, worked out in the same query.
+  scope :with_cover, -> { select("series.*", COVER_SELECT) }
+
+  # The cover to show for this series: its first issue's cover, or nil for
+  # the placeholder. Free on series loaded with_cover or through Stash#series;
+  # one small query otherwise.
+  def cover_url
+    return self[:cover_url] if has_attribute?(:cover_url)
+
+    issues.where.not(image_url: [ nil, "" ]).order(:sort_number, :id).pick(:image_url)
+  end
+
   # "2019–present", "2021–2023".
   def years = year_began ? "#{year_began}–#{year_end || "present"}" : "Year unknown"
 

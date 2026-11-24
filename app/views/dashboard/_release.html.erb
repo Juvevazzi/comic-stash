@@ -1,7 +1,7 @@
 <%# One row of "New in your series". Local: release (an Issue from
     Stash#releases, so it knows your status: hunting? or not). %>
 <li>
-  <%= render "shared/cover", tone: release.tone, issue: release.label, css: "cs-thumb" %>
+  <%= render "shared/cover", tone: release.tone, image: release.image_url, issue: release.label, css: "cs-thumb" %>
   <div class="cs-grow">
     <div class="d-flex flex-wrap align-items-center gap-2">
       <span class="fw-bold"><%= release.series.display_name %> <span class="cs-issue-no"><%= release.label %></span></span>

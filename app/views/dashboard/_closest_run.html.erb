@@ -3,7 +3,7 @@
 <% series = closest.series %>
 <% run = closest.run %>
 <li>
-  <%= render "shared/cover", tone: series.tone, css: "cs-thumb" %>
+  <%= render "shared/cover", tone: series.tone, image: series.cover_url, css: "cs-thumb" %>
   <div class="cs-grow">
     <div class="cs-run-meta mb-2">
       <%= link_to series.display_name, comics_path(series: series.id), class: "fw-bold" %>

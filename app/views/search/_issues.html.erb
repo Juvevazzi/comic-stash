@@ -39,7 +39,7 @@
     <% issues.each do |comic| %>
       <% status = comic.stash_status %>
       <li>
-        <%= render "shared/cover", tone: comic.tone, css: "cs-thumb-xs #{"is-out" unless status == "owned"}" %>
+        <%= render "shared/cover", tone: comic.tone, image: comic.image_url, css: "cs-thumb-xs #{"is-out" unless status == "owned"}" %>
         <div class="cs-grow">
           <div class="d-flex justify-content-between align-items-start gap-2">
             <p class="mb-0">

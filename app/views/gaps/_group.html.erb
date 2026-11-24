@@ -6,7 +6,7 @@
 <% hunting = group.issues.count(&:hunting?) %>
 <details class="cs-gap-group" <%= "open" if open %> data-gaps-target="group">
   <summary>
-    <%= render "shared/cover", tone: series.tone, css: "cs-gap-cover" %>
+    <%= render "shared/cover", tone: series.tone, image: series.cover_url, css: "cs-gap-cover" %>
     <h2 class="cs-gap-name h5 mb-0"><%= series.display_name %></h2>
     <span class="cs-gap-meta small text-body-secondary">
       <%= [ series.series_type, series.years, series.publisher_name ].compact.join(" · ") %>
@@ -40,7 +40,7 @@
     <tbody>
       <% shown.each do |issue| %>
         <tr>
-          <td><%= render "shared/cover", tone: series.tone, css: "cs-thumb-xs is-out" %></td>
+          <td><%= render "shared/cover", tone: series.tone, image: issue.image_url, css: "cs-thumb-xs is-out" %></td>
           <td class="cs-issue-no"><%= issue.label %></td>
           <th scope="row"><%= render "gaps/issue_title", issue: issue %></th>
           <td class="cs-issue-no text-nowrap"><%= month_year(issue.released_on) %></td>
@@ -55,7 +55,7 @@
   <ul class="cs-gap-list d-md-none" aria-label="Missing issues of <%= series.display_name %>">
     <% shown.each do |issue| %>
       <li>
-        <%= render "shared/cover", tone: series.tone, css: "cs-thumb-xs is-out" %>
+        <%= render "shared/cover", tone: series.tone, image: issue.image_url, css: "cs-thumb-xs is-out" %>
         <div class="cs-grow">
           <p class="mb-0">
             <span class="cs-issue-no cs-missing-no"><%= issue.label %></span>
