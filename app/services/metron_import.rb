@@ -76,9 +76,11 @@ class MetronImport
     end
   end
 
+  # Matched on metron_id; failing that, an issue someone typed in by hand
+  # with the same number is adopted, so it isn't copied.
   def import_issue_row(series, row)
-    issue = Issue.find_or_initialize_by(metron_id: row.fetch("id"))
-    issue.update!(series: series, number: row.fetch("number"),
+    issue = Issue.find_by(metron_id: row.fetch("id")) || series.issues.find_or_initialize_by(number: row.fetch("number"))
+    issue.update!(series: series, number: row.fetch("number"), metron_id: row.fetch("id"),
                   cover_date: row["cover_date"], store_date: row["store_date"],
                   image_url: row["image"].presence || issue.image_url,
                   metron_modified_at: row["modified"])

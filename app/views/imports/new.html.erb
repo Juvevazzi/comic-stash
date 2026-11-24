@@ -1,0 +1,42 @@
+<%# Import from Metron: find a series on Metron and bring it into the
+    catalogue with all its issues. Search is a GET, so results have their own
+    URL; Import is a POST that queues ImportSeriesJob. %>
+<%= render "shared/page_header", title: "Import from Metron",
+           lead: "Find a series on Metron and bring in every issue, ready to add to your stash.",
+           breadcrumbs: [ [ "Dashboard", dashboard_path ], [ "Add comics", new_comic_path ] ] %>
+
+<%= form_with url: new_import_path, method: :get, role: "search", class: "cs-panel cs-form-panel mb-4" do |f| %>
+  <%= f.label :q, "Series name", class: "form-label fw-bold" %>
+  <div class="input-group">
+    <%= f.search_field :q, value: @q, class: "form-control", placeholder: "e.g. Saga", required: true %>
+    <button type="submit" class="btn btn-primary"><%= icon("search") %> Search Metron</button>
+  </div>
+<% end %>
+
+<% if @q.present? && @results.empty? %>
+  <div class="cs-empty">
+    <p class="fw-bold mb-1">Nothing from Metron for “<%= @q %>”</p>
+    <p class="text-body-secondary mb-0">Try fewer words, or add the comic by hand on Add comics.</p>
+  </div>
+<% elsif @results.any? %>
+  <ul class="cs-row-list" aria-label="Series on Metron">
+    <% @results.each do |row| %>
+      <li class="align-items-center">
+        <div class="cs-grow">
+          <span class="d-block fw-bold"><%= row["series"] %></span>
+          <span class="small text-body-secondary">
+            Metron <%= row["id"] %><% if row["issue_count"] %> · <%= pluralize(row["issue_count"], "issue") %><% end %>
+          </span>
+        </div>
+        <% if @imported.include?(row["id"]) %>
+          <span class="cs-status cs-status-owned"><%= icon("check2") %>In the catalogue</span>
+        <% else %>
+          <%= button_to imports_path, params: { metron_id: row["id"] }, class: "btn btn-secondary btn-sm",
+                        "aria-label": "Import #{row["series"]}" do %>
+            <%= icon("cloud-download") %> Import
+          <% end %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

@@ -1,7 +1,7 @@
 # Comics. index = View comics, show = View issue, new = Add comics. A "comic"
 # here is an issue from the catalogue, so /comics/:id is the issue's id.
 # index filters, sorts and pages Stash#issues in the database (TableQuery).
-# create, update, bulk and destroy still only redirect back with a message:
+# create, bulk, update and destroy save to your own stash (Current.user).
 class ComicsController < ApplicationController
   include TableQuery
 
@@ -57,32 +57,56 @@ class ComicsController < ApplicationController
                              .includes(issue: :series).order(created_at: :desc).limit(5)
   end
 
-  # "Add comic". params.expect only lets the three named fields through
-  # (strong parameters), which is what the real version will save.
+  # "Add comic": strong parameters (params.expect) let only the three named
+  # fields through. AddComics finds or makes the series and issue.
   def create
     comic = params.expect(comic: [ :series_name, :issue_number, :barcode ])
+    item = AddComics.new(Current.user).add(series_name: comic[:series_name], number: comic[:issue_number],
+                                           barcode: comic[:barcode])
+    redirect_to new_comic_path(series: comic[:series_name]), notice: "Added. #{item.issue} is in your collection."
+  rescue ActiveRecord::RecordInvalid => error
     redirect_to new_comic_path(series: comic[:series_name]),
-                notice: "Added. #{comic[:series_name]} ##{comic[:issue_number]} is in your collection."
+                alert: "Nothing was added: #{error.record.errors.full_messages.to_sentence}."
   end
 
-  # "Got it" and "Remove from collection" (View issue, Find the gaps). Both
-  # change one thing, whether you own this comic, so they share the RESTful
-  # update action. It returns to the page you came from.
+  # "Got it" and "Remove from collection" (View issue, Find the gaps, Search,
+  # the dashboard). Both change one thing, whether you own this issue, so they
+  # share the RESTful update action, and come back to the page you were on.
   def update
     issue = Issue.find(params[:id])
-    owned = params.expect(comic: [ :owned ])[:owned] == "true"
-    flash[:undo] = issue.id if owned # the flash message offers Undo after "Got it"
-    redirect_back_or_to comic_path(issue),
-                        notice: owned ? "Got it. #{issue} is in your stash." : "Removed. #{issue} is back on your gaps."
+    if params.expect(comic: [ :owned ])[:owned] == "true"
+      Current.user.collect!(issue)
+      flash[:undo] = issue.id # the message offers Undo
+      notice = "Got it. #{issue} is in your stash."
+    else
+      Current.user.uncollect!(issue)
+      notice = "Removed. #{issue} is back on your gaps."
+    end
+    redirect_back_or_to comic_path(issue), notice: notice
   end
 
-  # "Add in bulk": an issue range, a pasted list or a CSV file.
+  # "Add in bulk": an issue range, a pasted list or a CSV file. All or nothing.
   def bulk
-    redirect_to new_comic_path, notice: "Added. Your comics are in your collection."
+    bulk = params.expect(bulk: [ :source, :series_name, :from, :to, :list, :file ])
+    rows = case bulk[:source]
+    when "range" then AddComics.range(bulk[:series_name], bulk[:from], bulk[:to])
+    when "paste" then AddComics.parse_lines(bulk[:list])
+    when "csv" then AddComics.parse_csv(bulk[:file]&.read)
+    else []
+    end
+    result = AddComics.new(Current.user).add_all(rows)
+
+    if result.problems.any?
+      redirect_to new_comic_path, alert: "Nothing was added. #{result.problems.first(3).join(" ")}"
+    else
+      redirect_to new_comic_path, notice: "Added #{result.added.size} #{"comic".pluralize(result.added.size)} to your collection."
+    end
   end
 
   # "Undo" in Added just now.
   def destroy
-    redirect_to new_comic_path, notice: "Removed from your collection."
+    issue = Issue.find(params[:id])
+    Current.user.uncollect!(issue)
+    redirect_to new_comic_path, notice: "Removed #{issue} from your collection."
   end
 end

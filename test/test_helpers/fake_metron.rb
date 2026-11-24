@@ -12,7 +12,7 @@ class FakeMetron
   def series(id) = answer(:series, id) { read("series_#{id}") }
   def series_issues(id) = answer(:series_issues, id) { read("series_#{id}_issues") }
   def issue(id) = answer(:issue, id) { read("issue_#{id}") }
-
+  def search_series(name) = answer(:search_series, name) { read("search_series") }
   private
 
   def answer(name, id)

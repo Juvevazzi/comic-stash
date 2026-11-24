@@ -45,6 +45,24 @@ class User < ApplicationRecord
   # The series you collect: every series with at least one issue in your stash.
   def collected_series = Series.where(id: issues.select(:series_id))
 
+  # Got it: you own this issue now, and it comes off your hunt list.
+  def collect!(issue)
+    item = collection_items.find_or_initialize_by(issue: issue)
+    item.update!(status: :owned)
+    item
+  end
+
+  # Remove from collection (or Undo): the issue leaves your stash.
+  def uncollect!(issue) = collection_items.where(issue: issue).destroy_all
+
+  # Add to hunt list. An issue you already own stays owned.
+  def hunt!(issue)
+    collection_items.find_or_create_by!(issue: issue) { |item| item.status = :hunting }
+  end
+
+  # Take off the hunt list. Never touches an issue you own.
+  def unhunt!(issue) = collection_items.hunting.where(issue: issue).destroy_all
+
   # Your run of one series, worked out by the Longbox gem from two lists of
   # issue numbers: what's been released, and what you own.
   def run_for(series)
