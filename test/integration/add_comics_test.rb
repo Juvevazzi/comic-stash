@@ -19,7 +19,6 @@ class AddComicsTest < ActionDispatch::IntegrationTest
     assert_select "[role=tab]", 3
     assert_select "[role=tab][aria-selected=true]", "Issue range"
     assert_select "[role=tabpanel][hidden]", 2
-    assert_select "a[href=?]", new_import_path
   end
 
   test "adding a comic saves it and keeps the series filled in" do

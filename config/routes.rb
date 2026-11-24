@@ -15,11 +15,16 @@ Rails.application.routes.draw do
 
   resources :passwords, param: :token, only: %i[edit update]
 
-  # Collection full CRUD
-  # create, bulk and destroy are front-end stubs for now (they redirect back).
+  # Your collection. A comic is an issue from the catalogue: create adds one,
+  # bulk adds many, update is Got it / Remove, destroy is Undo, and each
+  # issue's hunt is the hunt list (POST adds it, DELETE takes it off).
   resources :comics, only: %i[index show new create update destroy] do
     post :bulk, on: :collection # POST /comics/bulk -> comics#bulk
+    resource :hunt, only: %i[create destroy] # /comics/:comic_id/hunt -> hunts#create, hunts#destroy
   end
+
+  # Import from Metron: search (new, a GET with ?q=) and queue an import (create).
+  resources :imports, only: %i[new create]
   resources :series, only: :index
   get "gaps", to: "gaps#index", as: :gaps
   get "search", to: "search#index", as: :search

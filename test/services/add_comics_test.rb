@@ -2,7 +2,7 @@ require "test_helper"
 
 # Ada owns Paper Moons #1 (fixtures). The catalogue has Paper Moons Vol. 2
 # (#1-#5) and Night Signal (#1).
-class AddComicsTest < ActiveSupport::TestCase
+class AddComicsServiceTest < ActiveSupport::TestCase
   setup { @adder = AddComics.new(users(:ada)) }
 
   test "adds an issue the catalogue already has" do

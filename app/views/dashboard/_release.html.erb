@@ -13,7 +13,7 @@
     <% if release.released? %>
       <%= render "shared/issue_actions", comic_id: release.id, label: release.to_s, hunting: release.hunting? %>
     <% else %>
-      <%= render "shared/hunt_button", on: release.hunting?, item: release.to_s %>
+      <%= render "shared/hunt_button", issue_id: release.id, on: release.hunting?, item: release.to_s %>
     <% end %>
   </div>
 </li>
