@@ -2,7 +2,8 @@ import { Controller } from "@hotwired/stimulus";
 
 // Live preview for the "Paste a list" bulk tab. Each line is
 // "series, issue, barcode" (barcode optional). Lines with a problem are
-// flagged and left out of the count. The server will check them again.
+// flagged, and the button stays off until every line is ready, because the
+// server adds all or nothing (AddComics#add_all). It checks them again.
 export default class extends Controller {
   static targets = ["input", "rows", "summary", "note", "submit", "label"];
 
@@ -20,14 +21,14 @@ export default class extends Controller {
 
     this.rowsTarget.replaceChildren(...rows.map((row) => this.row(row)));
     this.summaryTarget.textContent = `${ready} of ${rows.length} ready`;
-    this.noteTarget.textContent =
-      ready < rows.length
-        ? "Lines with a problem are skipped. Fix them to include them."
-        : "You can undo any of these from “Added just now”.";
-    this.labelTarget.textContent = ready
-      ? `Add ${ready} ${ready === 1 ? "comic" : "comics"}`
+    const problems = rows.length - ready;
+    this.noteTarget.textContent = problems
+      ? "Fix the lines marked with a problem. Nothing is added until every line is ready."
+      : "You can undo any of these from “Added just now”.";
+    this.labelTarget.textContent = rows.length
+      ? `Add ${rows.length} ${rows.length === 1 ? "comic" : "comics"}`
       : "Add comics";
-    this.submitTarget.disabled = ready === 0;
+    this.submitTarget.disabled = rows.length === 0 || problems > 0;
   }
 
   // "Iron Tide, #11, 761..." -> { series, issue, barcode, problem }
