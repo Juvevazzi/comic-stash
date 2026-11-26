@@ -21,7 +21,11 @@ class PasswordsController < ApplicationController
   def create
     email = params[:email].to_s.strip.downcase
     if (user = User.find_by(email_address: email))
-      PasswordsMailer.reset(user).deliver_later
+      begin
+        PasswordsMailer.reset(user).deliver_now
+      rescue StandardError => error
+        Rails.logger.error("[mail] reset email failed: #{error.class}: #{error.message}")
+      end
     end
     redirect_to password_reset_sent_path, flash: { reset_email: email }
   end
