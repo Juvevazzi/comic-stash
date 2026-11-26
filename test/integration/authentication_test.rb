@@ -69,7 +69,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
   end
 
   test "forgot password emails a link that sets a new password, once" do
-    assert_enqueued_emails 1 do
+    assert_emails 1 do
       post forgot_password_path, params: { email: "RG@example.com" }
     end
     follow_redirect!
@@ -91,11 +91,28 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
   end
 
   test "an unknown email gets the same page and no email" do
-    assert_no_enqueued_emails do
+    assert_no_emails do
       post forgot_password_path, params: { email: "nobody@example.com" }
     end
     follow_redirect!
     assert_select "h1", "Check your email"
+  end
+
+  test "a reset email that fails to send still shows Check your email" do
+    failing = Class.new do
+      def initialize(*) = nil
+      def deliver!(_mail) = raise("Resend is down")
+    end
+    ActionMailer::Base.add_delivery_method :failing, failing
+    PasswordsMailer.delivery_method = :failing
+    PasswordsMailer.raise_delivery_errors = true # make sure the error reaches the controller
+
+    post forgot_password_path, params: { email: "rg@example.com" }
+    follow_redirect!
+    assert_select "h1", "Check your email"
+  ensure
+    PasswordsMailer.delivery_method = :test
+    PasswordsMailer.raise_delivery_errors = ActionMailer::Base.raise_delivery_errors
   end
 
   test "new passwords that don't match are shown again with a message" do
