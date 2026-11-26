@@ -28,14 +28,14 @@
             Metron <%= row["id"] %><% if row["issue_count"] %> · <%= pluralize(row["issue_count"], "issue") %><% end %>
           </span>
         </div>
-        <% if @imported.include?(row["id"]) %>
+        <% if (series = @imported[row["id"]]) %>
           <span class="cs-status cs-status-owned"><%= icon("check2") %>In the catalogue</span>
+          <%= link_to "Add comics", new_comic_path(series: series.display_name), class: "btn btn-primary btn-sm" %>
         <% else %>
-          <%= button_to imports_path, params: { metron_id: row["id"] }, class: "btn btn-secondary btn-sm",
-                        "aria-label": "Import #{row["series"]}" do %>
+          <%= button_to imports_path, params: { metron_id: row["id"], q: @q }, class: "btn btn-secondary btn-sm", "aria-label": "Import #{row["series"]}" do %>
             <%= icon("cloud-download") %> Import
-          <% end %>
         <% end %>
+      <% end %>
       </li>
     <% end %>
   </ul>
