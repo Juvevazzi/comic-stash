@@ -9,7 +9,7 @@
         <li class="nav-item"><%= nav_link_to "Dashboard", dashboard_path, class: "nav-link", active: controller_name == "dashboard" %></li>
         <li class="nav-item"><%= nav_link_to "Collection", comics_path, class: "nav-link", active: controller_name == "comics" %></li>
         <li class="nav-item"><%= nav_link_to "Series", series_index_path, class: "nav-link" %></li>
-        <li class="nav-item"><%= nav_link_to "Hunt list", dashboard_path(anchor: "hunt"), class: "nav-link", active: false %></li>
+        <li class="nav-item"><%= nav_link_to "Hunt list", gaps_path(hunt: "1"), class: "nav-link", active: controller_name == "gaps" && params[:hunt] == "1" %></li>
         <li class="nav-item"><%= nav_link_to "Insights", dashboard_path(anchor: "insights"), class: "nav-link", active: false %></li>
       </ul>
     </nav>

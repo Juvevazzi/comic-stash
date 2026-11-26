@@ -90,4 +90,12 @@ class StaticPagesTest < ActionDispatch::IntegrationTest
       assert_select "header.cs-public-header"
     end
   end
+
+test "Hunt list opens Find the gaps showing only the hunt list, and is marked current there" do
+  sign_in_as users(:ricardo)
+  get gaps_path(hunt: "1")
+  assert_select "header.cs-navbar a[href=?]", gaps_path(hunt: "1"), "Hunt list"
+  assert_select "nav.cs-bottom-nav a[href=?]", gaps_path(hunt: "1")
+  assert_select "header.cs-navbar a.active[aria-current=page]", "Hunt list"
+end
 end

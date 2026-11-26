@@ -9,7 +9,7 @@
   <%= nav_link_block series_index_path do %>
     <%= icon("journals") %><span>Series</span>
   <% end %>
-  <%= nav_link_block dashboard_path(anchor: "hunt"), active: false do %>
+  <%= nav_link_block gaps_path(hunt: "1"), active: controller_name == "gaps" && params[:hunt] == "1" do %>
     <%= icon("bookmark") %><span>Hunt list</span>
   <% end %>
   <%= nav_link_block dashboard_path(anchor: "insights"), active: false do %>
