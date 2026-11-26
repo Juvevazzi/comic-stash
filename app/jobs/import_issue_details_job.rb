@@ -3,6 +3,7 @@
 # issue that hasn't got them yet, so the page itself never waits on Metron.
 class ImportIssueDetailsJob < ApplicationJob
   queue_as :default
+  limits_concurrency to: 1, key: ->(metron_id) { metron_id }, duration: 15.minutes, on_conflict: :discard
 
   retry_on Longbox::Metron::RateLimited, wait: 1.minute, attempts: 5
   retry_on Longbox::Metron::ServerError, wait: :polynomially_longer, attempts: 5

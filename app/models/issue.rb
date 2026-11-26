@@ -69,6 +69,19 @@ class Issue < ApplicationRecord
   # From Metron, but its credits and description haven't been fetched yet.
   def needs_details? = metron_id.present? && credits.empty? && description.blank?
 
+  DETAILS_RETRY_AFTER = 1.hour
+
+  # Queues one details fetch, at most once an hour per issue, however many
+  # people open it. The UPDATE only succeeds for the first request.
+  def request_details!
+    return unless needs_details?
+
+    claimed = Issue.where(id: id)
+                  .where("details_requested_at IS NULL OR details_requested_at < ?", DETAILS_RETRY_AFTER.ago)
+                  .update_all(details_requested_at: Time.current)
+    ImportIssueDetailsJob.perform_later(self) if claimed == 1
+  end
+
   # The issues either side of this one in its series: [previous, next],
   # with nil at either end.
   def neighbours(user)
