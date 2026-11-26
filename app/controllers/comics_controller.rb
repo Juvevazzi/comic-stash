@@ -50,9 +50,14 @@ class ComicsController < ApplicationController
   # Add comics page: the one-comic form, "Added just now" and bulk add.
   def new
     stash = Stash.new(Current.user)
-    @series_options = stash.series.order(:sort_name).map do |series|
+    mine = stash.series.order(:sort_name).map do |series|
       [ series.display_name, "#{series.owned_count} of #{series.released_count}" ]
     end
+    # Imported series you don't collect yet, so a new import can be picked straight away.
+    catalogue = Series.where.not(metron_id: nil).where.not(id: stash.series.select(:id))
+                      .order(:sort_name).limit(300)
+                      .map { |series| [ series.display_name, "In the catalogue" ] }
+    @series_options = mine + catalogue
     @just_added = Current.user.collection_items.where(created_at: 1.hour.ago..)
                              .includes(issue: :series).order(created_at: :desc).limit(5)
   end

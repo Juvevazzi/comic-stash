@@ -8,7 +8,8 @@ class ImportsController < ApplicationController
     return if @q.empty?
 
     @results = MetronImport.client.search_series(@q).first(10)
-    @imported = Series.where(metron_id: @results.pluck("id")).pluck(:metron_id)
+    # A lookup by Metron id, so the view can link to each imported series.
+    @imported = Series.where(metron_id: @results.pluck("id")).index_by(&:metron_id)
   rescue Longbox::Metron::Error
     @results = []
     flash.now[:alert] = "Metron isn't answering right now. Try again in a minute."
@@ -16,7 +17,8 @@ class ImportsController < ApplicationController
 
   def create
     ImportSeriesJob.perform_later(params.expect(:metron_id).to_i)
-    redirect_to new_import_path,
-                notice: "Importing from Metron. In a minute or two it'll be in the catalogue, ready to add on Add comics."
+    # Back to the same search, so the series shows as "In the catalogue" with an Add link.
+    redirect_to new_import_path(q: params[:q]),
+                notice: "Importing from Metron. It takes a few seconds: reload this page to add it."
   end
 end

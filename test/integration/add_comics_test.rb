@@ -14,7 +14,8 @@ class AddComicsTest < ActionDispatch::IntegrationTest
       assert_select "input[name=?][required][pattern]", "comic[issue_number]"
       assert_select "input[name=?]:not([required])", "comic[barcode]"
     end
-    assert_select "datalist#series-options option", 1 # Paper Moons, the one series Ricardo collects
+    assert_select "datalist#series-options option", 2 # Paper Moons (collected) + Night Signal (catalogue)
+    assert_select "datalist#series-options option[value=?]", series(:night_signal).display_name, text: "In the catalogue"
     assert_select "section[aria-labelledby=added-h] li", users(:ricardo).collection_items.count
     assert_select "[role=tab]", 3
     assert_select "[role=tab][aria-selected=true]", "Issue range"
