@@ -82,7 +82,9 @@ $btn-border-width: 2px;
 $input-btn-padding-y: 0.4375rem;
 $input-btn-padding-x: 0.875rem;
 $input-border-color: #8b8476;
-$input-bg: #ffffff;
+$input-bg: var(
+  --paper-raised
+); // follows the theme, so focused fields stay dark in dark mode
 $input-placeholder-color: #6f6a62;
 $form-check-input-border: 1px solid #8b8476;
 $form-label-font-weight: 700;

@@ -110,6 +110,12 @@ kbd,
     0 0 0 4px var(--focus);
 }
 
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--paper-raised);
+  color: var(--ink);
+}
+
 // 2. Buttons
 .btn {
   --bs-btn-font-weight: 700;
