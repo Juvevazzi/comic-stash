@@ -88,6 +88,8 @@ COPY --chown=rails:rails --from=build /rails /rails
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start server via Thruster by default, this can be overwritten at runtime
-EXPOSE 80
-CMD ["./bin/thrust", "./bin/rails", "server"]
+# Vercel sends the first request as soon as the port opens. Thruster opens
+# it in milliseconds, before Rails has booted, so a cold start answered 502.
+# Puma only opens the port once the app is ready, so it answers Vercel itself.
+EXPOSE 8080
+CMD ["./bin/rails", "server"]
