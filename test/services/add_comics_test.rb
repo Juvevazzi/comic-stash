@@ -36,7 +36,14 @@ class AddComicsServiceTest < ActiveSupport::TestCase
   test "a pasted list can mix series, and barcodes are optional" do
     rows = AddComics.parse_lines("Night Signal, 2\n\nPaper Moons Vol. 2, 3, 76194134182500311\n")
     assert_equal 2, @adder.add_all(rows).added.size
-    assert_equal "76194134182500311", issues(:paper_moons_3).reload.upc
+    # Paper Moons #3 is a catalogue issue: its barcode only comes from Metron.
+    assert_nil issues(:paper_moons_3).reload.upc
+  end
+
+  test "a barcode is saved on an issue you added by hand" do
+    @adder.add_all(AddComics.parse_lines("Brand New Comic, 1, 76194134182500311\n"))
+    issue = Issue.joins(:series).find_by!(series: { name: "Brand New Comic" }, number: "1")
+    assert_equal "76194134182500311", issue.upc
   end
 
   test "a CSV has a header row, then series and issue columns" do

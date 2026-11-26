@@ -17,6 +17,6 @@ class HuntsController < ApplicationController
   private
 
   def set_issue
-    @issue = Issue.find(params[:comic_id])
+    @issue = Issue.visible_to(Current.user).find(params[:comic_id])
   end
 end

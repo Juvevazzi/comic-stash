@@ -12,6 +12,9 @@ class ProfilesController < ApplicationController
   # PATCH /profile: name, email and (optionally) a new password.
   def update
     if @account.update(profile_params)
+      if @account.saved_change_to_password_digest? || @account.saved_change_to_email_address?
+        @account.sessions.where.not(id: Current.session.id).destroy_all
+      end
       redirect_to profile_path, notice: "Saved. Your profile is up to date."
     else
       # Show the form again with what was typed and the model's messages.
@@ -40,15 +43,20 @@ class ProfilesController < ApplicationController
     @errors = {}
   end
 
-  # Leaving the new password empty means "don't change it". When there is a
-  # new password, the current one is always checked: has_secure_password
-  # compares password_challenge with the saved password, and "" never matches.
   def profile_params
     details = params.expect(user: [ :name, :email_address, :password_challenge, :password ])
-    if details[:password].blank?
-      details.except(:password, :password_challenge)
+    details.delete(:password) if details[:password].blank?
+
+    if details.key?(:password) || email_changing?(details)
+      details[:password_challenge] = details[:password_challenge].to_s # "" never matches
     else
-      details.merge(password_challenge: details[:password_challenge].to_s)
+      details.delete(:password_challenge)
     end
+    details
+  end
+
+  def email_changing?(details)
+    details[:email_address].present? &&
+      details[:email_address].strip.downcase != @account.email_address
   end
 end

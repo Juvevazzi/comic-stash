@@ -75,24 +75,24 @@ class AddComics
     end
   end
 
-  # "Paper Moons Vol. 2" is the series called Paper Moons, volume 2. The
-  # name matches whatever the capitals; volume 1 matches a series with no
-  # volume too. Not in the catalogue: a new series is made.
   def series_for(text)
     @series[text.squish.downcase] ||= begin
       name, volume = text.squish.match(/\A(.*?)(?:\s+vol\.?\s*(\d+))?\z/i).captures
       volume = volume&.to_i
-      Series.where("LOWER(name) = LOWER(?)", name).where(volume: volume.to_i > 1 ? volume : [ nil, 1 ]).order(:id).first ||
-        Series.create!(name: name, volume: volume)
+      Series.visible_to(@user)
+            .where("LOWER(name) = LOWER(?)", name)
+            .where(volume: volume.to_i > 1 ? volume : [ nil, 1 ])
+            .order(Arel.sql("added_by_id IS NOT NULL"), :id).first || # catalogue first
+        Series.create!(name: name, volume: volume, added_by: @user)
     end
   end
 
-  # An issue you're holding is out, so a new one gets today's date until a
-  # Metron import fills in the real one. The barcode is kept if the issue
-  # hasn't got one.
   def issue_for(series, number, barcode)
-    issue = series.issues.find_or_create_by!(number: number.to_s) { |new_issue| new_issue.store_date = Date.current }
-    issue.update!(upc: barcode) if barcode.present? && issue.upc.blank?
+    issue = series.issues.visible_to(@user)
+                  .order(Arel.sql("added_by_id IS NOT NULL")).find_by(number: number.to_s)
+    issue ||= series.issues.create!(number: number.to_s, store_date: Date.current, added_by: @user)
+    # Only your own private issue takes your barcode; the catalogue's comes from Metron.
+    issue.update!(upc: barcode) if barcode.present? && issue.added_by_id == @user.id && issue.upc.blank?
     issue
   end
 end

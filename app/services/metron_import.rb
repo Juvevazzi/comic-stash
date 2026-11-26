@@ -10,6 +10,14 @@ class MetronImport
     def client
       @client ||= Longbox::Metron::Client.new(token: Rails.application.credentials.dig(:metron, :api_token))
     end
+
+    # For page views: give up after a few seconds rather than hold the page.
+    def interactive_client
+      @interactive_client ||= Longbox::Metron::Client.new(
+        token: Rails.application.credentials.dig(:metron, :api_token),
+        transport: Longbox::Metron::HttpTransport.new(open_timeout: 2, read_timeout: 4)
+      )
+    end
   end
 
   def initialize(client: self.class.client)
@@ -76,13 +84,23 @@ class MetronImport
     end
   end
 
-  # Matched on metron_id; failing that, an issue someone typed in by hand
-  # with the same number is adopted, so it isn't copied.
   def import_issue_row(series, row)
-    issue = Issue.find_by(metron_id: row.fetch("id")) || series.issues.find_or_initialize_by(number: row.fetch("number"))
+    issue = Issue.find_by(metron_id: row.fetch("id")) ||
+            series.issues.find_or_initialize_by(number: row.fetch("number"), added_by_id: nil)
     issue.update!(series: series, number: row.fetch("number"), metron_id: row.fetch("id"),
                   cover_date: row["cover_date"], store_date: row["store_date"],
                   image_url: row["image"].presence || issue.image_url,
                   metron_modified_at: row["modified"])
+    adopt_private_copies(issue)
+  end
+
+  # Move everyone's hand-added copy of this issue onto the real one, then delete the copies.
+  def adopt_private_copies(issue)
+    copies = issue.series.issues.where(number: issue.number).where.not(added_by_id: nil)
+    copies.find_each do |copy|
+      CollectionItem.where(issue: copy).where.not(user_id: issue.collection_items.select(:user_id))
+                    .update_all(issue_id: issue.id)
+      copy.destroy # removes any duplicate collection item left on it
+    end
   end
 end

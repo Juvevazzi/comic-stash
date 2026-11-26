@@ -57,9 +57,10 @@ class IssueTest < ActiveSupport::TestCase
   end
 
   test "neighbours are the issues either side in the series" do
-    assert_equal [ issues(:paper_moons_2), issues(:paper_moons_4) ], issues(:paper_moons_3).neighbours
-    assert_equal [ nil, issues(:paper_moons_2) ], issues(:paper_moons_1).neighbours
-    assert_equal [ issues(:paper_moons_4), nil ], issues(:paper_moons_5).neighbours
+    ricardo = users(:ricardo)
+    assert_equal [ issues(:paper_moons_2), issues(:paper_moons_4) ], issues(:paper_moons_3).neighbours(ricardo)
+    assert_equal [ nil, issues(:paper_moons_2) ], issues(:paper_moons_1).neighbours(ricardo)
+    assert_equal [ issues(:paper_moons_4), nil ], issues(:paper_moons_5).neighbours(ricardo)
   end
 
   test "an issue from Metron without its details needs them fetched" do

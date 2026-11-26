@@ -14,7 +14,7 @@
   <% end %>
 
   <%= form_with scope: :user, url: profile_path, method: :patch, class: "cs-profile-form" do |f| %>
-    <div class="row g-3">
+        <div class="row g-3">
       <div class="col-md-6">
         <%= f.label :name, "Display name", class: "form-label fw-bold" %>
         <%= f.text_field :name, value: @account.name, required: true, autocomplete: "name",
@@ -28,19 +28,25 @@
         <div id="email-hint" class="form-text">We send new-issue alerts here.</div>
         <%= field_error(:email_address) %>
       </div>
+
+      <%# ← MOVED: Current password now sits here, under Email, always visible %>
+      <div class="col-md-6">
+        <%= f.label :password_challenge, "Current password", class: "form-label fw-bold" %>
+        <%= f.password_field :password_challenge, autocomplete: "current-password",
+                             class: field_class(:password_challenge),
+                             aria: field_aria(:password_challenge, "challenge-hint") %>
+        <div id="challenge-hint" class="form-text">Needed to change your email or password.</div>
+        <%= field_error(:password_challenge) %>
+      </div>
     </div>
 
-    <details class="cs-disclosure mt-3" <%= "open" if @errors.key?(:password) || @errors.key?(:password_challenge) %>>
+    <%# The block now opens on a password error only; the challenge error shows above. %>
+    <details class="cs-disclosure mt-3" <%= "open" if @errors.key?(:password) %>>
       <summary>
         <span>Change password <span class="fw-normal text-body-secondary">· last changed <%= time_ago_in_words(@account.password_changed_at || @account.created_at) %> ago</span></span>
       </summary>
       <div class="row g-3 p-3">
-        <div class="col-md-6">
-          <%= f.label :password_challenge, "Current password", class: "form-label fw-bold" %>
-          <%= f.password_field :password_challenge, autocomplete: "current-password",
-                               class: field_class(:password_challenge), aria: field_aria(:password_challenge) %>
-          <%= field_error(:password_challenge) %>
-        </div>
+        <%# ← REMOVED: the Current password column that used to be here (old lines 38–43) %>
         <div class="col-md-6">
           <%= f.label :password, "New password", class: "form-label fw-bold" %>
           <%= f.password_field :password, autocomplete: "new-password",

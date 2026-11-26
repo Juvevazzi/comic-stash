@@ -29,7 +29,17 @@ module Authentication
     end
 
     def find_session_by_cookie
-      Session.find_by(id: cookies.signed[:session_id]) if cookies.signed[:session_id]
+      session = Session.find_by(id: cookies.signed[:session_id]) if cookies.signed[:session_id]
+      return unless session
+
+      if session.expired?
+        session.destroy
+        cookies.delete(:session_id)
+        return
+      end
+
+      session.record_activity!
+      session
     end
 
     # Not logged in: remember where they were going, then ask them to log in.
@@ -42,17 +52,14 @@ module Authentication
       session.delete(:return_to_after_authenticating) || dashboard_url
     end
 
-    # remember: true is "Keep me logged in": a cookie that lasts 20 years.
-    # Otherwise the cookie ends when the browser closes.
+    # remember: true is "Keep me logged in": a cookie that lasts as long as a
+    # session may (Session::MAX_AGE, one year). Otherwise it ends when the browser closes.
     def start_new_session_for(user, remember: false)
       user.sessions.create!(user_agent: request.user_agent, ip_address: request.remote_ip).tap do |session|
         Current.session = session
         cookie = { value: session.id, httponly: true, same_site: :lax }
-        if remember
-          cookies.signed.permanent[:session_id] = cookie
-        else
-          cookies.signed[:session_id] = cookie
-        end
+        cookie[:expires] = Session::MAX_AGE.from_now if remember
+        cookies.signed[:session_id] = cookie
       end
     end
 

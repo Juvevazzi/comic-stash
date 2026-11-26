@@ -2,6 +2,10 @@
 # request); create queues ImportSeriesJob, so the import itself, with all its
 # issues, never holds up a page.
 class ImportsController < ApplicationController
+  rate_limit to: 10, within: 1.minute, only: :new, by: -> { Current.user.id },
+           with: -> { redirect_to new_import_path, alert: "Too many searches. Wait a minute and try again." }
+  rate_limit to: 5, within: 1.hour, only: :create, by: -> { Current.user.id },
+            with: -> { redirect_to new_import_path, alert: "You've queued 5 imports this hour. Try again later." }
   def new
     @q = params[:q].to_s.strip
     @results = []
@@ -16,8 +20,12 @@ class ImportsController < ApplicationController
   end
 
   def create
-    ImportSeriesJob.perform_later(params.expect(:metron_id).to_i)
-    # Back to the same search, so the series shows as "In the catalogue" with an Add link.
+    metron_id = params.expect(:metron_id).to_i
+    if Series.exists?(metron_id: metron_id)
+      return redirect_to new_import_path(q: params[:q]), notice: "That series is already in the catalogue."
+    end
+
+    ImportSeriesJob.perform_later(metron_id)
     redirect_to new_import_path(q: params[:q]),
                 notice: "Importing from Metron. It takes a few seconds: reload this page to add it."
   end

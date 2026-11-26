@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_05_193444) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_26_194746) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -47,8 +47,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_193444) do
     t.datetime "metron_modified_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "added_by_id"
+    t.datetime "details_requested_at"
+    t.index ["added_by_id"], name: "index_issues_on_added_by_id"
     t.index ["metron_id"], name: "index_issues_on_metron_id", unique: true
-    t.index ["series_id", "number"], name: "index_issues_on_series_id_and_number", unique: true
+    t.index ["series_id", "number", "added_by_id"], name: "index_private_issues_on_series_number_and_user", unique: true, where: "(added_by_id IS NOT NULL)"
+    t.index ["series_id", "number"], name: "index_catalogue_issues_on_series_and_number", unique: true, where: "(added_by_id IS NULL)"
     t.index ["series_id", "sort_number"], name: "index_issues_on_series_id_and_sort_number"
     t.index ["series_id"], name: "index_issues_on_series_id"
     t.index ["upc"], name: "index_issues_on_upc"
@@ -77,6 +81,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_193444) do
     t.datetime "metron_modified_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "added_by_id"
+    t.index ["added_by_id"], name: "index_series_on_added_by_id"
     t.index ["metron_id"], name: "index_series_on_metron_id", unique: true
     t.index ["publisher_id"], name: "index_series_on_publisher_id"
     t.index ["sort_name"], name: "index_series_on_sort_name"
@@ -88,6 +94,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_193444) do
     t.string "user_agent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "last_active_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
@@ -111,6 +118,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_193444) do
   add_foreign_key "collection_items", "issues"
   add_foreign_key "collection_items", "users"
   add_foreign_key "issues", "series"
+  add_foreign_key "issues", "users", column: "added_by_id", on_delete: :cascade
   add_foreign_key "series", "publishers"
+  add_foreign_key "series", "users", column: "added_by_id", on_delete: :cascade
   add_foreign_key "sessions", "users"
 end
