@@ -8,8 +8,13 @@ class Issue < ApplicationRecord
 
   before_validation :set_sort_number
 
+  belongs_to :added_by, class_name: "User", optional: true
+
   validates :number, presence: true, length: { maximum: 20 },
-                     uniqueness: { scope: :series_id, message: "is already in this series" }
+                    uniqueness: { scope: [ :series_id, :added_by_id ], message: "is already in this series" }
+
+  # The catalogue plus this user's own hand-added issues.
+  scope :visible_to, ->(user) { where(added_by_id: [ nil, user.id ]) }
   validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :metron_id, uniqueness: true, allow_nil: true
 
@@ -66,8 +71,8 @@ class Issue < ApplicationRecord
 
   # The issues either side of this one in its series: [previous, next],
   # with nil at either end.
-  def neighbours
-    ids = series.issues.in_order.ids
+  def neighbours(user)
+    ids = series.issues.visible_to(user).in_order.ids
     place = ids.index(id)
     [ (Issue.find(ids[place - 1]) if place.positive?), Issue.find_by(id: ids[place + 1]) ]
   end

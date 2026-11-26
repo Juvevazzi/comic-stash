@@ -60,7 +60,7 @@ class Stash
   def runs
     @runs ||= begin
       collected = user.collected_series.with_cover.to_a
-      released = numbers_by_series(Issue.released(today).where(series: collected))
+      released = numbers_by_series(Issue.visible_to(user).released(today).where(series: collected))
       owned = numbers_by_series(user.owned_issues)
       collected.index_with do |series|
         Longbox::Run.new(released: released.fetch(series.id, []), owned: owned.fetch(series.id, []))
@@ -110,9 +110,9 @@ class Stash
           .joins("LEFT JOIN publishers ON publishers.id = series.publisher_id")
           .select("series.*", "publishers.name AS publisher_name", Series::COVER_SELECT, sql(<<~SQL))
             (SELECT COUNT(*) FROM issues i
-              WHERE i.series_id = series.id AND COALESCE(i.store_date, i.cover_date) <= :today) AS released_count,
+              WHERE i.series_id = series.id AND (i.added_by_id IS NULL OR i.added_by_id = :user) AND COALESCE(i.store_date, i.cover_date) <= :today) AS released_count,
             (SELECT COUNT(*) FROM issues i
-              WHERE i.series_id = series.id AND COALESCE(i.store_date, i.cover_date) <= :today
+              WHERE i.series_id = series.id AND (i.added_by_id IS NULL OR i.added_by_id = :user) AND COALESCE(i.store_date, i.cover_date) <= :today
                 AND NOT EXISTS (SELECT 1 FROM collection_items ci
                                  WHERE ci.issue_id = i.id AND ci.user_id = :user AND ci.status = :owned)) AS missing_count,
             (SELECT COUNT(*) FROM collection_items ci JOIN issues i ON i.id = ci.issue_id
@@ -129,6 +129,7 @@ class Stash
          .joins("LEFT JOIN publishers ON publishers.id = series.publisher_id")
          .joins(sql("LEFT JOIN collection_items mine ON mine.issue_id = issues.id AND mine.user_id = :user"))
          .where(series_id: user.issues.select(:series_id))
+         .where(sql("issues.added_by_id IS NULL OR issues.added_by_id = :user"))
          .select("issues.*", "series.name AS series_name", "series.sort_name AS series_sort_name",
                  "publishers.name AS publisher_name", "mine.created_at AS added_at",
                  sql("CASE mine.status WHEN :owned THEN 'owned' WHEN :hunting THEN 'hunting' ELSE 'missing' END AS stash_status"))

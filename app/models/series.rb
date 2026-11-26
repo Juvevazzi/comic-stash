@@ -2,6 +2,10 @@
 # user; what each user owns lives in CollectionItem.
 class Series < ApplicationRecord
   belongs_to :publisher, optional: true
+  belongs_to :added_by, class_name: "User", optional: true
+
+  scope :visible_to, ->(user) { where(added_by_id: [ nil, user.id ]) }
+  scope :catalogue, -> { where(added_by_id: nil) }
   has_many :issues, dependent: :destroy
 
   normalizes :name, with: ->(name) { name.squish }

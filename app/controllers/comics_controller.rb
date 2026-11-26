@@ -41,9 +41,9 @@ class ComicsController < ApplicationController
   # View issue: any issue in the catalogue, with your copy of it if you have one.
   # An unknown id raises RecordNotFound, which Rails turns into the 404 page.
   def show
-    @issue = Issue.includes(series: :publisher).find(params[:id])
+    @issue = Issue.visible_to(Current.user).includes(series: :publisher).find(params[:id])
     @item = Current.user.collection_items.find_by(issue: @issue)
-    @previous_issue, @next_issue = @issue.neighbours
+    @previous_issue, @next_issue = @issue.neighbours(Current.user)
     ImportIssueDetailsJob.perform_later(@issue) if @issue.needs_details?
   end
 
@@ -78,7 +78,7 @@ class ComicsController < ApplicationController
   # the dashboard). Both change one thing, whether you own this issue, so they
   # share the RESTful update action, and come back to the page you were on.
   def update
-    issue = Issue.find(params[:id])
+    issue = Issue.visible_to(Current.user).find(params[:id])
     if params.expect(comic: [ :owned ])[:owned] == "true"
       Current.user.collect!(issue)
       flash[:undo] = issue.id # the message offers Undo
@@ -110,7 +110,7 @@ class ComicsController < ApplicationController
 
   # "Undo" in Added just now.
   def destroy
-    issue = Issue.find(params[:id])
+    issue = Issue.visible_to(Current.user).find(params[:id])
     Current.user.uncollect!(issue)
     redirect_to new_comic_path, notice: "Removed #{issue} from your collection."
   end

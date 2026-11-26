@@ -32,8 +32,7 @@ class StashSearch
 
   # Catalogue series (imported from Metron) that aren't in your stash yet.
   def catalogue
-    @catalogue ||= blank? ? [] : Series.with_cover.where.not(id: @stash.series.select(:id)).where("name ILIKE ?", like)
-                                       .includes(:publisher).order(:sort_name).to_a
+    @catalogue ||= blank? ? [] : Series.catalogue.with_cover.where.not(id: @stash.series.select(:id)).where("name ILIKE ?", like)
   end
 
   private
