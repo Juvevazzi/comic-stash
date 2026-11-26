@@ -19,7 +19,7 @@ class RegistrationsController < ApplicationController
     @user = User.new(params.expect(user: %i[name email_address password terms_accepted]))
 
     if @user.save
-      start_new_session_for @user, remember: true
+      start_new_session_for @user, remember: false
       redirect_to dashboard_path, notice: "Your stash is ready. Add your first comic to get going."
     else
       # field => first message, for the field helpers in the form.
