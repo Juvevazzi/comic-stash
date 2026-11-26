@@ -10,6 +10,14 @@ class MetronImport
     def client
       @client ||= Longbox::Metron::Client.new(token: Rails.application.credentials.dig(:metron, :api_token))
     end
+
+    # For page views: give up after a few seconds rather than hold the page.
+    def interactive_client
+      @interactive_client ||= Longbox::Metron::Client.new(
+        token: Rails.application.credentials.dig(:metron, :api_token),
+        transport: Longbox::Metron::HttpTransport.new(open_timeout: 2, read_timeout: 4)
+      )
+    end
   end
 
   def initialize(client: self.class.client)

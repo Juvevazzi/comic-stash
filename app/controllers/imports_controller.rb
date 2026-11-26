@@ -16,9 +16,16 @@ class ImportsController < ApplicationController
   end
 
   def create
-    ImportSeriesJob.perform_later(params.expect(:metron_id).to_i)
-    # Back to the same search, so the series shows as "In the catalogue" with an Add link.
-    redirect_to new_import_path(q: params[:q]),
-                notice: "Importing from Metron. It takes a few seconds: reload this page to add it."
+    metron_id = params.expect(:metron_id).to_i
+    series = MetronImport.new.import_series(metron_id)
+    redirect_to new_import_path,
+                notice: "Imported #{series.display_name}: #{series.issues.count} issues. Add them on Add comics."
+  rescue Longbox::Metron::RateLimited
+    redirect_to new_import_path, alert: "Metron is busy right now. Try again in a minute."
+  rescue Longbox::Metron::NotFound
+    redirect_to new_import_path, alert: "Metron doesn't have that series any more."
+  rescue Longbox::Metron::Error, ActiveRecord::RecordInvalid => error
+    Rails.logger.warn("[metron] import #{metron_id} failed: #{error.class}: #{error.message}")
+    redirect_to new_import_path, alert: "That import didn't work. Try again in a minute."
   end
 end
